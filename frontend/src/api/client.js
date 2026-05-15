@@ -23,6 +23,14 @@ async function request(endpoint, options = {}) {
   return response.json()
 }
 
+function buildQuery(params = {}) {
+  const clean = Object.fromEntries(
+    Object.entries(params).filter(([_, v]) => v != null && v !== '')
+  )
+  const query = new URLSearchParams(clean).toString()
+  return query ? '?' + query : ''
+}
+
 export const api = {
   // Health
   health: () => request('/health'),
@@ -37,18 +45,27 @@ export const api = {
 
   // Games
   getGames: (params = {}) => {
-    const query = new URLSearchParams(params).toString()
-    return request(`/games${query ? '?' + query : ''}`)
+    return request(`/games${buildQuery(params)}`)
   },
   getGame: (id) => request(`/games/${id}`),
 
   // Players
   getPlayers: (params = {}) => {
-    const query = new URLSearchParams(params).toString()
-    return request(`/players${query ? '?' + query : ''}`)
+    return request(`/players${buildQuery(params)}`)
   },
   getPlayer: (id) => request(`/players/${id}`),
 
   // Standings
   getStandings: (competitionId) => request(`/standings/${competitionId}`),
+
+  // Stats
+  getPlayerStats: (params = {}) => {
+    return request(`/stats/players${buildQuery(params)}`)
+  },
+  getClubStats: (params = {}) => {
+    return request(`/stats/clubs${buildQuery(params)}`)
+  },
+  getSeasonOverview: (params = {}) => {
+    return request(`/stats/overview${buildQuery(params)}`)
+  },
 }

@@ -12,6 +12,7 @@ from src.clubs.router import router as clubs_router
 from src.games.router import router as games_router
 from src.players.router import router as players_router
 from src.standings.router import router as standings_router
+from src.stats.router import router as stats_router
 
 settings = get_settings()
 logger = logging.getLogger("uvicorn")
@@ -57,6 +58,7 @@ app.include_router(clubs_router, prefix="/api/clubs", tags=["Clubs"])
 app.include_router(games_router, prefix="/api/games", tags=["Games"])
 app.include_router(players_router, prefix="/api/players", tags=["Players"])
 app.include_router(standings_router, prefix="/api/standings", tags=["Standings"])
+app.include_router(stats_router, prefix="/api/stats", tags=["Stats"])
 
 
 @app.get("/api/health", tags=["Health"])

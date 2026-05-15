@@ -89,10 +89,12 @@ def map_event_type(fusesport_slug: str) -> str:
 
 def transform_team(raw_team: dict) -> dict:
     """Transform a raw FuseSport team into our schema."""
+    name = raw_team.get("name", "")
+    club_name = extract_club_name(raw_team.get("team_name", name))
     return {
         "external_id": raw_team["id"],
-        "name": raw_team.get("name", ""),
-        "club_name": extract_club_name(raw_team.get("team_name", raw_team.get("name", ""))),
+        "name": name,
+        "club_name": club_name or name,
         "logo_url": raw_team.get("logo_url"),
     }
 

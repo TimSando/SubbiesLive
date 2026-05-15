@@ -36,9 +36,12 @@ function EventRow({ event }) {
     drop_goal: '💥', 
     yellow_card: '🟡', 
     red_card: '🔴',
-    blue_card: '🔵'
+    blue_card: '🚑',
+    rugby_union_blue_card: '🚑',
+    rugby_union_penalty_try: '🏉'
   }
-  const isCard = ['yellow_card', 'red_card', 'blue_card'].includes(event.event_type)
+  // Blue card is a welfare/HIA (Head Injury Assessment) event, not discipline
+  const isCard = ['yellow_card', 'red_card'].includes(event.event_type)
 
   return (
     <div className="event-row" style={{ flexDirection: 'column', alignItems: 'stretch', gap: '0' }}>

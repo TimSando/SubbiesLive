@@ -59,7 +59,9 @@ def _get_sync_engine():
 # Upsert helpers (raw SQL for simplicity and performance)
 # ---------------------------------------------------------------------------
 
-def upsert_club(session, club_name: str, logo_url: str = None) -> int:
+def upsert_club(session, club_name: str, logo_url: str = None) -> int | None:
+    if not club_name:
+        return None
     result = session.execute(
         text("SELECT id FROM clubs WHERE name = :name"), {"name": club_name}
     )
@@ -119,6 +121,8 @@ def upsert_team(session, external_id: int, name: str, club_name: str,
         return row[0]
 
     club_id = upsert_club(session, club_name, logo_url)
+    if not club_id:
+        return None
     result = session.execute(
         text("""INSERT INTO teams (club_id, competition_id, name, external_id) 
                 VALUES (:club_id, :comp_id, :name, :eid) RETURNING id"""),
@@ -287,29 +291,39 @@ def run_ingestion(session_factory):
                 continue
 
             for raw_round in comp_info.get("round_objects", []):
-                round_id = upsert_round(session, comp_id, raw_round["id"], raw_round["name"])
+                try:
+                    round_id = upsert_round(session, comp_id, raw_round["id"], raw_round["name"])
 
-                for raw_game in raw_round.get("games", []):
-                    game_data = transform_game(raw_game, raw_round["id"])
+                    for raw_game in raw_round.get("games", []):
+                        try:
+                            game_data = transform_game(raw_game, raw_round["id"])
 
-                    ht = game_data["home_team"]
-                    at = game_data["away_team"]
-                    home_team_id = upsert_team(
-                        session, ht["external_id"], ht["name"],
-                        ht["club_name"], comp_id, ht["logo_url"]
-                    )
-                    away_team_id = upsert_team(
-                        session, at["external_id"], at["name"],
-                        at["club_name"], comp_id, at["logo_url"]
-                    )
+                            ht = game_data["home_team"]
+                            at = game_data["away_team"]
+                            home_team_id = upsert_team(
+                                session, ht["external_id"], ht["name"],
+                                ht["club_name"], comp_id, ht["logo_url"]
+                            )
+                            away_team_id = upsert_team(
+                                session, at["external_id"], at["name"],
+                                at["club_name"], comp_id, at["logo_url"]
+                            )
 
-                    team_id_map[ht["external_id"]] = home_team_id
-                    team_id_map[at["external_id"]] = away_team_id
+                            team_id_map[ht["external_id"]] = home_team_id
+                            team_id_map[at["external_id"]] = away_team_id
 
-                    game_id = upsert_game(session, round_id, game_data, home_team_id, away_team_id)
+                            game_id = upsert_game(session, round_id, game_data, home_team_id, away_team_id)
 
-                    if game_data["status"] == "completed":
-                        ingest_game_events(session, game_id, game_data["external_id"], team_id_map)
+                            if game_data["status"] == "completed":
+                                ingest_game_events(session, game_id, game_data["external_id"], team_id_map)
+                        except Exception as e:
+                            logger.error(f"    Failed to process game {raw_game.get('id')}: {e}")
+                            session.rollback()
+                            continue
+                except Exception as e:
+                    logger.error(f"  Failed to process round {raw_round.get('id')}: {e}")
+                    session.rollback()
+                    continue
 
         elapsed = (datetime.now() - start_time).total_seconds()
         logger.info(f"Ingestion complete in {elapsed:.1f}s")

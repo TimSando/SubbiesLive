@@ -5,7 +5,7 @@ const navLinks = [
   { path: '/', label: 'Home' },
   { path: '/clubs', label: 'Clubs' },
   { path: '/competitions', label: 'Competitions' },
-  { path: '/players', label: 'Players' },
+  { path: '/stats', label: 'Stats' },
 ]
 
 export default function Layout() {

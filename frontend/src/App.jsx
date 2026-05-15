@@ -6,7 +6,7 @@ import ClubDetail from './pages/ClubDetail.jsx'
 import Competitions from './pages/Competitions.jsx'
 import CompetitionDetail from './pages/CompetitionDetail.jsx'
 import GameDetail from './pages/GameDetail.jsx'
-import Players from './pages/Players.jsx'
+import Stats from './pages/Stats.jsx'
 
 export default function App() {
   return (
@@ -19,7 +19,7 @@ export default function App() {
           <Route path="/competitions" element={<Competitions />} />
           <Route path="/competitions/:id" element={<CompetitionDetail />} />
           <Route path="/games/:id" element={<GameDetail />} />
-          <Route path="/players" element={<Players />} />
+          <Route path="/stats" element={<Stats />} />
         </Route>
       </Routes>
     </BrowserRouter>
