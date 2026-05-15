@@ -23,13 +23,23 @@ def extract_club_name(team_name: str) -> str | None:
     else:
         raw_name = team_name.strip()
         
-    # Invalid markers to ignore completely
-    invalid_exact = {"Wet Weather Week", "Blank", "King's Birthday", "Anzac Day", ""}
-    if raw_name in invalid_exact:
+    # Invalid markers to ignore completely (case-insensitive)
+    invalid_patterns = [
+        r"(?i)wet weather", 
+        r"(?i)king's birthday", 
+        r"(?i)anzac day", 
+        r"(?i)blank", 
+        r"(?i)^Rd \d+ published soon", 
+        r"(?i)^draw to be published",
+        r"(?i)bye"
+    ]
+    
+    if not raw_name:
         return None
         
-    if re.search(r'(?i)^Rd \d+ published soon', raw_name) or re.search(r'(?i)^draw to be published', raw_name):
-        return None
+    for pattern in invalid_patterns:
+        if re.search(pattern, raw_name):
+            return None
 
     # Remove trailing numbers/grades/colts like " 2nds", " 6ths", " II", " 2", " Colts", " 5th Grade"
     # Matches patterns like "Balmain 2nds", "Colleagues II", "Manly 2", "Gordon*", "Colleagues Colts", "Easts 5th Grade"
@@ -94,7 +104,7 @@ def transform_team(raw_team: dict) -> dict:
     return {
         "external_id": raw_team["id"],
         "name": name,
-        "club_name": club_name or name,
+        "club_name": club_name,
         "logo_url": raw_team.get("logo_url"),
     }
 

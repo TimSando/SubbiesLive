@@ -25,6 +25,7 @@ from src.ingestion.transformers import (
     transform_game,
     transform_game_event,
 )
+from src.scripts.seed_mapping import seed_mapping
 
 logger = logging.getLogger("ingestion")
 
@@ -85,9 +86,16 @@ def upsert_competition(session, external_id: int, name: str) -> int:
     if row:
         return row[0]
 
+    # Try to find a mapping
+    mapping_res = session.execute(
+        text("SELECT id FROM competition_mapping WHERE name = :name"), {"name": name}
+    )
+    mapping_row = mapping_res.fetchone()
+    mapping_id = mapping_row[0] if mapping_row else None
+
     result = session.execute(
-        text("INSERT INTO competitions (name, external_id) VALUES (:name, :eid) RETURNING id"),
-        {"name": name, "eid": external_id}
+        text("INSERT INTO competitions (name, external_id, competition_mapping_id) VALUES (:name, :eid, :mid) RETURNING id"),
+        {"name": name, "eid": external_id, "mid": mapping_id}
     )
     session.commit()
     return result.fetchone()[0]
@@ -122,6 +130,7 @@ def upsert_team(session, external_id: int, name: str, club_name: str,
 
     club_id = upsert_club(session, club_name, logo_url)
     if not club_id:
+        logger.debug(f"Skipping team {name} ({external_id}) as no valid club could be determined")
         return None
     result = session.execute(
         text("""INSERT INTO teams (club_id, competition_id, name, external_id) 
@@ -309,6 +318,10 @@ def run_ingestion(session_factory):
                                 at["club_name"], comp_id, at["logo_url"]
                             )
 
+                            if home_team_id is None or away_team_id is None:
+                                logger.debug(f"    Skipping game {game_data['external_id']} due to missing team info")
+                                continue
+
                             team_id_map[ht["external_id"]] = home_team_id
                             team_id_map[at["external_id"]] = away_team_id
 
@@ -351,6 +364,13 @@ def start_ingestion_scheduler():
 
     # Run initial ingestion in a background thread so it doesn't block startup
     def _initial_run():
+        logger.info("Checking for competition mapping seed...")
+        try:
+            csv_path = os.environ.get("MAPPING_CSV_PATH", "/app/src/scripts/competition_parent_mapping - Sheet1.csv")
+            seed_mapping(csv_path)
+        except Exception as e:
+            logger.error(f"Failed to seed mapping: {e}")
+
         logger.info("Running initial data ingestion...")
         run_ingestion(Session)
 

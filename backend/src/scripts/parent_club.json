@@ -1,0 +1,105 @@
+[
+    {
+        "Parent Competition": "Suburban Rugby Union",
+        "Division": "1",
+        "Clubs": [
+            "Colleagues",
+            "Waverley",
+            "Drummoyne",
+            "Petersham",
+            "Blue Mountains",
+            "Hunters Hill",
+            "Mosman",
+            "Lindfield"
+        ]
+    },
+    {
+        "Parent Competition": "Shute Shield",
+        "Division": null,
+        "Clubs": [
+            "Easts",
+            "Norths",
+            "Eastwood",
+            "Randwick",
+            "Two Blues",
+            "Gordon",
+            "Wests",
+            "Souths",
+            "Wildfires",
+            "Manly",
+            "Sydney Uni",
+            "Warringah"
+        ]
+    },
+    {
+        "Parent Competition": "Suburban Rugby Union",
+        "Division": "2",
+        "Clubs": [
+            "Briars",
+            "Sydney Irish",
+            "Newport",
+            "Forest",
+            "St Patrick's",
+            "UNSW"
+        ]
+    },
+    {
+        "Parent Competition": "Suburban Rugby Union",
+        "Division": "3",
+        "Clubs": [
+            "Hornsby",
+            "Wakehurst/Old Barker",
+            "Beecroft",
+            "Renegades",
+            "Knox",
+            "LC Old Ignatians"
+        ]
+    },
+    {
+        "Parent Competition": "Suburban Rugby Union",
+        "Division": "4",
+        "Clubs": [
+            "Sydney Convicts",
+            "Macquarie Uni",
+            "Balmain",
+            "Chatswood",
+            "Redfield",
+            "North Cronulla",
+            "Brothers",
+            "Kings",
+            "Manly Savers",
+            "St Ives"
+        ]
+    },
+    {
+        "Parent Competition": "Suburban Rugby Union",
+        "Division": "5",
+        "Clubs": [
+            "Hills",
+            "Epping",
+            "Sydney Harlequins",
+            "Georges River",
+            "Merrylands",
+            "Penrith",
+            "Oatley",
+            "Canterbury",
+            "Sydney Harbour",
+            "Hawkesbury Valley",
+            "Chifley Chiefs",
+            "Blacktown"
+        ]
+    },
+    {
+        "Parent Competition": "Suburban Rugby Union",
+        "Division": null,
+        "Clubs": [
+            "Uni of Wollongong",
+            "Old Barker",
+            "Balmain Grey Wolves",
+            "Norths Sirens",
+            "Campbelltown",
+            "West Harbour",
+            "Camden"
+        ]
+    }
+]
