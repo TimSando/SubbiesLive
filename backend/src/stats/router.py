@@ -11,23 +11,29 @@ router = APIRouter(tags=["stats"])
 @router.get("/players", response_model=List[schemas.PlayerStatRow])
 async def get_player_leaderboard(
     competition_id: Optional[int] = Query(None),
+    parent_competition: Optional[str] = Query(None),
+    division: Optional[str] = Query(None),
     db: AsyncSession = Depends(get_db)
 ):
     """Get player leaderboard stats."""
-    return await stats_repo.get_player_stats(db, competition_id)
+    return await stats_repo.get_player_stats(db, competition_id, parent_competition, division)
 
 @router.get("/clubs", response_model=List[schemas.ClubStatRow])
 async def get_club_leaderboard(
     competition_id: Optional[int] = Query(None),
+    parent_competition: Optional[str] = Query(None),
+    division: Optional[str] = Query(None),
     db: AsyncSession = Depends(get_db)
 ):
     """Get club leaderboard stats."""
-    return await stats_repo.get_club_stats(db, competition_id)
+    return await stats_repo.get_club_stats(db, competition_id, parent_competition, division)
 
 @router.get("/overview", response_model=schemas.SeasonOverview)
 async def get_season_overview(
     competition_id: Optional[int] = Query(None),
+    parent_competition: Optional[str] = Query(None),
+    division: Optional[str] = Query(None),
     db: AsyncSession = Depends(get_db)
 ):
     """Get high-level season overview stats."""
-    return await stats_repo.get_season_overview(db, competition_id)
+    return await stats_repo.get_season_overview(db, competition_id, parent_competition, division)

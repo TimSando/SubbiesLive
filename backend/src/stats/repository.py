@@ -13,7 +13,14 @@ EXCLUDED_EVENTS = (
     'rugby_union_blue_card'
 )
 
-async def get_player_stats(db: AsyncSession, competition_id: Optional[int] = None) -> List[PlayerStatRow]:
+
+
+async def get_player_stats(
+    db: AsyncSession, 
+    competition_id: Optional[int] = None,
+    parent_competition: Optional[str] = None,
+    division: Optional[str] = None
+) -> List[PlayerStatRow]:
     query = """
         SELECT 
             p.id as player_id, 
@@ -34,14 +41,22 @@ async def get_player_stats(db: AsyncSession, competition_id: Optional[int] = Non
         JOIN clubs c ON t.club_id = c.id
         JOIN games g ON ge.game_id = g.id
         JOIN rounds r ON g.round_id = r.id
+        JOIN competitions comp ON r.competition_id = comp.id
+        LEFT JOIN competition_mapping m ON comp.competition_mapping_id = m.id
         WHERE ge.player_id IS NOT NULL
           AND ge.event_type NOT IN :excluded
     """
     
-    params = {"excluded": EXCLUDED_EVENTS}
+    params = {"excluded": list(EXCLUDED_EVENTS)}
     if competition_id:
         query += " AND r.competition_id = :comp_id"
         params["comp_id"] = competition_id
+    if parent_competition:
+        query += " AND m.parent_competition = :parent"
+        params["parent"] = parent_competition
+    if division:
+        query += " AND m.division = :div"
+        params["div"] = division
         
     query += """
         GROUP BY p.id, p.name, c.id, c.name, p.thumbnail_url
@@ -75,7 +90,12 @@ async def get_player_stats(db: AsyncSession, competition_id: Optional[int] = Non
         ))
     return stats
 
-async def get_club_stats(db: AsyncSession, competition_id: Optional[int] = None) -> List[ClubStatRow]:
+async def get_club_stats(
+    db: AsyncSession, 
+    competition_id: Optional[int] = None,
+    parent_competition: Optional[str] = None,
+    division: Optional[str] = None
+) -> List[ClubStatRow]:
     query = """
         SELECT 
             c.id as club_id, 
@@ -92,13 +112,21 @@ async def get_club_stats(db: AsyncSession, competition_id: Optional[int] = None)
         JOIN clubs c ON t.club_id = c.id
         JOIN games g ON ge.game_id = g.id
         JOIN rounds r ON g.round_id = r.id
+        JOIN competitions comp ON r.competition_id = comp.id
+        LEFT JOIN competition_mapping m ON comp.competition_mapping_id = m.id
         WHERE ge.event_type NOT IN :excluded
     """
     
-    params = {"excluded": EXCLUDED_EVENTS}
+    params = {"excluded": list(EXCLUDED_EVENTS)}
     if competition_id:
         query += " AND r.competition_id = :comp_id"
         params["comp_id"] = competition_id
+    if parent_competition:
+        query += " AND m.parent_competition = :parent"
+        params["parent"] = parent_competition
+    if division:
+        query += " AND m.division = :div"
+        params["div"] = division
         
     query += """
         GROUP BY c.id, c.name, c.logo_url
@@ -128,7 +156,12 @@ async def get_club_stats(db: AsyncSession, competition_id: Optional[int] = None)
         ))
     return stats
 
-async def get_season_overview(db: AsyncSession, competition_id: Optional[int] = None) -> SeasonOverview:
+async def get_season_overview(
+    db: AsyncSession, 
+    competition_id: Optional[int] = None,
+    parent_competition: Optional[str] = None,
+    division: Optional[str] = None
+) -> SeasonOverview:
     # 1. General counts
     query_base = """
         SELECT 
@@ -140,12 +173,20 @@ async def get_season_overview(db: AsyncSession, competition_id: Optional[int] = 
         FROM game_events ge
         JOIN games g ON ge.game_id = g.id
         JOIN rounds r ON g.round_id = r.id
+        JOIN competitions comp ON r.competition_id = comp.id
+        LEFT JOIN competition_mapping m ON comp.competition_mapping_id = m.id
         WHERE ge.event_type NOT IN :excluded
     """
-    params = {"excluded": EXCLUDED_EVENTS}
+    params = {"excluded": list(EXCLUDED_EVENTS)}
     if competition_id:
         query_base += " AND r.competition_id = :comp_id"
         params["comp_id"] = competition_id
+    if parent_competition:
+        query_base += " AND m.parent_competition = :parent"
+        params["parent"] = parent_competition
+    if division:
+        query_base += " AND m.division = :div"
+        params["div"] = division
         
     stmt_base = text(query_base).bindparams(bindparam("excluded", expanding=True))
     params["excluded"] = list(EXCLUDED_EVENTS)
@@ -154,14 +195,25 @@ async def get_season_overview(db: AsyncSession, competition_id: Optional[int] = 
     row_base = res_base.fetchone()
     
     # 2. Games played
-    query_games = "SELECT COUNT(*) FROM games g JOIN rounds r ON g.round_id = r.id WHERE g.status = 'completed'"
+    query_games = """
+        SELECT COUNT(*) 
+        FROM games g 
+        JOIN rounds r ON g.round_id = r.id 
+        JOIN competitions comp ON r.competition_id = comp.id
+        LEFT JOIN competition_mapping m ON comp.competition_mapping_id = m.id
+        WHERE g.status = 'completed'
+    """
     if competition_id:
         query_games += " AND r.competition_id = :comp_id"
+    if parent_competition:
+        query_games += " AND m.parent_competition = :parent"
+    if division:
+        query_games += " AND m.division = :div"
     res_games = await db.execute(text(query_games), params)
     games_played = res_games.scalar()
     
     # 3. Top scorers
-    player_stats = await get_player_stats(db, competition_id)
+    player_stats = await get_player_stats(db, competition_id, parent_competition, division)
     top_scorer = player_stats[0] if player_stats else None
     
     # Top try scorer specifically
@@ -171,10 +223,16 @@ async def get_season_overview(db: AsyncSession, competition_id: Optional[int] = 
         JOIN players p ON ge.player_id = p.id
         JOIN games g ON ge.game_id = g.id
         JOIN rounds r ON g.round_id = r.id
+        JOIN competitions comp ON r.competition_id = comp.id
+        LEFT JOIN competition_mapping m ON comp.competition_mapping_id = m.id
         WHERE ge.event_type = 'try'
     """
     if competition_id:
         query_try += " AND r.competition_id = :comp_id"
+    if parent_competition:
+        query_try += " AND m.parent_competition = :parent"
+    if division:
+        query_try += " AND m.division = :div"
     query_try += " GROUP BY p.id, p.name ORDER BY tries DESC LIMIT 1"
     res_try = await db.execute(text(query_try), params)
     row_try = res_try.fetchone()

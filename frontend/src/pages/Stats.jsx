@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, Fragment } from 'react'
 import { api } from '../api/client'
 import { useApi } from '../hooks/useApi'
 import StatsTable from '../components/Stats/StatsTable'
@@ -6,35 +6,55 @@ import { Link } from 'react-router-dom'
 
 export default function Stats() {
   const [activeTab, setActiveTab] = useState('players')
-  const [compId, setCompId] = useState('')
+  const [filter, setFilter] = useState({ type: 'all', value: '' })
   
   const { data: competitions } = useApi(api.getCompetitions)
   
+  const filterParams = useMemo(() => {
+    const params = {}
+    if (filter.type === 'comp') params.competition_id = filter.value
+    if (filter.type === 'parent') params.parent_competition = filter.value
+    if (filter.type === 'division') params.division = filter.value
+    return params
+  }, [filter])
+
   const { data: playerStats, loading: playersLoading } = useApi(
-    () => api.getPlayerStats({ competition_id: compId || undefined }),
-    [compId]
+    () => api.getPlayerStats(filterParams),
+    [filterParams]
   )
   
   const { data: clubStats, loading: clubsLoading } = useApi(
-    () => api.getClubStats({ competition_id: compId || undefined }),
-    [compId]
+    () => api.getClubStats(filterParams),
+    [filterParams]
   )
   
   const { data: overview, loading: overviewLoading } = useApi(
-    () => api.getSeasonOverview({ competition_id: compId || undefined }),
-    [compId]
+    () => api.getSeasonOverview(filterParams),
+    [filterParams]
   )
 
-  // Group competitions by parent
-  const groupedComps = useMemo(() => {
+  // Group competitions by parent then division
+  const groupedHierarchy = useMemo(() => {
     if (!competitions) return {}
     return competitions.reduce((acc, c) => {
       const parent = c.parent_competition || 'Other'
-      if (!acc[parent]) acc[parent] = []
-      acc[parent].push(c)
+      if (!acc[parent]) acc[parent] = { competitions: [], divisions: {} }
+      
+      if (c.division) {
+        if (!acc[parent].divisions[c.division]) acc[parent].divisions[c.division] = []
+        acc[parent].divisions[c.division].push(c)
+      } else {
+        acc[parent].competitions.push(c)
+      }
       return acc
     }, {})
   }, [competitions])
+
+  const handleFilterChange = (e) => {
+    const [type, ...rest] = e.target.value.split(':')
+    const value = rest.join(':')
+    setFilter({ type, value })
+  }
 
   const renderPlayerRow = (player) => (
     <>
@@ -94,19 +114,41 @@ export default function Stats() {
           </div>
 
           <div className="stats-filter-group">
-            <label className="stats-filter-label">Competition</label>
+            <label className="stats-filter-label">Filter By</label>
             <select 
               className="stats-select" 
-              value={compId} 
-              onChange={(e) => setCompId(e.target.value)}
+              value={`${filter.type}:${filter.value}`} 
+              onChange={handleFilterChange}
+              style={{ minWidth: '280px' }}
             >
-              <option value="">All Competitions</option>
-              {Object.entries(groupedComps).map(([parent, comps]) => (
-                <optgroup key={parent} label={parent}>
-                  {comps.map(c => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
+              <option value="all:">All Competitions</option>
+              {Object.entries(groupedHierarchy).map(([parent, data]) => (
+                <Fragment key={parent}>
+                  <option value={`parent:${parent}`} style={{ fontWeight: 'bold', background: 'rgba(255,255,255,0.05)' }}>
+                    {parent} (All)
+                  </option>
+                  
+                  {/* Divisions */}
+                  {Object.entries(data.divisions).sort().map(([div, comps]) => (
+                    <Fragment key={`${parent}-${div}`}>
+                      <option value={`division:${div}`}>
+                        &nbsp;&nbsp;Division {div} (All)
+                      </option>
+                      {comps.map(c => (
+                        <option key={c.id} value={`comp:${c.id}`}>
+                          &nbsp;&nbsp;&nbsp;&nbsp;{c.name}
+                        </option>
+                      ))}
+                    </Fragment>
                   ))}
-                </optgroup>
+
+                  {/* Competitions without division */}
+                  {data.competitions.map(c => (
+                    <option key={c.id} value={`comp:${c.id}`}>
+                      &nbsp;&nbsp;{c.name}
+                    </option>
+                  ))}
+                </Fragment>
               ))}
             </select>
           </div>
