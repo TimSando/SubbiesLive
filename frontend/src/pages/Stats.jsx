@@ -140,14 +140,14 @@ export default function Stats() {
             <StatsTable 
               title="Player Leaderboard"
               headers={[
-                { key: 'player', label: 'Player', style: { minWidth: '200px' } },
+                { key: 'player_name', label: 'Player', style: { minWidth: '200px' } },
                 { key: 'tries', label: 'Tries' },
-                { key: 'conv', label: 'Conv' },
-                { key: 'pen', label: 'Pen' },
-                { key: 'dg', label: 'DG' },
-                { key: 'pts', label: 'Pts' },
-                { key: 'yc', label: 'YC' },
-                { key: 'rc', label: 'RC' }
+                { key: 'conversions', label: 'Conv' },
+                { key: 'penalties', label: 'Pen' },
+                { key: 'drop_goals', label: 'DG' },
+                { key: 'total_points', label: 'Pts' },
+                { key: 'yellow_cards', label: 'YC' },
+                { key: 'red_cards', label: 'RC' }
               ]}
               data={playerStats || []}
               renderRow={renderPlayerRow}
@@ -162,13 +162,13 @@ export default function Stats() {
             <StatsTable 
               title="Club Scoring & Discipline"
               headers={[
-                { key: 'club', label: 'Club', style: { minWidth: '200px' } },
+                { key: 'club_name', label: 'Club', style: { minWidth: '200px' } },
                 { key: 'tries', label: 'Tries' },
-                { key: 'conv', label: 'Conv' },
-                { key: 'pen', label: 'Pen' },
-                { key: 'pts', label: 'Pts' },
-                { key: 'yc', label: 'YC' },
-                { key: 'rc', label: 'RC' }
+                { key: 'conversions', label: 'Conv' },
+                { key: 'penalties', label: 'Pen' },
+                { key: 'total_points', label: 'Pts' },
+                { key: 'yellow_cards', label: 'YC' },
+                { key: 'red_cards', label: 'RC' }
               ]}
               data={clubStats || []}
               renderRow={renderClubRow}

@@ -725,6 +725,11 @@ tbody tr:last-child td {
   color: var(--color-text-secondary);
 }
 
+.table-container th.th-sorted {
+  background: var(--color-bg-glass);
+  color: var(--color-text-primary);
+}
+
 .rank-badge {
   display: flex;
   align-items: center;

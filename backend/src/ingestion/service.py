@@ -60,19 +60,36 @@ def _get_sync_engine():
 # Upsert helpers (raw SQL for simplicity and performance)
 # ---------------------------------------------------------------------------
 
-def upsert_club(session, club_name: str, logo_url: str = None) -> int | None:
+def upsert_club(session, club_name: str, logo_url: str = None, competition_id: int = None) -> int | None:
     if not club_name:
         return None
+        
     result = session.execute(
-        text("SELECT id FROM clubs WHERE name = :name"), {"name": club_name}
+        text("SELECT id, competition_mapping_id FROM clubs WHERE name = :name"), {"name": club_name}
     )
     row = result.fetchone()
+    
+    mapping_id = None
+    if competition_id:
+        comp_res = session.execute(
+            text("SELECT competition_mapping_id FROM competitions WHERE id = :cid"),
+            {"cid": competition_id}
+        )
+        mapping_id = comp_res.scalar()
+
     if row:
-        return row[0]
+        club_id = row[0]
+        if mapping_id and not row[1]:
+            session.execute(
+                text("UPDATE clubs SET competition_mapping_id = :mid WHERE id = :id"),
+                {"mid": mapping_id, "id": club_id}
+            )
+            session.commit()
+        return club_id
 
     result = session.execute(
-        text("INSERT INTO clubs (name, short_name, logo_url) VALUES (:name, :short_name, :logo_url) RETURNING id"),
-        {"name": club_name, "short_name": club_name, "logo_url": logo_url}
+        text("INSERT INTO clubs (name, short_name, logo_url, competition_mapping_id) VALUES (:name, :short_name, :logo_url, :mid) RETURNING id"),
+        {"name": club_name, "short_name": club_name, "logo_url": logo_url, "mid": mapping_id}
     )
     session.commit()
     return result.fetchone()[0]
@@ -128,7 +145,7 @@ def upsert_team(session, external_id: int, name: str, club_name: str,
     if row:
         return row[0]
 
-    club_id = upsert_club(session, club_name, logo_url)
+    club_id = upsert_club(session, club_name, logo_url, competition_id)
     if not club_id:
         logger.debug(f"Skipping team {name} ({external_id}) as no valid club could be determined")
         return None

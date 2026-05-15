@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { useState, useMemo } from 'react'
 
 export default function StatsTable({ 
   title, 
@@ -6,6 +6,46 @@ export default function StatsTable({
   data, 
   renderRow 
 }) {
+  const [sortConfig, setSortConfig] = useState({ key: 'total_points', direction: 'desc' })
+
+  const sortedData = useMemo(() => {
+    let sortableItems = [...data]
+    if (sortConfig.key !== null) {
+      sortableItems.sort((a, b) => {
+        let aVal = a[sortConfig.key]
+        let bVal = b[sortConfig.key]
+
+        // Handle string comparison for names
+        if (typeof aVal === 'string') {
+          aVal = aVal.toLowerCase()
+          bVal = bVal.toLowerCase()
+        }
+
+        if (aVal < bVal) {
+          return sortConfig.direction === 'asc' ? -1 : 1
+        }
+        if (aVal > bVal) {
+          return sortConfig.direction === 'asc' ? 1 : -1
+        }
+        return 0
+      })
+    }
+    return sortableItems
+  }, [data, sortConfig])
+
+  const requestSort = (key) => {
+    let direction = 'desc'
+    if (sortConfig.key === key && sortConfig.direction === 'desc') {
+      direction = 'asc'
+    }
+    setSortConfig({ key, direction })
+  }
+
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) return '↕️'
+    return sortConfig.direction === 'asc' ? '🔼' : '🔽'
+  }
+
   return (
     <div className="stats-table-wrapper animate-in">
       {title && <h2 className="stats-table-title">{title}</h2>}
@@ -15,12 +55,24 @@ export default function StatsTable({
             <tr>
               <th style={{ width: '60px' }}>Rank</th>
               {headers.map(h => (
-                <th key={h.key} style={h.style}>{h.label}</th>
+                <th 
+                  key={h.key} 
+                  style={{ ...h.style, cursor: 'pointer', userSelect: 'none' }}
+                  onClick={() => requestSort(h.key)}
+                  className={sortConfig.key === h.key ? 'th-sorted' : ''}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    {h.label}
+                    <span style={{ fontSize: '0.7rem', opacity: sortConfig.key === h.key ? 1 : 0.3 }}>
+                      {getSortIcon(h.key)}
+                    </span>
+                  </div>
+                </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {data.map((row, idx) => (
+            {sortedData.map((row, idx) => (
               <tr key={idx}>
                 <td>
                   <span className={`rank-badge ${row.rank <= 3 ? `rank-badge--${row.rank}` : ''}`}>
