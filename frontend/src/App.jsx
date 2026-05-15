@@ -1,0 +1,27 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Layout from './components/Layout/Layout.jsx'
+import Home from './pages/Home.jsx'
+import Clubs from './pages/Clubs.jsx'
+import ClubDetail from './pages/ClubDetail.jsx'
+import Competitions from './pages/Competitions.jsx'
+import CompetitionDetail from './pages/CompetitionDetail.jsx'
+import GameDetail from './pages/GameDetail.jsx'
+import Players from './pages/Players.jsx'
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/clubs" element={<Clubs />} />
+          <Route path="/clubs/:id" element={<ClubDetail />} />
+          <Route path="/competitions" element={<Competitions />} />
+          <Route path="/competitions/:id" element={<CompetitionDetail />} />
+          <Route path="/games/:id" element={<GameDetail />} />
+          <Route path="/players" element={<Players />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  )
+}
