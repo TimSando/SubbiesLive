@@ -3,7 +3,7 @@
 import uuid
 
 from datetime import datetime
-from sqlalchemy import ForeignKey, Integer, String, DateTime, Text, Uuid
+from sqlalchemy import ForeignKey, Integer, String, DateTime, Text, Uuid, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.database import Base
@@ -61,3 +61,43 @@ class GameEvent(Base):
 
     def __repr__(self) -> str:
         return f"<GameEvent(id={self.id}, type='{self.event_type}', points={self.points})>"
+
+
+class PlayerHistory(Base):
+    """Per-player per-game statistics sourced from the FuseSport score sheet."""
+
+    __tablename__ = "player_history"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    player_id: Mapped[int] = mapped_column(ForeignKey("players.id"), nullable=False, index=True)
+    game_id: Mapped[int] = mapped_column(ForeignKey("games.id"), nullable=False, index=True)
+    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), nullable=False, index=True)
+    position_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    player_number: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    points: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    tries: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    conversions: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    penalty_goals: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    drop_goals: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    yellow_cards: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    red_cards: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    blue_cards: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    medal_points_1: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    medal_points_2: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    medal_points_3: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    coach_points_1: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    coach_points_2: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    coach_points_3: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    card_text: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    # Relationships
+    player: Mapped["Player"] = relationship("Player")
+    game: Mapped["Game"] = relationship("Game")
+    team: Mapped["Team"] = relationship("Team")
+
+    __table_args__ = (
+        UniqueConstraint("player_id", "game_id", "team_id"),
+    )
+
+    def __repr__(self) -> str:
+        return f"<PlayerHistory(id={self.id}, player_id={self.player_id}, game_id={self.game_id})>"

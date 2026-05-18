@@ -67,3 +67,17 @@ def get_game_info(game_id: int):
     r = requests.get(url, params=params, timeout=30)
     r.raise_for_status()
     return r.json()
+
+
+def get_score_sheet(score_sheet_id: str) -> list:
+    """Fetch player stats for a score sheet.
+
+    Returns the raw JSON list from FuseSport (one dict per player slot).
+    score_sheet_id is a UUID string from home_score_sheet.id / away_score_sheet.id
+    """
+    url = f"{BASE_URL}/score-sheets/{score_sheet_id}/player-stats/"
+    params = {"device_id": DEVICE_ID}
+    logger.debug(f"Fetching score sheet {score_sheet_id}...")
+    r = requests.get(url, params=params, timeout=30)
+    r.raise_for_status()
+    return r.json()

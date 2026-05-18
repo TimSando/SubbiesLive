@@ -4,7 +4,7 @@ from sqlalchemy import select, func, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 
-from src.games.models import Game, GameEvent
+from src.games.models import Game, GameEvent, PlayerHistory
 from src.competitions.models import Competition, Round
 from src.clubs.models import Club, Team
 from src.players.models import Player
@@ -85,6 +85,7 @@ async def get_games(
     round_id: int | None = None,
     team_id: int | None = None,
     status: str | None = None,
+    player_id: int | None = None,
     limit: int = 50,
     offset: int = 0,
 ) -> list[dict]:
@@ -99,6 +100,8 @@ async def get_games(
         stmt = stmt.where((Game.home_team_id == team_id) | (Game.away_team_id == team_id))
     if status:
         stmt = stmt.where(Game.status == status)
+    if player_id:
+        stmt = stmt.join(PlayerHistory, PlayerHistory.game_id == Game.id).where(PlayerHistory.player_id == player_id)
 
     stmt = stmt.order_by(desc(Game.game_date)).limit(limit).offset(offset)
 

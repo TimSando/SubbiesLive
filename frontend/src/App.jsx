@@ -7,6 +7,7 @@ import Competitions from './pages/Competitions.jsx'
 import CompetitionDetail from './pages/CompetitionDetail.jsx'
 import GameDetail from './pages/GameDetail.jsx'
 import Stats from './pages/Stats.jsx'
+import PlayerDetail from './pages/PlayerDetail.jsx'
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
           <Route path="/competitions/:id" element={<CompetitionDetail />} />
           <Route path="/games/:id" element={<GameDetail />} />
           <Route path="/stats" element={<Stats />} />
+          <Route path="/players/:id" element={<PlayerDetail />} />
         </Route>
       </Routes>
     </BrowserRouter>

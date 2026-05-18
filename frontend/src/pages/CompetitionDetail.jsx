@@ -1,5 +1,5 @@
-import { useParams, Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import { useApi } from '../hooks/useApi.js'
 import { api } from '../api/client.js'
 
@@ -108,9 +108,35 @@ function GamesForRound({ competitionId, round }) {
 }
 
 export default function CompetitionDetail() {
+  const navigate = useNavigate()
+  const location = useLocation()
   const { id } = useParams()
-  const [activeTab, setActiveTab] = useState('standings')
+  
+  // Extract active tab from query params if available
+  const queryParams = new URLSearchParams(location.search)
+  const tabFromQuery = queryParams.get('tab')
+  
+  const [activeTab, setActiveTab] = useState(() => {
+    if (tabFromQuery === 'standings' || tabFromQuery === 'fixtures') {
+      return tabFromQuery
+    }
+    return 'standings'
+  })
   const [selectedRound, setSelectedRound] = useState(null)
+
+  // Keep state in sync with URL queries if they change
+  useEffect(() => {
+    const qParams = new URLSearchParams(location.search)
+    const tabQ = qParams.get('tab')
+    if (tabQ === 'standings' || tabQ === 'fixtures') {
+      setActiveTab(tabQ)
+    }
+  }, [location.search])
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab)
+    navigate(`/competitions/${id}?tab=${tab}`, { replace: true })
+  }
 
   const { data: competition, loading: loadingComp } = useApi(
     () => api.getCompetition(id), [id]
@@ -135,8 +161,8 @@ export default function CompetitionDetail() {
       <div className="page">
         <div className="container">
           <h1>Competition not found</h1>
-          <Link to="/competitions" className="btn btn--ghost" style={{ marginTop: 'var(--space-4)' }}>
-            ← Back to Competitions
+          <Link to="/competitions" className="btn btn--ghost" style={{ marginTop: 'var(--space-4)' }} onClick={(e) => { e.preventDefault(); navigate(-1); }}>
+            ← Back
           </Link>
         </div>
       </div>
@@ -162,7 +188,7 @@ export default function CompetitionDetail() {
   return (
     <div className="page">
       <div className="container animate-in">
-        <Link to="/competitions" className="breadcrumb">← All Competitions</Link>
+        <Link to="/competitions" className="breadcrumb" onClick={(e) => { e.preventDefault(); navigate(-1); }}>← Back</Link>
 
         <header style={{ marginBottom: 'var(--space-8)' }}>
           <h1 style={{ marginBottom: 'var(--space-2)' }}>{competition.name}</h1>
@@ -175,14 +201,14 @@ export default function CompetitionDetail() {
         <div className="tab-bar">
           <button
             className={`tab-bar__tab ${activeTab === 'standings' ? 'tab-bar__tab--active' : ''}`}
-            onClick={() => setActiveTab('standings')}
+            onClick={() => handleTabChange('standings')}
           >
             Standings
           </button>
           <button
             className={`tab-bar__tab ${activeTab === 'fixtures' ? 'tab-bar__tab--active' : ''}`}
             onClick={() => {
-              setActiveTab('fixtures')
+              handleTabChange('fixtures')
               if (!selectedRound && lastCompletedRound) {
                 setSelectedRound(lastCompletedRound)
               }

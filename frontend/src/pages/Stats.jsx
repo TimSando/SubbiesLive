@@ -1,12 +1,65 @@
-import { useState, useMemo, Fragment } from 'react'
+import { useState, useMemo, Fragment, useEffect, useRef } from 'react'
 import { api } from '../api/client'
 import { useApi } from '../hooks/useApi'
 import StatsTable from '../components/Stats/StatsTable'
+import ToggleSwitch from '../components/Stats/ToggleSwitch'
 import { Link } from 'react-router-dom'
 
 export default function Stats() {
-  const [activeTab, setActiveTab] = useState('players')
-  const [filter, setFilter] = useState({ type: 'all', value: '' })
+  const [activeTab, setActiveTab] = useState(() => sessionStorage.getItem('stats_activeTab') || 'players')
+  const [filter, setFilter] = useState(() => {
+    const cached = sessionStorage.getItem('stats_filter')
+    return cached ? JSON.parse(cached) : { type: 'all', value: '' }
+  })
+  const [viewMode, setViewMode] = useState(() => sessionStorage.getItem('stats_viewMode') || 'total')
+  
+  const [searchQuery, setSearchQuery] = useState(() => sessionStorage.getItem('stats_searchQuery') || '')
+
+  useEffect(() => {
+    sessionStorage.setItem('stats_activeTab', activeTab)
+  }, [activeTab])
+
+  useEffect(() => {
+    sessionStorage.setItem('stats_filter', JSON.stringify(filter))
+  }, [filter])
+
+  useEffect(() => {
+    sessionStorage.setItem('stats_viewMode', viewMode)
+  }, [viewMode])
+
+  useEffect(() => {
+    sessionStorage.setItem('stats_searchQuery', searchQuery)
+  }, [searchQuery])
+  const [searchResults, setSearchResults] = useState([])
+  const searchRef = useRef(null)
+
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults([])
+      return
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await api.getPlayers({ search: searchQuery })
+        setSearchResults(res || [])
+      } catch (err) {
+        console.error('Error searching players:', err)
+      }
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setSearchResults([])
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
   
   const { data: competitions } = useApi(api.getCompetitions)
   
@@ -56,28 +109,78 @@ export default function Stats() {
     setFilter({ type, value })
   }
 
+  const NUMERIC_STAT_KEYS = ['tries', 'conversions', 'penalties', 'drop_goals', 'total_points', 'yellow_cards', 'red_cards']
+
+  const applyViewMode = useMemo(() => (rows) => {
+    if (viewMode === 'total') return rows
+    return rows
+      .map(row => {
+        const gp = row.games_played || 1
+        const avg = {}
+        NUMERIC_STAT_KEYS.forEach(k => {
+          avg[k] = row[k] / gp
+        })
+        return { ...row, ...avg }
+      })
+      .sort((a, b) => b.total_points - a.total_points)
+      .map((row, i) => ({ ...row, rank: i + 1 }))
+  }, [viewMode])
+
+  const displayedPlayerStats = useMemo(() => 
+    applyViewMode(playerStats || []), [playerStats, applyViewMode])
+
+  const displayedClubStats = useMemo(() => 
+    applyViewMode(clubStats || []), [clubStats, applyViewMode])
+
+  const formatStat = (val) => {
+    if (viewMode === 'total') return val
+    return val.toFixed(2)
+  }
+
+  const getSeasonValue = (totalValue) => {
+    if (!overview || overview.games_played === 0) return 0
+    if (viewMode === 'total') return totalValue
+    return (totalValue / overview.games_played).toFixed(2)
+  }
+
+  const topAveragePerformers = useMemo(() => {
+    if (!playerStats || playerStats.length === 0) return null
+
+    const playersWithAvg = playerStats.map(p => ({
+      ...p,
+      avgPoints: p.games_played > 0 ? p.total_points / p.games_played : 0,
+      avgTries: p.games_played > 0 ? p.tries / p.games_played : 0
+    }))
+
+    const topScorer = [...playersWithAvg].sort((a, b) => b.avgPoints - a.avgPoints)[0]
+    const topTryScorer = [...playersWithAvg].sort((a, b) => b.avgTries - a.avgTries)[0]
+
+    return { topScorer, topTryScorer }
+  }, [playerStats])
+
   const renderPlayerRow = (player) => (
     <>
       <td>
-        <div className="player-cell">
+        <Link to={`/players/${player.player_id}`} className="player-cell" style={{ textDecoration: 'none' }}>
           <img 
             src={player.image_url || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'} 
             alt={player.player_name} 
             className="player-avatar"
           />
           <div className="player-info">
-            <span className="player-name">{player.player_name}</span>
+            <span className="player-name" style={{ color: 'var(--color-accent-primary)' }}>{player.player_name}</span>
             <span className="player-club">{player.club_name}</span>
           </div>
-        </div>
+        </Link>
       </td>
-      <td className="stat-value">{player.tries}</td>
-      <td className="stat-value">{player.conversions}</td>
-      <td className="stat-value">{player.penalties}</td>
-      <td className="stat-value">{player.drop_goals}</td>
-      <td className="stat-value stat-value--primary">{player.total_points}</td>
-      <td className="stat-value" style={{ color: 'var(--color-draw)' }}>{player.yellow_cards}</td>
-      <td className="stat-value" style={{ color: 'var(--color-loss)' }}>{player.red_cards}</td>
+      <td className="stat-value">{player.games_played}</td>
+      <td className="stat-value">{formatStat(player.tries)}</td>
+      <td className="stat-value">{formatStat(player.conversions)}</td>
+      <td className="stat-value">{formatStat(player.penalties)}</td>
+      <td className="stat-value">{formatStat(player.drop_goals)}</td>
+      <td className="stat-value stat-value--primary">{formatStat(player.total_points)}</td>
+      <td className="stat-value" style={{ color: 'var(--color-draw)' }}>{formatStat(player.yellow_cards)}</td>
+      <td className="stat-value" style={{ color: 'var(--color-loss)' }}>{formatStat(player.red_cards)}</td>
     </>
   )
 
@@ -93,12 +196,14 @@ export default function Stats() {
           <span className="player-name">{club.club_name}</span>
         </Link>
       </td>
-      <td className="stat-value">{club.tries}</td>
-      <td className="stat-value">{club.conversions}</td>
-      <td className="stat-value">{club.penalties}</td>
-      <td className="stat-value stat-value--primary">{club.total_points}</td>
-      <td className="stat-value" style={{ color: 'var(--color-draw)' }}>{club.yellow_cards}</td>
-      <td className="stat-value" style={{ color: 'var(--color-loss)' }}>{club.red_cards}</td>
+      <td className="stat-value">{club.games_played}</td>
+      <td className="stat-value">{formatStat(club.tries)}</td>
+      <td className="stat-value">{formatStat(club.conversions)}</td>
+      <td className="stat-value">{formatStat(club.penalties)}</td>
+      <td className="stat-value">{formatStat(club.drop_goals)}</td>
+      <td className="stat-value stat-value--primary">{formatStat(club.total_points)}</td>
+      <td className="stat-value" style={{ color: 'var(--color-draw)' }}>{formatStat(club.yellow_cards)}</td>
+      <td className="stat-value" style={{ color: 'var(--color-loss)' }}>{formatStat(club.red_cards)}</td>
     </>
   )
 
@@ -152,6 +257,11 @@ export default function Stats() {
               ))}
             </select>
           </div>
+
+          <div className="stats-filter-group">
+            <label className="stats-filter-label">View Mode</label>
+            <ToggleSwitch value={viewMode} onChange={setViewMode} />
+          </div>
         </header>
 
         <div className="tab-bar">
@@ -176,25 +286,94 @@ export default function Stats() {
         </div>
 
         {activeTab === 'players' && (
-          playersLoading ? (
-            <div className="skeleton" style={{ height: '500px' }} />
-          ) : (
-            <StatsTable 
-              title="Player Leaderboard"
-              headers={[
-                { key: 'player_name', label: 'Player', style: { minWidth: '200px' } },
-                { key: 'tries', label: 'Tries' },
-                { key: 'conversions', label: 'Conv' },
-                { key: 'penalties', label: 'Pen' },
-                { key: 'drop_goals', label: 'DG' },
-                { key: 'total_points', label: 'Pts' },
-                { key: 'yellow_cards', label: 'YC' },
-                { key: 'red_cards', label: 'RC' }
-              ]}
-              data={playerStats || []}
-              renderRow={renderPlayerRow}
-            />
-          )
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <div ref={searchRef} className="player-search-container" style={{ position: 'relative', width: '100%', maxWidth: '400px' }}>
+              <input
+                type="text"
+                placeholder="🔍 Search for any player..."
+                className="stats-select"
+                style={{ width: '100%', padding: '10px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: 'var(--color-bg-glass)' }}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              {searchResults.length > 0 && (
+                <div 
+                  className="autocomplete-dropdown card"
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    width: '100%',
+                    zIndex: 10,
+                    marginTop: '4px',
+                    maxHeight: '300px',
+                    overflowY: 'auto',
+                    background: 'rgba(20, 20, 20, 0.95)',
+                    backdropFilter: 'blur(20px)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '8px',
+                    padding: 'var(--space-2)'
+                  }}
+                >
+                  {searchResults.map(p => (
+                    <Link 
+                      key={p.id} 
+                      to={`/players/${p.id}`} 
+                      className="player-cell"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: '8px 12px',
+                        textDecoration: 'none',
+                        borderRadius: '6px',
+                        transition: 'background 0.2s',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => {
+                        setSearchQuery('')
+                        setSearchResults([])
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <img 
+                        src={p.thumbnail_url || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'} 
+                        alt={p.name} 
+                        className="player-avatar"
+                        style={{ marginRight: '12px' }}
+                      />
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span className="player-name" style={{ color: 'var(--color-text-primary)', fontSize: '0.95rem' }}>{p.name}</span>
+                        {p.current_team && <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>{p.current_team}</span>}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {playersLoading ? (
+              <div className="skeleton" style={{ height: '500px' }} />
+            ) : (
+              <StatsTable 
+                title="Player Leaderboard"
+                headers={[
+                  { key: 'player_name', label: 'Player', style: { minWidth: '200px' } },
+                  { key: 'games_played', label: 'Games' },
+                  { key: 'tries', label: 'Tries' },
+                  { key: 'conversions', label: 'Conv' },
+                  { key: 'penalties', label: 'Pen' },
+                  { key: 'drop_goals', label: 'DG' },
+                  { key: 'total_points', label: 'Pts' },
+                  { key: 'yellow_cards', label: 'YC' },
+                  { key: 'red_cards', label: viewMode === 'total' ? 'RC' : 'Avg RC' }
+                ]}
+                data={displayedPlayerStats}
+                renderRow={renderPlayerRow}
+                viewMode={viewMode}
+              />
+            )}
+          </div>
         )}
 
         {activeTab === 'clubs' && (
@@ -205,15 +384,18 @@ export default function Stats() {
               title="Club Scoring & Discipline"
               headers={[
                 { key: 'club_name', label: 'Club', style: { minWidth: '200px' } },
+                { key: 'games_played', label: 'Games' },
                 { key: 'tries', label: 'Tries' },
                 { key: 'conversions', label: 'Conv' },
                 { key: 'penalties', label: 'Pen' },
+                { key: 'drop_goals', label: 'DG' },
                 { key: 'total_points', label: 'Pts' },
                 { key: 'yellow_cards', label: 'YC' },
-                { key: 'red_cards', label: 'RC' }
+                { key: 'red_cards', label: viewMode === 'total' ? 'RC' : 'Avg RC' }
               ]}
-              data={clubStats || []}
+              data={displayedClubStats}
               renderRow={renderClubRow}
+              viewMode={viewMode}
             />
           )
         )}
@@ -225,52 +407,83 @@ export default function Stats() {
             <div className="overview-grid animate-in">
               <div className="card overview-card">
                 <span className="overview-card__icon">🏉</span>
-                <span className="overview-card__value">{overview?.total_tries}</span>
-                <span className="overview-card__label">Total Tries</span>
+                <span className="overview-card__value">{getSeasonValue(overview?.total_tries)}</span>
+                <span className="overview-card__label">
+                  {viewMode === 'total' ? 'Total Tries' : 'Avg Tries/Game'}
+                </span>
                 <span className="overview-card__subtext">
                   Incl. penalty tries
                 </span>
               </div>
               <div className="card overview-card">
                 <span className="overview-card__icon">🔄</span>
-                <span className="overview-card__value">{overview?.total_conversions}</span>
-                <span className="overview-card__label">Conversions</span>
+                <span className="overview-card__value">{getSeasonValue(overview?.total_conversions)}</span>
+                <span className="overview-card__label">
+                  {viewMode === 'total' ? 'Conversions' : 'Avg Conversions/Game'}
+                </span>
               </div>
               <div className="card overview-card">
                 <span className="overview-card__icon">🎯</span>
-                <span className="overview-card__value">{overview?.total_penalties}</span>
-                <span className="overview-card__label">Penalty Goals</span>
+                <span className="overview-card__value">{getSeasonValue(overview?.total_penalties)}</span>
+                <span className="overview-card__label">
+                  {viewMode === 'total' ? 'Penalty Goals' : 'Avg Penalty Goals/Game'}
+                </span>
               </div>
               <div className="card overview-card">
                 <span className="overview-card__icon">🏆</span>
-                <span className="overview-card__value">{overview?.top_scorer_points}</span>
-                <span className="overview-card__label">Top Scorer pts</span>
+                <span className="overview-card__value">
+                  {viewMode === 'total' 
+                    ? overview?.top_scorer_points 
+                    : (playersLoading ? '...' : topAveragePerformers?.topScorer?.avgPoints?.toFixed(2))}
+                </span>
+                <span className="overview-card__label">
+                  {viewMode === 'total' ? 'Top Scorer pts' : 'Top Avg Pts/Game'}
+                </span>
                 <span className="overview-card__subtext">
-                  {overview?.top_scorer_name}
+                  {viewMode === 'total' 
+                    ? overview?.top_scorer_name 
+                    : (playersLoading ? 'Loading...' : (topAveragePerformers?.topScorer?.player_name ? `${topAveragePerformers.topScorer.player_name} (${topAveragePerformers.topScorer.club_name})` : 'N/A'))}
                 </span>
               </div>
               <div className="card overview-card">
                 <span className="overview-card__icon">🥇</span>
-                <span className="overview-card__value">{overview?.top_try_scorer_tries}</span>
-                <span className="overview-card__label">Most Tries</span>
+                <span className="overview-card__value">
+                  {viewMode === 'total' 
+                    ? overview?.top_try_scorer_tries 
+                    : (playersLoading ? '...' : topAveragePerformers?.topTryScorer?.avgTries?.toFixed(2))}
+                </span>
+                <span className="overview-card__label">
+                  {viewMode === 'total' ? 'Most Tries' : 'Most Tries/Game'}
+                </span>
                 <span className="overview-card__subtext">
-                  {overview?.top_try_scorer_name}
+                  {viewMode === 'total' 
+                    ? overview?.top_try_scorer_name 
+                    : (playersLoading ? 'Loading...' : (topAveragePerformers?.topTryScorer?.player_name ? `${topAveragePerformers.topTryScorer.player_name} (${topAveragePerformers.topTryScorer.club_name})` : 'N/A'))}
                 </span>
               </div>
               <div className="card overview-card">
                 <span className="overview-card__icon">🟡</span>
-                <span className="overview-card__value">{overview?.total_yellow_cards}</span>
-                <span className="overview-card__label">Yellow Cards</span>
+                <span className="overview-card__value">{getSeasonValue(overview?.total_yellow_cards)}</span>
+                <span className="overview-card__label">
+                  {viewMode === 'total' ? 'Yellow Cards' : 'Avg Yellow Cards/Game'}
+                </span>
               </div>
               <div className="card overview-card">
                 <span className="overview-card__icon">🔴</span>
-                <span className="overview-card__value">{overview?.total_red_cards}</span>
-                <span className="overview-card__label">Red Cards</span>
+                <span className="overview-card__value">{getSeasonValue(overview?.total_red_cards)}</span>
+                <span className="overview-card__label">
+                  {viewMode === 'total' ? 'Red Cards' : 'Avg Red Cards/Game'}
+                </span>
               </div>
               <div className="card overview-card">
                 <span className="overview-card__icon">📍</span>
                 <span className="overview-card__value">{overview?.games_played}</span>
                 <span className="overview-card__label">Games Played</span>
+                {viewMode !== 'total' && (
+                  <span className="overview-card__subtext">
+                    Total games in selection
+                  </span>
+                )}
               </div>
             </div>
           )

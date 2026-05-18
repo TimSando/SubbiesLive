@@ -4,7 +4,8 @@ export default function StatsTable({
   title, 
   headers, 
   data, 
-  renderRow 
+  renderRow,
+  viewMode = 'total'
 }) {
   const [sortConfig, setSortConfig] = useState({ key: 'total_points', direction: 'desc' })
 
@@ -48,7 +49,11 @@ export default function StatsTable({
 
   return (
     <div className="stats-table-wrapper animate-in">
-      {title && <h2 className="stats-table-title">{title}</h2>}
+      {title && (
+        <h2 className="stats-table-title">
+          {title} {viewMode === 'average' && <span style={{ fontSize: '0.9rem', fontWeight: 'normal', color: 'var(--color-accent-primary)', marginLeft: 'var(--space-2)' }}>(Per Game Average)</span>}
+        </h2>
+      )}
       <div className="table-container">
         <table>
           <thead>

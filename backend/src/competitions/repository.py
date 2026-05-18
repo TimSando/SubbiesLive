@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.competitions.models import Competition, Round, CompetitionMapping
-from src.clubs.models import Team
+from src.clubs.models import Team, Club
 from src.games.models import Game
 
 
@@ -22,8 +22,11 @@ async def get_all_competitions(db: AsyncSession) -> list[dict]:
             CompetitionMapping.grade,
             func.count(func.distinct(Team.id)).label("team_count"),
             func.count(func.distinct(Round.id)).label("round_count"),
+            func.count(func.distinct(Club.id)).label("club_count"),
+            func.string_agg(func.distinct(Club.name), ", ").label("club_names"),
         )
         .outerjoin(Team, Team.competition_id == Competition.id)
+        .outerjoin(Club, Team.club_id == Club.id)
         .outerjoin(Round, Round.competition_id == Competition.id)
         .outerjoin(CompetitionMapping, Competition.competition_mapping_id == CompetitionMapping.id)
         .group_by(

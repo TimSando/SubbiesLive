@@ -3,10 +3,10 @@
 from sqlalchemy import select, func, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.players.models import Player, PlayerTeamHistory
+from src.players.models import Player
 from src.clubs.models import Club, Team
 from src.competitions.models import Competition
-from src.games.models import GameEvent
+from src.games.models import GameEvent, Game, PlayerHistory
 
 
 async def get_players(
@@ -31,8 +31,8 @@ async def get_players(
 
     if team_id:
         stmt = stmt.join(
-            PlayerTeamHistory, PlayerTeamHistory.player_id == Player.id
-        ).where(PlayerTeamHistory.team_id == team_id)
+            PlayerHistory, PlayerHistory.player_id == Player.id
+        ).where(PlayerHistory.team_id == team_id).distinct()
 
     stmt = stmt.order_by(Player.name).limit(limit).offset(offset)
     result = await db.execute(stmt)
@@ -56,30 +56,34 @@ async def get_player_by_id(db: AsyncSession, player_id: int) -> dict | None:
             Club.name.label("club_name"),
             Competition.name.label("competition_name"),
         )
-        .select_from(PlayerTeamHistory)
-        .join(Team, Team.id == PlayerTeamHistory.team_id)
+        .select_from(PlayerHistory)
+        .join(Team, Team.id == PlayerHistory.team_id)
         .join(Club, Club.id == Team.club_id)
         .join(Competition, Competition.id == Team.competition_id)
-        .where(PlayerTeamHistory.player_id == player_id)
+        .where(PlayerHistory.player_id == player_id)
+        .group_by(Team.id, Team.name, Club.name, Competition.name)
         .order_by(Competition.name)
     )
     teams_result = await db.execute(teams_stmt)
     teams = [row._asdict() for row in teams_result.all()]
 
-    # Get aggregated stats from game events
+    # Get aggregated stats from player history
     stats_stmt = (
         select(
-            GameEvent.event_type,
-            func.count().label("count"),
-            func.sum(GameEvent.points).label("total_points"),
+            func.sum(PlayerHistory.tries).label("tries"),
+            func.sum(PlayerHistory.conversions).label("conversions"),
+            func.sum(PlayerHistory.penalty_goals).label("penalty_goals"),
+            func.sum(PlayerHistory.drop_goals).label("drop_goals"),
+            func.sum(PlayerHistory.yellow_cards).label("yellow_cards"),
+            func.sum(PlayerHistory.red_cards).label("red_cards"),
+            func.sum(PlayerHistory.points).label("points"),
+            func.count(PlayerHistory.game_id).label("games_played"),
         )
-        .where(GameEvent.player_id == player_id)
-        .group_by(GameEvent.event_type)
+        .where(PlayerHistory.player_id == player_id)
     )
     stats_result = await db.execute(stats_stmt)
-    stats_rows = stats_result.all()
+    row = stats_result.one_or_none()
 
-    # Build stats summary
     stats = {
         "total_tries": 0,
         "total_conversions": 0,
@@ -91,26 +95,32 @@ async def get_player_by_id(db: AsyncSession, player_id: int) -> dict | None:
         "games_played": 0,
     }
 
-    for row in stats_rows:
-        stat_map = {
-            "try": "total_tries",
-            "conversion": "total_conversions",
-            "penalty_goal": "total_penalty_goals",
-            "drop_goal": "total_drop_goals",
-            "yellow_card": "total_yellow_cards",
-            "red_card": "total_red_cards",
-        }
-        key = stat_map.get(row.event_type)
-        if key:
-            stats[key] = row.count
-        stats["total_points"] += row.total_points or 0
+    if row:
+        stats["total_tries"] = int(row.tries or 0)
+        stats["total_conversions"] = int(row.conversions or 0)
+        stats["total_penalty_goals"] = int(row.penalty_goals or 0)
+        stats["total_drop_goals"] = int(row.drop_goals or 0)
+        stats["total_yellow_cards"] = int(row.yellow_cards or 0)
+        stats["total_red_cards"] = int(row.red_cards or 0)
+        stats["total_points"] = int(row.points or 0)
+        stats["games_played"] = int(row.games_played or 0)
 
-    # Count distinct games played
-    games_stmt = (
-        select(func.count(func.distinct(GameEvent.game_id)))
-        .where(GameEvent.player_id == player_id)
+
+    # Get most recent club name
+    recent_club_stmt = (
+        select(Club.name)
+        .select_from(PlayerHistory)
+        .join(Team, Team.id == PlayerHistory.team_id)
+        .join(Club, Club.id == Team.club_id)
+        .join(Game, Game.id == PlayerHistory.game_id)
+        .where(PlayerHistory.player_id == player_id)
+        .order_by(desc(Game.game_date))
+        .limit(1)
     )
-    stats["games_played"] = (await db.execute(games_stmt)).scalar() or 0
+    recent_club = (await db.execute(recent_club_stmt)).scalar_one_or_none()
+    
+    if not recent_club and teams:
+        recent_club = teams[0]["club_name"]
 
     return {
         "id": player.id,
@@ -121,4 +131,5 @@ async def get_player_by_id(db: AsyncSession, player_id: int) -> dict | None:
         "external_id": player.external_id,
         "teams": teams,
         "stats": stats,
+        "recent_club": recent_club,
     }

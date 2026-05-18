@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 from src.competitions.schemas import CompetitionMappingBrief
+from src.games.schemas import GameBrief
 
 
 class TeamBrief(BaseModel):
@@ -12,6 +13,9 @@ class TeamBrief(BaseModel):
     name: str
     competition_name: str = ""
     external_id: int
+    wins: int = 0
+    losses: int = 0
+    draws: int = 0
 
     class Config:
         from_attributes = True
@@ -28,6 +32,9 @@ class ClubBrief(BaseModel):
     wins: int = 0
     losses: int = 0
     draws: int = 0
+    home_ground_name: str | None = None
+    home_ground_map_url: str | None = None
+    has_womens_team: bool | None = False
 
     class Config:
         from_attributes = True
@@ -41,6 +48,21 @@ class ClubDetail(BaseModel):
     logo_url: str | None = None
     competition_mapping: CompetitionMappingBrief | None = None
     teams: list[TeamBrief] = []
+    
+    about_text: str | None = None
+    division_info: str | None = None
+    grades_count: int | None = None
+    training_info: str | None = None
+    has_womens_team: bool | None = False
+    home_ground_name: str | None = None
+    home_ground_map_url: str | None = None
+    website_url: str | None = None
+    facebook_url: str | None = None
+    instagram_url: str | None = None
+    tiktok_url: str | None = None
+    
+    recent_fixtures: list[GameBrief] = []
+    upcoming_fixtures: list[GameBrief] = []
 
     class Config:
         from_attributes = True

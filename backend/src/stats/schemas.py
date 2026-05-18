@@ -13,6 +13,7 @@ class PlayerStatRow(BaseModel):
     total_points: int
     yellow_cards: int
     red_cards: int
+    games_played: int
     image_url: str | None = None
 
 class ClubStatRow(BaseModel):
@@ -22,9 +23,11 @@ class ClubStatRow(BaseModel):
     tries: int
     conversions: int
     penalties: int
+    drop_goals: int
     total_points: int
     yellow_cards: int
     red_cards: int
+    games_played: int
     logo_url: str | None = None
 
 class SeasonOverview(BaseModel):

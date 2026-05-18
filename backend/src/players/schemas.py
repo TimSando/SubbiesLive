@@ -49,6 +49,7 @@ class PlayerDetail(BaseModel):
     external_id: int
     teams: list[PlayerTeamInfo] = []
     stats: PlayerStatSummary = PlayerStatSummary()
+    recent_club: str | None = None
 
     class Config:
         from_attributes = True

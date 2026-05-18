@@ -1,0 +1,119 @@
+import os
+import json
+import logging
+from sqlalchemy import create_engine, text
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("seed_club_details")
+
+def get_engine():
+    db_url = os.environ.get(
+        "DATABASE_URL_SYNC",
+        os.environ.get("DATABASE_URL", "").replace("+asyncpg", "")
+    )
+    if not db_url or "+asyncpg" in db_url:
+        db_url = (
+            f"postgresql://{os.environ.get('POSTGRES_USER', 'subbiesstats')}"
+            f":{os.environ.get('POSTGRES_PASSWORD', 'subbiesstats_dev_2026')}"
+            f"@{os.environ.get('POSTGRES_HOST', 'db')}"
+            f":5432/{os.environ.get('POSTGRES_DB', 'subbiesstats')}"
+        )
+    return create_engine(db_url)
+
+def seed_club_details(json_path: str):
+    if not os.path.exists(json_path):
+        logger.error(f"JSON file not found: {json_path}")
+        return
+
+    logger.info(f"Reading scraped club details from {json_path}...")
+    with open(json_path, 'r', encoding='utf-8') as f:
+        clubs_data = json.load(f)
+
+    engine = get_engine()
+    with engine.begin() as conn:
+        count = 0
+        for club in clubs_data:
+            name = club.get("name")
+            if not name:
+                continue
+
+            # Update the club record
+            res = conn.execute(
+                text("""
+                    UPDATE clubs 
+                    SET about_text = :about,
+                        division_info = :div,
+                        grades_count = :grades,
+                        training_info = :training,
+                        has_womens_team = :womens,
+                        home_ground_name = :ground,
+                        home_ground_map_url = :map_url,
+                        website_url = :website,
+                        facebook_url = :facebook,
+                        instagram_url = :instagram,
+                        tiktok_url = :tiktok
+                    WHERE name = :name OR short_name = :name
+                """),
+                {
+                    "name": name,
+                    "about": club.get("about_text"),
+                    "div": club.get("division_info"),
+                    "grades": club.get("grades_count"),
+                    "training": club.get("training_info"),
+                    "womens": club.get("has_womens_team", False),
+                    "ground": club.get("home_ground_name"),
+                    "map_url": club.get("home_ground_map_url"),
+                    "website": club.get("website_url"),
+                    "facebook": club.get("facebook_url"),
+                    "instagram": club.get("instagram_url"),
+                    "tiktok": club.get("tiktok_url")
+                }
+            )
+            if res.rowcount > 0:
+                count += 1
+                logger.info(f"Updated club '{name}' successfully.")
+            else:
+                # If exact name/short_name not found, check with a partial match
+                partial_res = conn.execute(
+                    text("""
+                        UPDATE clubs 
+                        SET about_text = :about,
+                            division_info = :div,
+                            grades_count = :grades,
+                            training_info = :training,
+                            has_womens_team = :womens,
+                            home_ground_name = :ground,
+                            home_ground_map_url = :map_url,
+                            website_url = :website,
+                            facebook_url = :facebook,
+                            instagram_url = :instagram,
+                            tiktok_url = :tiktok
+                        WHERE name ILIKE :partial
+                    """),
+                    {
+                        "partial": f"%{name}%",
+                        "about": club.get("about_text"),
+                        "div": club.get("division_info"),
+                        "grades": club.get("grades_count"),
+                        "training": club.get("training_info"),
+                        "womens": club.get("has_womens_team", False),
+                        "ground": club.get("home_ground_name"),
+                        "map_url": club.get("home_ground_map_url"),
+                        "website": club.get("website_url"),
+                        "facebook": club.get("facebook_url"),
+                        "instagram": club.get("instagram_url"),
+                        "tiktok": club.get("tiktok_url")
+                    }
+                )
+                if partial_res.rowcount > 0:
+                    count += 1
+                    logger.info(f"Updated club '{name}' via partial match.")
+                else:
+                    logger.warning(f"Club '{name}' not found in database. Skipping.")
+
+        logger.info(f"Successfully updated details for {count} clubs.")
+
+if __name__ == "__main__":
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    json_path = os.path.join(script_dir, "club_scraped_data.json")
+    seed_club_details(json_path)

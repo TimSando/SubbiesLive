@@ -1,18 +1,7 @@
-from sqlalchemy import text, bindparam
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
 from src.stats.schemas import PlayerStatRow, ClubStatRow, SeasonOverview
-
-EXCLUDED_EVENTS = (
-    'rugby_union_coach_points_1', 
-    'rugby_union_coach_points_2', 
-    'rugby_union_coach_points_3', 
-    'start', 
-    'stop', 
-    'rugby_union_uncontested_scrum', 
-    'rugby_union_blue_card'
-)
-
 
 
 async def get_player_stats(
@@ -27,27 +16,27 @@ async def get_player_stats(
             p.name as player_name, 
             c.name as club_name, 
             c.id as club_id,
-            COUNT(CASE WHEN ge.event_type = 'try' OR ge.event_type = 'rugby_union_penalty_try' THEN 1 END) as tries,
-            COUNT(CASE WHEN ge.event_type = 'conversion' THEN 1 END) as conversions,
-            COUNT(CASE WHEN ge.event_type = 'penalty_goal' THEN 1 END) as penalties,
-            COUNT(CASE WHEN ge.event_type = 'drop_goal' THEN 1 END) as drop_goals,
-            SUM(ge.points) as total_points,
-            COUNT(CASE WHEN ge.event_type = 'yellow_card' THEN 1 END) as yellow_cards,
-            COUNT(CASE WHEN ge.event_type = 'red_card' THEN 1 END) as red_cards,
+            SUM(ph.tries) as tries,
+            SUM(ph.conversions) as conversions,
+            SUM(ph.penalty_goals) as penalties,
+            SUM(ph.drop_goals) as drop_goals,
+            SUM(ph.points) as total_points,
+            SUM(ph.yellow_cards) as yellow_cards,
+            SUM(ph.red_cards) as red_cards,
+            COUNT(ph.game_id) as games_played,
             p.thumbnail_url as image_url
-        FROM game_events ge 
-        JOIN players p ON ge.player_id = p.id
-        JOIN teams t ON ge.team_id = t.id
+        FROM player_history ph
+        JOIN players p ON ph.player_id = p.id
+        JOIN teams t ON ph.team_id = t.id
         JOIN clubs c ON t.club_id = c.id
-        JOIN games g ON ge.game_id = g.id
+        JOIN games g ON ph.game_id = g.id
         JOIN rounds r ON g.round_id = r.id
         JOIN competitions comp ON r.competition_id = comp.id
         LEFT JOIN competition_mapping m ON comp.competition_mapping_id = m.id
-        WHERE ge.player_id IS NOT NULL
-          AND ge.event_type NOT IN :excluded
+        WHERE 1=1
     """
     
-    params = {"excluded": list(EXCLUDED_EVENTS)}
+    params = {}
     if competition_id:
         query += " AND r.competition_id = :comp_id"
         params["comp_id"] = competition_id
@@ -64,11 +53,7 @@ async def get_player_stats(
         LIMIT 50
     """
     
-    # Use bindparams for expanding IN clause
-    stmt = text(query).bindparams(bindparam("excluded", expanding=True))
-    params["excluded"] = list(EXCLUDED_EVENTS)
-    
-    result = await db.execute(stmt, params)
+    result = await db.execute(text(query), params)
     rows = result.fetchall()
     
     stats = []
@@ -79,13 +64,14 @@ async def get_player_stats(
             player_name=row.player_name,
             club_name=row.club_name,
             club_id=row.club_id,
-            tries=row.tries,
-            conversions=row.conversions,
-            penalties=row.penalties,
-            drop_goals=row.drop_goals,
+            tries=row.tries or 0,
+            conversions=row.conversions or 0,
+            penalties=row.penalties or 0,
+            drop_goals=row.drop_goals or 0,
             total_points=row.total_points or 0,
-            yellow_cards=row.yellow_cards,
-            red_cards=row.red_cards,
+            yellow_cards=row.yellow_cards or 0,
+            red_cards=row.red_cards or 0,
+            games_played=row.games_played or 0,
             image_url=row.image_url
         ))
     return stats
@@ -100,24 +86,26 @@ async def get_club_stats(
         SELECT 
             c.id as club_id, 
             c.name as club_name,
-            COUNT(CASE WHEN ge.event_type = 'try' OR ge.event_type = 'rugby_union_penalty_try' THEN 1 END) as tries,
-            COUNT(CASE WHEN ge.event_type = 'conversion' THEN 1 END) as conversions,
-            COUNT(CASE WHEN ge.event_type = 'penalty_goal' THEN 1 END) as penalties,
-            SUM(ge.points) as total_points,
-            COUNT(CASE WHEN ge.event_type = 'yellow_card' THEN 1 END) as yellow_cards,
-            COUNT(CASE WHEN ge.event_type = 'red_card' THEN 1 END) as red_cards,
+            SUM(ph.tries) as tries,
+            SUM(ph.conversions) as conversions,
+            SUM(ph.penalty_goals) as penalties,
+            SUM(ph.drop_goals) as drop_goals,
+            SUM(ph.points) as total_points,
+            SUM(ph.yellow_cards) as yellow_cards,
+            SUM(ph.red_cards) as red_cards,
+            COUNT(DISTINCT ph.game_id) as games_played,
             c.logo_url
-        FROM game_events ge
-        JOIN teams t ON ge.team_id = t.id
+        FROM player_history ph
+        JOIN teams t ON ph.team_id = t.id
         JOIN clubs c ON t.club_id = c.id
-        JOIN games g ON ge.game_id = g.id
+        JOIN games g ON ph.game_id = g.id
         JOIN rounds r ON g.round_id = r.id
         JOIN competitions comp ON r.competition_id = comp.id
         LEFT JOIN competition_mapping m ON comp.competition_mapping_id = m.id
-        WHERE ge.event_type NOT IN :excluded
+        WHERE 1=1
     """
     
-    params = {"excluded": list(EXCLUDED_EVENTS)}
+    params = {}
     if competition_id:
         query += " AND r.competition_id = :comp_id"
         params["comp_id"] = competition_id
@@ -134,10 +122,7 @@ async def get_club_stats(
         LIMIT 50
     """
     
-    stmt = text(query).bindparams(bindparam("excluded", expanding=True))
-    params["excluded"] = list(EXCLUDED_EVENTS)
-    
-    result = await db.execute(stmt, params)
+    result = await db.execute(text(query), params)
     rows = result.fetchall()
     
     stats = []
@@ -146,12 +131,14 @@ async def get_club_stats(
             rank=i + 1,
             club_id=row.club_id,
             club_name=row.club_name,
-            tries=row.tries,
-            conversions=row.conversions,
-            penalties=row.penalties,
+            tries=row.tries or 0,
+            conversions=row.conversions or 0,
+            penalties=row.penalties or 0,
+            drop_goals=row.drop_goals or 0,
             total_points=row.total_points or 0,
-            yellow_cards=row.yellow_cards,
-            red_cards=row.red_cards,
+            yellow_cards=row.yellow_cards or 0,
+            red_cards=row.red_cards or 0,
+            games_played=row.games_played or 0,
             logo_url=row.logo_url
         ))
     return stats
@@ -162,22 +149,24 @@ async def get_season_overview(
     parent_competition: Optional[str] = None,
     division: Optional[str] = None
 ) -> SeasonOverview:
-    # 1. General counts
+    params = {}
+    
+    # 1. General counts from player_history
     query_base = """
         SELECT 
-            COUNT(CASE WHEN ge.event_type = 'try' OR ge.event_type = 'rugby_union_penalty_try' THEN 1 END) as total_tries,
-            COUNT(CASE WHEN ge.event_type = 'conversion' THEN 1 END) as total_conversions,
-            COUNT(CASE WHEN ge.event_type = 'penalty_goal' THEN 1 END) as total_penalties,
-            COUNT(CASE WHEN ge.event_type = 'yellow_card' THEN 1 END) as total_yellow_cards,
-            COUNT(CASE WHEN ge.event_type = 'red_card' THEN 1 END) as total_red_cards
-        FROM game_events ge
-        JOIN games g ON ge.game_id = g.id
+            SUM(ph.tries) as total_tries,
+            SUM(ph.conversions) as total_conversions,
+            SUM(ph.penalty_goals) as total_penalties,
+            SUM(ph.yellow_cards) as total_yellow_cards,
+            SUM(ph.red_cards) as total_red_cards
+        FROM player_history ph
+        JOIN games g ON ph.game_id = g.id
         JOIN rounds r ON g.round_id = r.id
         JOIN competitions comp ON r.competition_id = comp.id
         LEFT JOIN competition_mapping m ON comp.competition_mapping_id = m.id
-        WHERE ge.event_type NOT IN :excluded
+        WHERE 1=1
     """
-    params = {"excluded": list(EXCLUDED_EVENTS)}
+    
     if competition_id:
         query_base += " AND r.competition_id = :comp_id"
         params["comp_id"] = competition_id
@@ -188,13 +177,10 @@ async def get_season_overview(
         query_base += " AND m.division = :div"
         params["div"] = division
         
-    stmt_base = text(query_base).bindparams(bindparam("excluded", expanding=True))
-    params["excluded"] = list(EXCLUDED_EVENTS)
-    
-    res_base = await db.execute(stmt_base, params)
+    res_base = await db.execute(text(query_base), params)
     row_base = res_base.fetchone()
     
-    # 2. Games played
+    # 2. Games played (from games table)
     query_games = """
         SELECT COUNT(*) 
         FROM games g 
@@ -209,23 +195,24 @@ async def get_season_overview(
         query_games += " AND m.parent_competition = :parent"
     if division:
         query_games += " AND m.division = :div"
+        
     res_games = await db.execute(text(query_games), params)
     games_played = res_games.scalar()
     
-    # 3. Top scorers
+    # 3. Top scorer (reuses the refactored player stats function)
     player_stats = await get_player_stats(db, competition_id, parent_competition, division)
     top_scorer = player_stats[0] if player_stats else None
     
-    # Top try scorer specifically
+    # 4. Top try scorer specifically
     query_try = """
-        SELECT p.name, COUNT(*) as tries
-        FROM game_events ge
-        JOIN players p ON ge.player_id = p.id
-        JOIN games g ON ge.game_id = g.id
+        SELECT p.name, SUM(ph.tries) as tries
+        FROM player_history ph
+        JOIN players p ON ph.player_id = p.id
+        JOIN games g ON ph.game_id = g.id
         JOIN rounds r ON g.round_id = r.id
         JOIN competitions comp ON r.competition_id = comp.id
         LEFT JOIN competition_mapping m ON comp.competition_mapping_id = m.id
-        WHERE ge.event_type = 'try'
+        WHERE 1=1
     """
     if competition_id:
         query_try += " AND r.competition_id = :comp_id"
@@ -234,18 +221,19 @@ async def get_season_overview(
     if division:
         query_try += " AND m.division = :div"
     query_try += " GROUP BY p.id, p.name ORDER BY tries DESC LIMIT 1"
+    
     res_try = await db.execute(text(query_try), params)
     row_try = res_try.fetchone()
     
     return SeasonOverview(
-        total_tries=row_base.total_tries,
-        total_conversions=row_base.total_conversions,
-        total_penalties=row_base.total_penalties,
-        total_yellow_cards=row_base.total_yellow_cards,
-        total_red_cards=row_base.total_red_cards,
+        total_tries=row_base.total_tries or 0,
+        total_conversions=row_base.total_conversions or 0,
+        total_penalties=row_base.total_penalties or 0,
+        total_yellow_cards=row_base.total_yellow_cards or 0,
+        total_red_cards=row_base.total_red_cards or 0,
         top_scorer_name=top_scorer.player_name if top_scorer else None,
         top_scorer_points=top_scorer.total_points if top_scorer else 0,
         top_try_scorer_name=row_try.name if row_try else None,
         top_try_scorer_tries=row_try.tries if row_try else 0,
-        games_played=games_played
+        games_played=games_played or 0
     )

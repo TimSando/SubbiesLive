@@ -1,6 +1,6 @@
 """Club and Team domain ORM models."""
 
-from sqlalchemy import ForeignKey, Integer, String
+from sqlalchemy import ForeignKey, Integer, String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.database import Base
@@ -19,6 +19,18 @@ class Club(Base):
     short_name: Mapped[str | None] = mapped_column(String(50), nullable=True)
     logo_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     competition_mapping_id: Mapped[int | None] = mapped_column(ForeignKey("competition_mapping.id"), nullable=True)
+    
+    about_text: Mapped[str | None] = mapped_column(String(5000), nullable=True)
+    division_info: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    grades_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    training_info: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    has_womens_team: Mapped[bool | None] = mapped_column(Boolean, nullable=True, default=False)
+    home_ground_name: Mapped[str | None] = mapped_column(String(250), nullable=True)
+    home_ground_map_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    website_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    facebook_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    instagram_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    tiktok_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
 
     # Relationships
     competition_mapping: Mapped["CompetitionMapping | None"] = relationship("CompetitionMapping", back_populates="clubs")
@@ -48,7 +60,6 @@ class Team(Base):
     competition: Mapped["Competition"] = relationship("Competition", back_populates="teams")
     home_games: Mapped[list["Game"]] = relationship("Game", foreign_keys="Game.home_team_id", back_populates="home_team")
     away_games: Mapped[list["Game"]] = relationship("Game", foreign_keys="Game.away_team_id", back_populates="away_team")
-    player_history: Mapped[list["PlayerTeamHistory"]] = relationship("PlayerTeamHistory", back_populates="team")
 
     def __repr__(self) -> str:
         return f"<Team(id={self.id}, name='{self.name}')>"

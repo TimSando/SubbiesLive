@@ -51,7 +51,13 @@ function EventRow({ event }) {
         </span>
         <span className="event-row__type">{event.event_type.replace('_', ' ')}</span>
         <span className="event-row__player">
-          {event.player_name || `#${event.player_number || '?'}`}
+          {event.player_id ? (
+            <Link to={`/players/${event.player_id}`} style={{ color: 'var(--color-accent-primary)', textDecoration: 'none' }}>
+              {event.player_name}
+            </Link>
+          ) : (
+            event.player_name || `#${event.player_number || '?'}`
+          )}
         </span>
         {!isCard && <span className="event-row__points">+{event.points}</span>}
       </div>

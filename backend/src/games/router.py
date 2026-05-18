@@ -16,13 +16,15 @@ async def list_games(
     round_id: int | None = Query(None, description="Filter by round"),
     team_id: int | None = Query(None, description="Filter by team"),
     status: str | None = Query(None, description="Filter by status (scheduled/completed)"),
+    player_id: int | None = Query(None, description="Filter by player"),
     limit: int = Query(50, ge=1, le=200, description="Max results"),
     offset: int = Query(0, ge=0, description="Offset for pagination"),
 ):
     """List games with optional filters."""
     return await service.list_games(
         db, competition_id=competition_id, round_id=round_id,
-        team_id=team_id, status=status, limit=limit, offset=offset
+        team_id=team_id, status=status, player_id=player_id,
+        limit=limit, offset=offset
     )
 
 

@@ -20,24 +20,6 @@ class Player(Base):
 
     # Relationships
     events: Mapped[list["GameEvent"]] = relationship("GameEvent", back_populates="player")
-    team_history: Mapped[list["PlayerTeamHistory"]] = relationship("PlayerTeamHistory", back_populates="player")
 
     def __repr__(self) -> str:
         return f"<Player(id={self.id}, name='{self.name}')>"
-
-
-class PlayerTeamHistory(Base):
-    """Tracks which team a player was part of for a given competition."""
-
-    __tablename__ = "player_team_history"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    player_id: Mapped[int] = mapped_column(ForeignKey("players.id"), nullable=False, index=True)
-    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), nullable=False, index=True)
-
-    # Relationships
-    player: Mapped["Player"] = relationship("Player", back_populates="team_history")
-    team: Mapped["Team"] = relationship("Team", back_populates="player_history")
-
-    def __repr__(self) -> str:
-        return f"<PlayerTeamHistory(player_id={self.player_id}, team_id={self.team_id})>"

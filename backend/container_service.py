@@ -293,32 +293,19 @@ def ingest_player_history(session, game_id: int, score_sheet_id: str, team_id_ma
         score_sheet_id: FuseSport UUID for the score sheet
         team_id_map:    Dict mapping external team IDs -> internal team DB IDs
     """
+    # Skip if already ingested for this game (check both teams)
+    existing = session.execute(
+        text("SELECT COUNT(*) FROM player_history WHERE game_id = :gid"),
+        {"gid": game_id}
+    ).scalar()
+    if existing > 0:
+        return  # Already processed
+
     try:
         records = get_score_sheet(score_sheet_id)
     except Exception as e:
         logger.warning(f"Failed to fetch score sheet {score_sheet_id}: {e}")
         return
-
-    if not records:
-        return
-
-    # Find the team ID represented by this score sheet to verify if we already ingested it
-    db_team_id = None
-    for record in records:
-        team_ext_id = record.get("team_id")
-        if team_ext_id:
-            resolved_id = team_id_map.get(team_ext_id)
-            if resolved_id:
-                db_team_id = resolved_id
-                break
-
-    if db_team_id:
-        existing = session.execute(
-            text("SELECT COUNT(*) FROM player_history WHERE game_id = :gid AND team_id = :tid"),
-            {"gid": game_id, "tid": db_team_id}
-        ).scalar()
-        if existing > 0:
-            return  # Already processed this score sheet
 
     inserted = 0
     for record in records:

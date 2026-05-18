@@ -1,0 +1,4 @@
+=== DIAGNOSTIC START ===
+UNSW Teams in DB: [[134, 551541, 'UNSW - Barraclough Cup'], [148, 551645, 'UNSW - Stockdale Cup'], [164, 551656, 'UNSW - Robertson Cup (Colts)'], [170, 551667, 'UNSW - Blunt Cup'], [172, 551678, 'UNSW - Richardson Cup'], [252, 555928, 'UNSW - Joy Johnson Cup (Yellow)']]
+Keys in tid_map: [541502, 541508, 541503, 541507, 541501, 541504, 541506, 541505, 544926, 544930] (total 275)
+Execution completed successfully

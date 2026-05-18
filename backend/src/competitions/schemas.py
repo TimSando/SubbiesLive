@@ -39,6 +39,8 @@ class CompetitionBrief(BaseModel):
     grade: str | None = None
     team_count: int = 0
     round_count: int = 0
+    club_count: int = 0
+    club_names: str | None = None
 
     class Config:
         from_attributes = True
