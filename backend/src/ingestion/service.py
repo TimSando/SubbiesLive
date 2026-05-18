@@ -533,6 +533,21 @@ def start_ingestion_scheduler():
         logger.info("Running initial data ingestion...")
         run_ingestion(Session)
 
+        logger.info("Checking for missing club details to seed...")
+        try:
+            from src.scripts.seed_club_details import seed_club_details_if_empty
+            seed_club_details_if_empty()
+        except Exception as e:
+            logger.error(f"Failed to automatically seed club details: {e}")
+
+        logger.info("Checking for missing club competition mappings...")
+        try:
+            from src.scripts.seed_mapping import seed_clubs_from_json
+            json_path = os.environ.get("PARENT_CLUB_JSON_PATH", "/app/src/scripts/parent_club.json")
+            seed_clubs_from_json(json_path)
+        except Exception as e:
+            logger.error(f"Failed to automatically seed club competition mappings: {e}")
+
     init_thread = threading.Thread(target=_initial_run, daemon=True)
     init_thread.start()
 

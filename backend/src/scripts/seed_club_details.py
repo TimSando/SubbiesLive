@@ -113,6 +113,23 @@ def seed_club_details(json_path: str):
 
         logger.info(f"Successfully updated details for {count} clubs.")
 
+def seed_club_details_if_empty():
+    engine = get_engine()
+    try:
+        with engine.connect() as conn:
+            # Check if there are any clubs that have details populated
+            res = conn.execute(text("SELECT COUNT(*) FROM clubs WHERE about_text IS NOT NULL"))
+            count = res.scalar()
+            if count == 0:
+                logger.info("Club details are empty. Running automatic seed...")
+                script_dir = os.path.dirname(os.path.abspath(__file__))
+                json_path = os.path.join(script_dir, "club_scraped_data.json")
+                seed_club_details(json_path)
+            else:
+                logger.info("Club details already populated. Skipping automatic seed.")
+    except Exception as e:
+        logger.error(f"Error checking/seeding club details: {e}")
+
 if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(script_dir, "club_scraped_data.json")
