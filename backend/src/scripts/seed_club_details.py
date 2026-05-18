@@ -20,7 +20,60 @@ def get_engine():
         )
     return create_engine(db_url)
 
+def merge_duplicate_clubs():
+    engine = get_engine()
+    try:
+        with engine.begin() as conn:
+            # 1. Fetch IDs of Colleagues and Colleagues Colts
+            res = conn.execute(text("SELECT id FROM clubs WHERE name = 'Colleagues'"))
+            colleagues_id = res.scalar()
+            
+            res = conn.execute(text("SELECT id FROM clubs WHERE name = 'Colleagues Colts'"))
+            colleagues_colts_id = res.scalar()
+            
+            # 2. Fetch IDs of Balmain and Balmain Grey Wolves
+            res = conn.execute(text("SELECT id FROM clubs WHERE name = 'Balmain'"))
+            balmain_id = res.scalar()
+            
+            res = conn.execute(text("SELECT id FROM clubs WHERE name = 'Balmain Grey Wolves'"))
+            balmain_wolves_id = res.scalar()
+            
+            # Merge Colleagues Colts -> Colleagues
+            if colleagues_id and colleagues_colts_id:
+                logger.info(f"Merging 'Colleagues Colts' (ID: {colleagues_colts_id}) into 'Colleagues' (ID: {colleagues_id})...")
+                # Update teams
+                res_teams = conn.execute(
+                    text("UPDATE teams SET club_id = :parent_id WHERE club_id = :duplicate_id"),
+                    {"parent_id": colleagues_id, "duplicate_id": colleagues_colts_id}
+                )
+                # Delete duplicate club
+                conn.execute(
+                    text("DELETE FROM clubs WHERE id = :duplicate_id"),
+                    {"duplicate_id": colleagues_colts_id}
+                )
+                logger.info(f"Merged Colleagues Colts. Updated {res_teams.rowcount} teams.")
+                
+            # Merge Balmain Grey Wolves -> Balmain
+            if balmain_id and balmain_wolves_id:
+                logger.info(f"Merging 'Balmain Grey Wolves' (ID: {balmain_wolves_id}) into 'Balmain' (ID: {balmain_id})...")
+                # Update teams
+                res_teams = conn.execute(
+                    text("UPDATE teams SET club_id = :parent_id WHERE club_id = :duplicate_id"),
+                    {"parent_id": balmain_id, "duplicate_id": balmain_wolves_id}
+                )
+                # Delete duplicate club
+                conn.execute(
+                    text("DELETE FROM clubs WHERE id = :duplicate_id"),
+                    {"duplicate_id": balmain_wolves_id}
+                )
+                logger.info(f"Merged Balmain Grey Wolves. Updated {res_teams.rowcount} teams.")
+    except Exception as e:
+        logger.error(f"Error merging duplicate clubs: {e}")
+
 def seed_club_details(json_path: str):
+    # Run merge of duplicates first to clean up existing databases
+    merge_duplicate_clubs()
+
     if not os.path.exists(json_path):
         logger.error(f"JSON file not found: {json_path}")
         return

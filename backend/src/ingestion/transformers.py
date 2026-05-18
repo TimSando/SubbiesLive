@@ -47,6 +47,12 @@ def extract_club_name(team_name: str) -> str | None:
     # also remove trailing asterisks and remaining dash artifacts if any
     cleaned_name = re.sub(r'\*$', '', cleaned_name).strip()
     
+    if cleaned_name:
+        if cleaned_name.lower() == "colleagues colts":
+            cleaned_name = "Colleagues"
+        elif cleaned_name.lower() == "balmain grey wolves":
+            cleaned_name = "Balmain"
+
     return cleaned_name if cleaned_name else None
 
 

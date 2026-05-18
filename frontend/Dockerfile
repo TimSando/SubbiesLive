@@ -1,4 +1,5 @@
 # --- Stage 1: Development ---
+# Vite dev server with HMR — used via docker-compose.override.yml
 FROM node:24-slim AS development
 
 WORKDIR /app
@@ -6,11 +7,7 @@ COPY package*.json ./
 RUN npm ci
 COPY . .
 
-# Install nginx for dev proxy too
-RUN apt-get update && apt-get install -y nginx && rm -rf /var/lib/apt/lists/*
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 5173 80
+EXPOSE 5173
 
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 

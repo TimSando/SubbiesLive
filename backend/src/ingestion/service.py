@@ -226,16 +226,31 @@ def upsert_player(session, player_data: dict) -> int | None:
     return result.fetchone()[0]
 
 
-def ingest_game_events(session, game_id: int, game_external_id: int, team_id_map: dict):
-    """Fetch and ingest game events for a completed game."""
-    # We don't skip if events exist anymore, as we want to handle partial updates or missing data.
-    # The inner loop handles existing records via external_id check.
-
-    try:
-        game_info = get_game_info(game_external_id)
-    except Exception as e:
-        logger.warning(f"Failed to fetch game {game_external_id} details: {e}")
+def ingest_game_events(session, game_id: int, game_external_id: int, team_id_map: dict,
+                       game_info: dict | None = None):
+    """Fetch and ingest game events for a completed/in-progress game.
+    
+    Accepts an optional pre-fetched game_info dict to avoid a redundant HTTP call
+    when called alongside ingest_player_history_for_game.
+    
+    For completed games whose events are already fully ingested, skips the network
+    call entirely so startup re-syncs stay fast.
+    """
+    # Skip network call entirely if this completed game already has events in the DB.
+    existing_count = session.execute(
+        text("SELECT COUNT(*) FROM game_events WHERE game_id = :gid"),
+        {"gid": game_id}
+    ).scalar()
+    if existing_count > 0:
+        logger.debug(f"  Skipping game_events fetch for game {game_external_id} — already ingested ({existing_count} events)")
         return
+
+    if game_info is None:
+        try:
+            game_info = get_game_info(game_external_id)
+        except Exception as e:
+            logger.warning(f"Failed to fetch game {game_external_id} details: {e}")
+            return
 
     events_ingested = 0
     for score_sheet_key in ["home_score_sheet", "away_score_sheet"]:
@@ -408,17 +423,31 @@ def ingest_player_history(session, game_id: int, score_sheet_id: str, team_id_ma
         logger.info(f"  Ingested {inserted} player_history rows for score sheet {score_sheet_id}")
 
 
-def ingest_player_history_for_game(session, game_id: int, game_external_id: int, team_id_map: dict):
-    """Fetch game details to get score sheet IDs and ingest history."""
-    # Guard against already processed games (checked inside ingest_player_history too)
-    # We no longer skip games that have history records. 
-    # ingest_player_history handles upserts via ON CONFLICT.
-
-    try:
-        game_info = get_game_info(game_external_id)
-    except Exception as e:
-        logger.warning(f"Failed to fetch game {game_external_id} details for history: {e}")
+def ingest_player_history_for_game(session, game_id: int, game_external_id: int, team_id_map: dict,
+                                    game_info: dict | None = None):
+    """Fetch game details to get score sheet IDs and ingest history.
+    
+    Accepts an optional pre-fetched game_info dict to avoid a redundant HTTP call
+    when called alongside ingest_game_events.
+    
+    For completed games whose player_history rows are already fully ingested for
+    both teams, skips the network call entirely.
+    """
+    # Skip if both score sheets are already recorded in player_history.
+    existing_sheets = session.execute(
+        text("SELECT COUNT(DISTINCT team_id) FROM player_history WHERE game_id = :gid"),
+        {"gid": game_id}
+    ).scalar()
+    if existing_sheets >= 2:
+        logger.debug(f"  Skipping player_history fetch for game {game_external_id} — both score sheets already ingested")
         return
+
+    if game_info is None:
+        try:
+            game_info = get_game_info(game_external_id)
+        except Exception as e:
+            logger.warning(f"Failed to fetch game {game_external_id} details for history: {e}")
+            return
 
     for sheet_key in ["home_score_sheet", "away_score_sheet"]:
         sheet = game_info.get(sheet_key, {})
@@ -484,10 +513,19 @@ def run_ingestion(session_factory):
 
                             game_id = upsert_game(session, round_id, game_data, home_team_id, away_team_id)
 
-                            # Ingest stats for both completed and in-progress games to ensure up-to-date data
+                            # Ingest stats for completed and in-progress games.
+                            # For completed games already fully ingested, both helpers
+                            # will short-circuit via a DB check before making any HTTP call.
+                            # For in-progress games, fetch game_info once and share it.
                             if game_data["status"] in ["completed", "in_progress"]:
-                                ingest_game_events(session, game_id, game_data["external_id"], team_id_map)
-                                ingest_player_history_for_game(session, game_id, game_data["external_id"], team_id_map)
+                                shared_game_info = None
+                                if game_data["status"] == "in_progress":
+                                    try:
+                                        shared_game_info = get_game_info(game_data["external_id"])
+                                    except Exception as e:
+                                        logger.warning(f"    Failed to fetch in-progress game {game_data['external_id']}: {e}")
+                                ingest_game_events(session, game_id, game_data["external_id"], team_id_map, shared_game_info)
+                                ingest_player_history_for_game(session, game_id, game_data["external_id"], team_id_map, shared_game_info)
                         except Exception as e:
                             logger.error(f"    Failed to process game {raw_game.get('id')}: {e}")
                             session.rollback()

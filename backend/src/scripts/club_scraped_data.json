@@ -14,20 +14,6 @@
     "tiktok_url": "https://www.tiktok.com/@balmainrugby"
   },
   {
-    "name": "Balmain Grey Wolves",
-    "about_text": "The Balmain Grey Wolves represents the veteran and social community of Balmain Rugby Club, fostering camaraderie, senior sportsmanship, and classic rugby traditions.",
-    "division_info": "Suburban Rugby - Veterans",
-    "grades_count": 1,
-    "training_info": "Wednesdays at 7:00 PM at Thornton Park",
-    "has_womens_team": false,
-    "home_ground_name": "Thornton Park",
-    "home_ground_map_url": "https://www.google.com/maps/search/?api=1&query=Thornton+Park+Balmain",
-    "website_url": "https://www.balmainrugby.com.au",
-    "facebook_url": "https://facebook.com/balmainrugby",
-    "instagram_url": "https://www.instagram.com/balmainrugbyofficial",
-    "tiktok_url": "https://www.tiktok.com/@balmaingreywolvesrugby"
-  },
-  {
     "name": "Beecroft",
     "about_text": "Beecroft Rugby Club, founded in 1947, is a long-standing suburban club competing in Division 2. Renowned for its community-driven ethos, Beecroft fields multiple competitive senior grades and a growing junior program.",
     "division_info": "Division 2 - Barraclough Cup",
@@ -180,20 +166,6 @@
     "facebook_url": "https://www.facebook.com/ColleaguesRugby",
     "instagram_url": "https://www.instagram.com/colleaguesrugby",
     "tiktok_url": "https://www.tiktok.com/@colleaguesrugby"
-  },
-  {
-    "name": "Colleagues Colts",
-    "about_text": "The junior colts division of Colleagues Rugby Club, providing a dynamic bridge for young players transitioning into senior grades under the famous Blue Giants banner.",
-    "division_info": "Suburban Rugby - Colts",
-    "grades_count": 2,
-    "training_info": "Tuesdays and Thursdays at 6:30 PM at Woollahra Oval",
-    "has_womens_team": false,
-    "home_ground_name": "Woollahra Oval #2",
-    "home_ground_map_url": "https://www.google.com/maps/search/?api=1&query=Woollahra+Oval+Rose+Bay",
-    "website_url": "https://www.colleaguesrugby.com.au",
-    "facebook_url": "https://www.facebook.com/ColleaguesRugby",
-    "instagram_url": "https://www.instagram.com/colleaguesrugby",
-    "tiktok_url": "https://www.tiktok.com/@colleaguescoltsrugby"
   },
   {
     "name": "Drummoyne",
