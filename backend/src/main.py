@@ -22,7 +22,7 @@ logger = logging.getLogger("uvicorn")
 async def lifespan(app: FastAPI):
     """Application lifespan handler for startup/shutdown events."""
     # Startup — launch ingestion scheduler in background
-    from src.ingestion.service import start_ingestion_scheduler, stop_ingestion_scheduler
+    from src.ingestion.scheduler import start_ingestion_scheduler, stop_ingestion_scheduler
     logger.info("Starting ingestion scheduler...")
     start_ingestion_scheduler()
 
@@ -34,12 +34,14 @@ async def lifespan(app: FastAPI):
     await engine.dispose()
 
 
+_is_dev = settings.environment == "development"
+
 app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
-    docs_url="/api/docs",
-    openapi_url="/api/openapi.json",
-    redoc_url="/api/redoc",
+    docs_url="/api/docs" if _is_dev else None,
+    openapi_url="/api/openapi.json" if _is_dev else None,
+    redoc_url="/api/redoc" if _is_dev else None,
     lifespan=lifespan,
 )
 

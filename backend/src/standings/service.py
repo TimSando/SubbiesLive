@@ -18,6 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.competitions.models import Competition
 from src.clubs.models import Club, Team
 from src.games import repository as games_repo
+from src.core.cache import ttl_cache
 
 
 # Points allocation
@@ -26,6 +27,7 @@ DRAW_POINTS = 2
 LOSS_POINTS = 0
 
 
+@ttl_cache(ttl_seconds=300)
 async def get_standings(db: AsyncSession, competition_id: int) -> dict | None:
     """Calculate standings for a competition from completed game results."""
     # Verify competition exists

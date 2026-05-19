@@ -1,8 +1,0 @@
-=== DETAILED DIAGNOSTIC ===
-Records fetched: 26
-Matched team_ext_id 551541 to db_team_id 134
-Existing count in player_history for game_id=1022, team_id=134: 0
-Skipped empty roster: 7
-Skipped no player ID: 0
-Skipped unknown team ID: 0
-Total insert operations: 19

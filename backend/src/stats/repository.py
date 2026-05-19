@@ -2,6 +2,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
 from src.stats.schemas import PlayerStatRow, ClubStatRow, SeasonOverview
+from src.core.cache import ttl_cache
 
 
 async def get_player_stats(
@@ -143,6 +144,7 @@ async def get_club_stats(
         ))
     return stats
 
+@ttl_cache(ttl_seconds=300)
 async def get_season_overview(
     db: AsyncSession, 
     competition_id: Optional[int] = None,
@@ -224,6 +226,42 @@ async def get_season_overview(
     
     res_try = await db.execute(text(query_try), params)
     row_try = res_try.fetchone()
+
+    # 5. Club count
+    query_clubs = """
+        SELECT COUNT(DISTINCT t.club_id)
+        FROM teams t
+        JOIN competitions comp ON t.competition_id = comp.id
+        LEFT JOIN competition_mapping m ON comp.competition_mapping_id = m.id
+        WHERE 1=1
+    """
+    if competition_id:
+        query_clubs += " AND comp.id = :comp_id"
+    if parent_competition:
+        query_clubs += " AND m.parent_competition = :parent"
+    if division:
+        query_clubs += " AND m.division = :div"
+    res_clubs = await db.execute(text(query_clubs), params)
+    club_count = res_clubs.scalar() or 0
+
+    # 6. Player count
+    query_players = """
+        SELECT COUNT(DISTINCT ph.player_id)
+        FROM player_history ph
+        JOIN games g ON ph.game_id = g.id
+        JOIN rounds r ON g.round_id = r.id
+        JOIN competitions comp ON r.competition_id = comp.id
+        LEFT JOIN competition_mapping m ON comp.competition_mapping_id = m.id
+        WHERE 1=1
+    """
+    if competition_id:
+        query_players += " AND r.competition_id = :comp_id"
+    if parent_competition:
+        query_players += " AND m.parent_competition = :parent"
+    if division:
+        query_players += " AND m.division = :div"
+    res_players = await db.execute(text(query_players), params)
+    player_count = res_players.scalar() or 0
     
     return SeasonOverview(
         total_tries=row_base.total_tries or 0,
@@ -235,5 +273,7 @@ async def get_season_overview(
         top_scorer_points=top_scorer.total_points if top_scorer else 0,
         top_try_scorer_name=row_try.name if row_try else None,
         top_try_scorer_tries=row_try.tries if row_try else 0,
-        games_played=games_played or 0
+        games_played=games_played or 0,
+        club_count=club_count,
+        player_count=player_count
     )

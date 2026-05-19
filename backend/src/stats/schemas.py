@@ -41,3 +41,6 @@ class SeasonOverview(BaseModel):
     top_try_scorer_name: str | None = None
     top_try_scorer_tries: int = 0
     games_played: int
+    club_count: int = 0
+    player_count: int = 0
+
