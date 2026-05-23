@@ -8,6 +8,8 @@ import CompetitionDetail from './pages/CompetitionDetail.jsx'
 import GameDetail from './pages/GameDetail.jsx'
 import Stats from './pages/Stats.jsx'
 import PlayerDetail from './pages/PlayerDetail.jsx'
+import RefZone from './pages/RefZone.jsx'
+
 
 export default function App() {
   return (
@@ -22,6 +24,8 @@ export default function App() {
           <Route path="/games/:id" element={<GameDetail />} />
           <Route path="/stats" element={<Stats />} />
           <Route path="/players/:id" element={<PlayerDetail />} />
+          <Route path="/refzone" element={<RefZone />} />
+
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,0 +1,376 @@
+/* ============================================
+   RefZone Styling
+   ============================================ */
+
+.refzone-page {
+  padding-top: calc(var(--nav-height) + var(--space-8));
+  padding-bottom: var(--space-16);
+  min-height: 100vh;
+}
+
+/* --- Login Form --- */
+.login-page {
+  padding-top: calc(var(--nav-height) + var(--space-12));
+  padding-bottom: var(--space-16);
+  min-height: calc(100vh - 120px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-card {
+
+  width: 100%;
+  max-width: 420px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-lg);
+  animation: fade-in 0.4s ease-out;
+}
+
+.login-card__header {
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+
+.login-card__icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-3);
+  display: inline-block;
+  filter: drop-shadow(0 0 10px var(--color-accent-glow));
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.2)); }
+  50% { filter: drop-shadow(0 0 15px rgba(34, 197, 94, 0.5)); }
+}
+
+.login-card__title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold);
+  margin-bottom: var(--space-2);
+}
+
+.login-card__subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.form-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+  outline: none;
+}
+
+.form-input:focus {
+  border-color: var(--color-accent-primary);
+  box-shadow: 0 0 0 2px var(--color-accent-glow);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.form-note {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: var(--line-height-relaxed);
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--color-border);
+}
+
+.alert-danger {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: var(--color-loss);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
+
+/* --- Dashboard --- */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-8);
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.referee-profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.referee-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  border: 2px solid var(--color-accent-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.referee-avatar-placeholder {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-glow);
+  color: var(--color-text-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-bold);
+  border: 2px solid var(--color-accent-primary);
+}
+
+.referee-name {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.referee-title {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* --- Appointment sections --- */
+.refzone-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+
+.refzone-section__title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.refzone-section__count {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  background: var(--color-bg-glass);
+  padding: 2px var(--space-3);
+  border-radius: var(--radius-full);
+  color: var(--color-text-muted);
+}
+
+.no-appointments {
+  background: var(--color-bg-card);
+  border: 1px dashed var(--color-border);
+  padding: var(--space-8);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+/* --- Card specific styles --- */
+.appointment-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.appointment-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.appointment-card__badges {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.badge.badge--role {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+.badge.badge--approved {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--color-win);
+  border-color: rgba(34, 197, 94, 0.25);
+}
+
+.badge.badge--pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--color-draw);
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+.badge.badge--past {
+  background: rgba(148, 163, 184, 0.1);
+  color: var(--color-text-secondary);
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+.badge.badge--cancelled {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--color-loss);
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+
+
+.appointment-card__time {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.appointment-card__teams {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.appointment-card__team {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  flex: 1;
+}
+
+.appointment-card__team--home {
+  text-align: right;
+}
+
+.appointment-card__team--away {
+  text-align: left;
+}
+
+.appointment-card__vs {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-weight: var(--font-weight-bold);
+  background: var(--color-bg-glass);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.appointment-card__details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.appointment-card__comp {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-accent);
+}
+
+.appointment-card__venue {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* Officials Panel */
+.officials-panel {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.officials-panel__trigger {
+  width: 100%;
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background var(--transition-fast);
+}
+
+.officials-panel__trigger:hover {
+  background: var(--color-bg-glass-hover);
+  color: var(--color-text-primary);
+}
+
+.officials-panel__content {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border);
+  background: rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.official-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-xs);
+}
+
+.official-name {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.official-role {
+  color: var(--color-text-muted);
+}

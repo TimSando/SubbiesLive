@@ -13,6 +13,8 @@ from src.games.router import router as games_router
 from src.players.router import router as players_router
 from src.standings.router import router as standings_router
 from src.stats.router import router as stats_router
+from src.refzone.router import router as refzone_router
+
 
 settings = get_settings()
 logger = logging.getLogger("uvicorn")
@@ -61,6 +63,8 @@ app.include_router(games_router, prefix="/api/games", tags=["Games"])
 app.include_router(players_router, prefix="/api/players", tags=["Players"])
 app.include_router(standings_router, prefix="/api/standings", tags=["Standings"])
 app.include_router(stats_router, prefix="/api/stats", tags=["Stats"])
+app.include_router(refzone_router, prefix="/api/refzone", tags=["RefZone"])
+
 
 
 @app.get("/api/health", tags=["Health"])

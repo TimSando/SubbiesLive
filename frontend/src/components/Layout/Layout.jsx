@@ -6,7 +6,9 @@ const navLinks = [
   { path: '/clubs', label: 'Clubs' },
   { path: '/competitions', label: 'Competitions' },
   { path: '/stats', label: 'Stats' },
+  { path: '/refzone', label: 'RefZone' },
 ]
+
 
 export default function Layout() {
   const location = useLocation()
