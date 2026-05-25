@@ -46,6 +46,8 @@ class GameBrief(BaseModel):
     location: str | None = None
     status: str
     external_id: int
+    video_url: str | None = None
+    video_url_needs_review: bool = False
 
     class Config:
         from_attributes = True
@@ -65,7 +67,10 @@ class GameDetail(BaseModel):
     location: str | None = None
     status: str
     external_id: int
+    video_url: str | None = None
+    video_url_needs_review: bool = False
     events: list[GameEventSchema] = []
 
     class Config:
         from_attributes = True
+

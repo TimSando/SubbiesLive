@@ -6,6 +6,7 @@ import ToggleSwitch from '../components/Stats/ToggleSwitch'
 import { Link } from 'react-router-dom'
 
 export default function Stats() {
+  const [hasLiveGames, setHasLiveGames] = useState(false)
   const [activeTab, setActiveTab] = useState(() => sessionStorage.getItem('stats_activeTab') || 'players')
   const [filter, setFilter] = useState(() => {
     const cached = sessionStorage.getItem('stats_filter')
@@ -14,6 +15,18 @@ export default function Stats() {
   const [viewMode, setViewMode] = useState(() => sessionStorage.getItem('stats_viewMode') || 'total')
   
   const [searchQuery, setSearchQuery] = useState(() => sessionStorage.getItem('stats_searchQuery') || '')
+
+  useEffect(() => {
+    async function checkLive() {
+      try {
+        const live = await api.getLiveGames()
+        setHasLiveGames(live && live.length > 0)
+      } catch (e) {
+        console.error('Failed to fetch live games for stats page:', e)
+      }
+    }
+    checkLive()
+  }, [])
 
   useEffect(() => {
     sessionStorage.setItem('stats_activeTab', activeTab)
@@ -263,6 +276,26 @@ export default function Stats() {
             <ToggleSwitch value={viewMode} onChange={setViewMode} />
           </div>
         </header>
+
+        {hasLiveGames && (
+          <div style={{
+            background: 'var(--color-live-bg)',
+            border: '1px solid var(--color-live)',
+            borderRadius: 'var(--radius-md)',
+            padding: 'var(--space-3) var(--space-4)',
+            marginBottom: 'var(--space-4)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--space-2)',
+            color: 'var(--color-text-primary)',
+            fontSize: 'var(--font-size-sm)'
+          }}>
+            <span className="live-dot" />
+            <span>
+              <strong>Live updates active:</strong> Stats include live, in-progress game data and will update as matches progress.
+            </span>
+          </div>
+        )}
 
         <div className="tab-bar">
           <button 

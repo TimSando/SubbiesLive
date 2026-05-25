@@ -1,7 +1,7 @@
 """Data transformation — maps raw FuseSport API responses into database-ready dicts."""
 
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil import parser as dateparser
 
 logger = logging.getLogger(__name__)
@@ -68,12 +68,23 @@ def parse_game_date(datestr: str) -> datetime | None:
 
 
 def determine_game_status(game: dict) -> str:
-    """Determine game status from FuseSport game data."""
+    """Determine game status from FuseSport game data.
+
+    Status values:
+      completed     — FuseSport has marked the game as submitted
+      in_progress   — game date has passed but < 2 hours ago, not yet submitted
+      not_completed — game date was > 2 hours ago but never submitted (bye, postponed, no data)
+      scheduled     — game date is in the future
+    """
     if game.get("submitted"):
         return "completed"
     game_date = parse_game_date(game.get("gamedate", ""))
-    if game_date and game_date < datetime.now():
-        return "in_progress"
+    if game_date:
+        now = datetime.now()
+        if game_date < now - timedelta(hours=2):
+            return "not_completed"
+        if game_date < now:
+            return "in_progress"
     return "scheduled"
 
 

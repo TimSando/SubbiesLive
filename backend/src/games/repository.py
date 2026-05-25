@@ -27,6 +27,8 @@ def _build_game_base_query():
             Game.location,
             Game.status,
             Game.external_id,
+            Game.video_url,
+            Game.video_url_needs_review,
             Round.name.label("round_name"),
             Competition.name.label("competition_name"),
             Competition.id.label("competition_id"),
@@ -76,7 +78,10 @@ def _row_to_game_dict(row) -> dict:
         "location": data["location"],
         "status": data["status"],
         "external_id": data["external_id"],
+        "video_url": data["video_url"],
+        "video_url_needs_review": data["video_url_needs_review"],
     }
+
 
 
 async def get_games(
@@ -99,7 +104,11 @@ async def get_games(
     if team_id:
         stmt = stmt.where((Game.home_team_id == team_id) | (Game.away_team_id == team_id))
     if status:
-        stmt = stmt.where(Game.status == status)
+        if "," in status:
+            statuses = [s.strip() for s in status.split(",") if s.strip()]
+            stmt = stmt.where(Game.status.in_(statuses))
+        else:
+            stmt = stmt.where(Game.status == status)
     if player_id:
         stmt = stmt.join(PlayerHistory, PlayerHistory.game_id == Game.id).where(PlayerHistory.player_id == player_id)
 

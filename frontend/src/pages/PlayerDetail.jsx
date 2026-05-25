@@ -187,31 +187,58 @@ export default function PlayerDetail() {
             <div className="round-games animate-in">
               {games.map(game => {
                 const isCompleted = game.status === 'completed'
+                const isLive = game.status === 'in_progress'
+                const isNotCompleted = game.status === 'not_completed'
                 const homeWin = isCompleted && game.home_score > game.away_score
                 const awayWin = isCompleted && game.away_score > game.home_score
+                const showScore = isCompleted || isLive
+
+                let rowClass = 'fixture-row'
+                if (isLive) rowClass += ' fixture-row--live'
+                if (isNotCompleted) rowClass += ' fixture-row--not-completed'
 
                 return (
-                  <Link to={`/games/${game.id}`} key={game.id} className="fixture-row" id={`fixture-${game.id}`}>
+                  <Link to={`/games/${game.id}`} key={game.id} className={rowClass} id={`fixture-${game.id}`}>
                     <span className="fixture-row__date">{formatDate(game.game_date)}</span>
                     <span className={`fixture-row__team fixture-row__team--home ${homeWin ? 'fixture-row__team--winner' : ''}`}>
                       {game.home_team.club_name || game.home_team.name}
                     </span>
-                    <span className="fixture-row__score--home">
-                      {isCompleted ? (
-                        <span className={homeWin ? 'score--winner' : ''}>{game.home_score}</span>
-                      ) : <span style={{ color: 'var(--color-text-muted)' }}>-</span>}
-                    </span>
-                    <span className="fixture-row__score--dash">—</span>
-                    <span className="fixture-row__score--away">
-                      {isCompleted ? (
-                        <span className={awayWin ? 'score--winner' : ''}>{game.away_score}</span>
-                      ) : <span style={{ color: 'var(--color-text-muted)' }}>-</span>}
-                    </span>
+                    
+                    {isNotCompleted ? (
+                      <>
+                        <span className="fixture-row__score--home"></span>
+                        <span className="fixture-row__score--dash">
+                          <span className="not-completed-label">No result</span>
+                        </span>
+                        <span className="fixture-row__score--away"></span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="fixture-row__score--home">
+                          {showScore ? (
+                            <span className={homeWin ? 'score--winner' : ''}>{game.home_score}</span>
+                          ) : <span style={{ color: 'var(--color-text-muted)' }}>-</span>}
+                        </span>
+                        <span className="fixture-row__score--dash">—</span>
+                        <span className="fixture-row__score--away">
+                          {showScore ? (
+                            <span className={awayWin ? 'score--winner' : ''}>{game.away_score}</span>
+                          ) : <span style={{ color: 'var(--color-text-muted)' }}>-</span>}
+                        </span>
+                      </>
+                    )}
+
                     <span className={`fixture-row__team fixture-row__team--away ${awayWin ? 'fixture-row__team--winner' : ''}`}>
                       {game.away_team.club_name || game.away_team.name}
                     </span>
                     <span className="fixture-row__location">
-                      {game.location ? `📍 ${game.location}` : ''}
+                      {isLive ? (
+                        <span className="live-badge">
+                          <span className="live-dot" /> Live
+                        </span>
+                      ) : (
+                        game.location ? `📍 ${game.location}` : ''
+                      )}
                     </span>
                   </Link>
                 )

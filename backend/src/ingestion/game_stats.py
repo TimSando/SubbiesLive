@@ -23,14 +23,24 @@ def ingest_game_events(session, game_id: int, game_external_id: int, team_id_map
     For completed games whose events are already fully ingested, skips the network
     call entirely so startup re-syncs stay fast.
     """
-    # Skip network call entirely if this completed game already has events in the DB.
-    existing_count = session.execute(
-        text("SELECT COUNT(*) FROM game_events WHERE game_id = :gid"),
+    # Fetch status of the game from the DB
+    status = session.execute(
+        text("SELECT status FROM games WHERE id = :gid"),
         {"gid": game_id}
     ).scalar()
-    if existing_count > 0:
-        logger.debug(f"  Skipping game_events fetch for game {game_external_id} — already ingested ({existing_count} events)")
+    
+    if status == "not_completed":
+        logger.debug(f"  Skipping game_events fetch for game {game_external_id} — game status is not_completed")
         return
+        
+    if status == "completed":
+        existing_count = session.execute(
+            text("SELECT COUNT(*) FROM game_events WHERE game_id = :gid"),
+            {"gid": game_id}
+        ).scalar()
+        if existing_count > 0:
+            logger.debug(f"  Skipping game_events fetch for game {game_external_id} — already ingested ({existing_count} events)")
+            return
 
     if game_info is None:
         try:
@@ -114,7 +124,16 @@ def ingest_player_history(session, game_id: int, score_sheet_id: str, team_id_ma
                 db_team_id = resolved_id
                 break
 
-    if db_team_id:
+    # Fetch status of the game from the DB
+    status = session.execute(
+        text("SELECT status FROM games WHERE id = :gid"),
+        {"gid": game_id}
+    ).scalar()
+
+    if status == "not_completed":
+        return
+
+    if status == "completed" and db_team_id:
         existing = session.execute(
             text("SELECT COUNT(*) FROM player_history WHERE game_id = :gid AND team_id = :tid"),
             {"gid": game_id, "tid": db_team_id}
@@ -220,14 +239,25 @@ def ingest_player_history_for_game(session, game_id: int, game_external_id: int,
     For completed games whose player_history rows are already fully ingested for
     both teams, skips the network call entirely.
     """
-    # Skip if both score sheets are already recorded in player_history.
-    existing_sheets = session.execute(
-        text("SELECT COUNT(DISTINCT team_id) FROM player_history WHERE game_id = :gid"),
+    # Fetch status of the game from the DB
+    status = session.execute(
+        text("SELECT status FROM games WHERE id = :gid"),
         {"gid": game_id}
     ).scalar()
-    if existing_sheets >= 2:
-        logger.debug(f"  Skipping player_history fetch for game {game_external_id} — both score sheets already ingested")
+
+    if status == "not_completed":
+        logger.debug(f"  Skipping player_history fetch for game {game_external_id} — game status is not_completed")
         return
+
+    if status == "completed":
+        # Skip if both score sheets are already recorded in player_history.
+        existing_sheets = session.execute(
+            text("SELECT COUNT(DISTINCT team_id) FROM player_history WHERE game_id = :gid"),
+            {"gid": game_id}
+        ).scalar()
+        if existing_sheets >= 2:
+            logger.debug(f"  Skipping player_history fetch for game {game_external_id} — both score sheets already ingested")
+            return
 
     if game_info is None:
         try:

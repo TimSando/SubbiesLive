@@ -101,8 +101,8 @@ export default function GameDetail() {
   const isCompleted = game.status === 'completed'
   const homeWin = isCompleted && game.home_score > game.away_score
   const awayWin = isCompleted && game.away_score > game.home_score
-  const homeEvents = game.events?.filter(e => e.team_id === game.home_team.id) || []
-  const awayEvents = game.events?.filter(e => e.team_id === game.away_team.id) || []
+  const homeEvents = game.events?.filter(e => e.team_id === game.home_team.id && !e.event_type.includes('coach')) || []
+  const awayEvents = game.events?.filter(e => e.team_id === game.away_team.id && !e.event_type.includes('coach')) || []
 
   return (
     <div className="page">
@@ -151,6 +151,44 @@ export default function GameDetail() {
             <span>📅 {formatDateTime(game.game_date)}</span>
             {game.location && <span>📍 {game.location}</span>}
           </div>
+
+          {game.video_url && (
+            <div style={{ 
+              marginTop: 'var(--space-6)', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              gap: 'var(--space-3)' 
+            }}>
+              <a 
+                href={game.video_url} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="btn"
+                style={{ 
+                  background: 'linear-gradient(135deg, #1e40af, #1e3a8a)', 
+                  color: 'white',
+                  borderColor: '#3b82f6',
+                  gap: 'var(--space-2)',
+                  fontWeight: 'var(--font-weight-semibold)',
+                  boxShadow: '0 0 15px rgba(59, 130, 246, 0.2)'
+                }}
+              >
+                📺 Watch Replay on NSW Rugby TV
+              </a>
+              {game.video_url_needs_review && (
+                <span className="badge" style={{ 
+                  backgroundColor: 'rgba(245, 158, 11, 0.15)', 
+                  color: 'var(--color-draw)', 
+                  borderColor: 'rgba(245, 158, 11, 0.25)',
+                  textTransform: 'none',
+                  letterSpacing: 'normal'
+                }}>
+                  ⚠️ Unverified Stream Link (Pending Review)
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         {isCompleted && game.events?.length > 0 && (

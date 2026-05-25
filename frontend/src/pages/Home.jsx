@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useApi } from '../hooks/useApi.js'
 import { api } from '../api/client.js'
@@ -14,11 +15,17 @@ function formatTime(dateStr) {
 
 function GamePill({ game }) {
   const isCompleted = game.status === 'completed'
+  const isLive = game.status === 'in_progress'
   const homeWin = isCompleted && game.home_score > game.away_score
   const awayWin = isCompleted && game.away_score > game.home_score
+  const showScore = isCompleted || isLive
 
   return (
-    <Link to={`/games/${game.id}`} className="game-pill" id={`game-${game.id}`}>
+    <Link 
+      to={`/games/${game.id}`} 
+      className={`game-pill ${isLive ? 'game-pill--live' : ''}`} 
+      id={`game-${game.id}`}
+    >
       <div className="game-pill__meta">
         <span className="game-pill__comp">{game.competition_name}</span>
         <span className="game-pill__round">{game.round_name}</span>
@@ -26,7 +33,7 @@ function GamePill({ game }) {
       <div className="game-pill__teams">
         <div className={`game-pill__team ${homeWin ? 'game-pill__team--winner' : ''}`}>
           <span className="game-pill__team-name">{game.home_team.club_name || game.home_team.name}</span>
-          {isCompleted && (
+          {showScore && (
             <span className={`game-pill__score ${homeWin ? 'game-pill__score--winner' : ''}`}>
               {game.home_score}
             </span>
@@ -34,7 +41,7 @@ function GamePill({ game }) {
         </div>
         <div className={`game-pill__team ${awayWin ? 'game-pill__team--winner' : ''}`}>
           <span className="game-pill__team-name">{game.away_team.club_name || game.away_team.name}</span>
-          {isCompleted && (
+          {showScore && (
             <span className={`game-pill__score ${awayWin ? 'game-pill__score--winner' : ''}`}>
               {game.away_score}
             </span>
@@ -45,13 +52,22 @@ function GamePill({ game }) {
         <span className="game-pill__date">
           {formatDate(game.game_date)} {!isCompleted && `at ${formatTime(game.game_date)}`}
         </span>
-        <span className="game-pill__status">{game.status}</span>
+        {isLive ? (
+          <span className="live-badge">
+            <span className="live-dot" /> Live
+          </span>
+        ) : (
+          <span className="game-pill__status">{game.status}</span>
+        )}
       </div>
     </Link>
   )
 }
 
 export default function Home() {
+  const [liveGames, setLiveGames] = useState([])
+  const [loadingLive, setLoadingLive] = useState(true)
+
   const { data: recentGames, loading: loadingRecent } = useApi(
     () => api.getGames({ status: 'completed', limit: 6 }), []
   )
@@ -61,6 +77,24 @@ export default function Home() {
   const { data: overview, loading: loadingOverview } = useApi(
     () => api.getSeasonOverview(), []
   )
+
+  // 60-second polling effect for live games
+  useEffect(() => {
+    async function fetchLive() {
+      try {
+        const data = await api.getLiveGames()
+        setLiveGames(data || [])
+      } catch (err) {
+        console.error('Error fetching live games:', err)
+      } finally {
+        setLoadingLive(false)
+      }
+    }
+
+    fetchLive()
+    const interval = setInterval(fetchLive, 60000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <div className="page">
@@ -127,6 +161,24 @@ export default function Home() {
             <p>Deep-dive into player performance, leaderboard rankings, top try-scorers, conversions, and team stats.</p>
           </Link>
         </section>
+
+        {liveGames.length > 0 && (
+          <>
+            <hr className="home-section-divider" />
+            <section className="home-section animate-fade-in">
+              <div className="game-strip-header">
+                <h2 style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                  <span className="live-dot" /> Live Games
+                </h2>
+              </div>
+              <div className="game-strip">
+                {liveGames.map(game => (
+                  <GamePill key={game.id} game={game} />
+                ))}
+              </div>
+            </section>
+          </>
+        )}
 
         <hr className="home-section-divider" />
 
