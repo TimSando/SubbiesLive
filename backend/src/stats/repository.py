@@ -189,7 +189,7 @@ async def get_season_overview(
         JOIN rounds r ON g.round_id = r.id 
         JOIN competitions comp ON r.competition_id = comp.id
         LEFT JOIN competition_mapping m ON comp.competition_mapping_id = m.id
-        WHERE g.status = 'completed'
+        WHERE g.status IN ('completed', 'in_progress')
     """
     if competition_id:
         query_games += " AND r.competition_id = :comp_id"

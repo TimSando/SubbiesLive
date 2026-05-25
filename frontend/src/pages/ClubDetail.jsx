@@ -53,6 +53,8 @@ export default function ClubDetail() {
 
   // Win/Loss/Draw highlight logic for our club in fixtures
   const getGameOutcome = (game) => {
+    if (game.status === 'in_progress') return 'in_progress'
+    if (game.status === 'not_completed') return 'not_completed'
     if (game.status !== 'completed' || game.home_score === null || game.away_score === null) return 'scheduled'
     const isHome = game.home_team.club_id === club.id
     const ourScore = isHome ? game.home_score : game.away_score
@@ -523,10 +525,10 @@ export default function ClubDetail() {
               )}
             </section>
 
-            {/* 3. UPCOMING FIXTURES CAROUSEL */}
+            {/* 3. UPCOMING & LIVE GAMES CAROUSEL */}
             <section style={{ marginBottom: 'var(--space-6)' }}>
               <h2 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-bold)', marginBottom: 'var(--space-4)', color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                <span>📅</span> Upcoming Games
+                <span>📅</span> Upcoming & Live Games
               </h2>
               {club.upcoming_fixtures && club.upcoming_fixtures.length > 0 ? (
                 <div style={{
@@ -538,76 +540,146 @@ export default function ClubDetail() {
                   scrollbarWidth: 'thin',
                   WebkitOverflowScrolling: 'touch'
                 }}>
-                  {club.upcoming_fixtures.map(game => (
-                    <Link 
-                      to={`/games/${game.id}`} 
-                      key={game.id} 
-                      className="card" 
-                      style={{
-                        flex: '0 0 290px',
-                        padding: 'var(--space-4)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 'var(--space-3)',
-                        textDecoration: 'none',
-                        color: 'inherit',
-                        borderLeft: '3px solid var(--color-border)',
-                        background: 'rgba(17, 24, 39, 0.4)'
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                          {game.round_name}
-                        </span>
-                        <span className="badge" style={{
-                          background: 'rgba(34, 197, 94, 0.1)',
-                          color: 'var(--color-text-accent)',
-                          borderColor: 'rgba(34, 197, 94, 0.2)',
-                          fontSize: '0.65rem',
-                          padding: '2px var(--space-2)'
-                        }}>
-                          FIXTURE
-                        </span>
-                      </div>
+                  {club.upcoming_fixtures.map(game => {
+                    const isLive = game.status === 'in_progress'
+                    const isNotCompleted = game.status === 'not_completed'
+                    
+                    let cardBorderColor = 'var(--color-border)'
+                    let cardBackground = 'rgba(17, 24, 39, 0.4)'
+                    let cardOpacity = 1
 
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-                        <div>
-                          <span style={{ 
-                            fontSize: 'var(--font-size-sm)', 
-                            fontWeight: game.home_team.club_id === club.id ? 'var(--font-weight-bold)' : 'var(--font-weight-medium)',
-                            color: game.home_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)',
-                            display: 'block',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis'
-                          }}>
-                            {game.home_team.name}
-                          </span>
-                        </div>
-                        <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textAlign: 'left', paddingLeft: 'var(--space-2)' }}>
-                          vs
-                        </div>
-                        <div>
-                          <span style={{ 
-                            fontSize: 'var(--font-size-sm)', 
-                            fontWeight: game.away_team.club_id === club.id ? 'var(--font-weight-bold)' : 'var(--font-weight-medium)',
-                            color: game.away_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)',
-                            display: 'block',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis'
-                          }}>
-                            {game.away_team.name}
-                          </span>
-                        </div>
-                      </div>
+                    if (isLive) {
+                      cardBorderColor = 'var(--color-live)'
+                      cardBackground = 'var(--color-live-bg)'
+                    } else if (isNotCompleted) {
+                      cardOpacity = 0.55
+                    }
 
-                      <div style={{ marginTop: 'auto', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 'var(--space-2)', display: 'flex', flexDirection: 'column', gap: '2px', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
-                        <span>📅 {formatFixtureDate(game.game_date)} at {formatFixtureTime(game.game_date)}</span>
-                        {game.location && <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>📍 {game.location}</span>}
-                      </div>
-                    </Link>
-                  ))}
+                    return (
+                      <Link 
+                        to={`/games/${game.id}`} 
+                        key={game.id} 
+                        className="card" 
+                        style={{
+                          flex: '0 0 290px',
+                          padding: 'var(--space-4)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 'var(--space-3)',
+                          textDecoration: 'none',
+                          color: 'inherit',
+                          borderLeft: `3px solid ${cardBorderColor}`,
+                          background: cardBackground,
+                          opacity: cardOpacity
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                            {game.round_name}
+                          </span>
+                          {isLive ? (
+                            <span className="live-badge" style={{ fontSize: '0.65rem', padding: '2px var(--space-2)' }}>
+                              <span className="live-dot" /> LIVE
+                            </span>
+                          ) : isNotCompleted ? (
+                            <span className="badge" style={{
+                              background: 'rgba(255, 255, 255, 0.05)',
+                              color: 'var(--color-text-muted)',
+                              borderColor: 'var(--color-border)',
+                              fontSize: '0.65rem',
+                              padding: '2px var(--space-2)'
+                            }}>
+                              NO RESULT
+                            </span>
+                          ) : (
+                            <span className="badge" style={{
+                              background: 'rgba(34, 197, 94, 0.1)',
+                              color: 'var(--color-text-accent)',
+                              borderColor: 'rgba(34, 197, 94, 0.2)',
+                              fontSize: '0.65rem',
+                              padding: '2px var(--space-2)'
+                            }}>
+                              FIXTURE
+                            </span>
+                          )}
+                        </div>
+
+                        {isLive ? (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <span style={{ 
+                                fontSize: 'var(--font-size-sm)', 
+                                fontWeight: game.home_team.club_id === club.id ? 'var(--font-weight-bold)' : 'var(--font-weight-medium)',
+                                color: game.home_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                maxWidth: '180px'
+                              }}>
+                                {game.home_team.name}
+                              </span>
+                              <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-bold)', color: game.home_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)' }}>
+                                {game.home_score}
+                              </span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <span style={{ 
+                                fontSize: 'var(--font-size-sm)', 
+                                fontWeight: game.away_team.club_id === club.id ? 'var(--font-weight-bold)' : 'var(--font-weight-medium)',
+                                color: game.away_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                maxWidth: '180px'
+                              }}>
+                                {game.away_team.name}
+                              </span>
+                              <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-bold)', color: game.away_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)' }}>
+                                {game.away_score}
+                              </span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                            <div>
+                              <span style={{ 
+                                fontSize: 'var(--font-size-sm)', 
+                                fontWeight: game.home_team.club_id === club.id ? 'var(--font-weight-bold)' : 'var(--font-weight-medium)',
+                                color: game.home_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)',
+                                display: 'block',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis'
+                              }}>
+                                {game.home_team.name}
+                              </span>
+                            </div>
+                            <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textAlign: 'left', paddingLeft: 'var(--space-2)' }}>
+                              vs
+                            </div>
+                            <div>
+                              <span style={{ 
+                                fontSize: 'var(--font-size-sm)', 
+                                fontWeight: game.away_team.club_id === club.id ? 'var(--font-weight-bold)' : 'var(--font-weight-medium)',
+                                color: game.away_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)',
+                                display: 'block',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis'
+                              }}>
+                                {game.away_team.name}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
+                        <div style={{ marginTop: 'auto', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 'var(--space-2)', display: 'flex', flexDirection: 'column', gap: '2px', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
+                          <span>📅 {formatFixtureDate(game.game_date)} {!isLive && `at ${formatFixtureTime(game.game_date)}`}</span>
+                          {game.location && <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>📍 {game.location}</span>}
+                        </div>
+                      </Link>
+                    )
+                  })}
                 </div>
               ) : (
                 <div className="card" style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)' }}>

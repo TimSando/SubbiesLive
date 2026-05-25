@@ -74,20 +74,20 @@ def start_ingestion_scheduler():
         name="Daily ingestion (Sun-Fri 6:00 AM)",
     )
 
-    # Game day sync every 30 min on Saturday, 9 AM - 6 PM
+    # Game day sync every 15 min on Saturday, 9 AM - 6 PM
     _scheduler.add_job(
         run_ingestion,
-        CronTrigger(day_of_week="sat", hour="9-17", minute="0,30", timezone=TIMEZONE),
+        CronTrigger(day_of_week="sat", hour="9-17", minute="0,15,30,45", timezone=TIMEZONE),
         args=[Session],
         id="gameday_ingestion",
-        name="Game day ingestion (Sat every 30 min, 9 AM - 6 PM)",
+        name="Game day ingestion (Sat every 15 min, 9 AM - 6 PM)",
     )
 
     _scheduler.start()
 
     logger.info("Ingestion scheduler started:")
     logger.info("  • Sun-Fri: Daily at 6:00 AM AEST")
-    logger.info("  • Saturday: Every 30 min, 9:00 AM - 6:00 PM AEST")
+    logger.info("  • Saturday: Every 15 min, 9:00 AM - 6:00 PM AEST")
 
 
 def stop_ingestion_scheduler():

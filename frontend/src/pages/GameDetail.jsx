@@ -101,8 +101,8 @@ export default function GameDetail() {
   const isCompleted = game.status === 'completed'
   const homeWin = isCompleted && game.home_score > game.away_score
   const awayWin = isCompleted && game.away_score > game.home_score
-  const homeEvents = game.events?.filter(e => e.team_id === game.home_team.id) || []
-  const awayEvents = game.events?.filter(e => e.team_id === game.away_team.id) || []
+  const homeEvents = game.events?.filter(e => e.team_id === game.home_team.id && !e.event_type.includes('coach')) || []
+  const awayEvents = game.events?.filter(e => e.team_id === game.away_team.id && !e.event_type.includes('coach')) || []
 
   return (
     <div className="page">

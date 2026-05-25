@@ -47,6 +47,7 @@ export const api = {
   getGames: (params = {}) => {
     return request(`/games${buildQuery(params)}`)
   },
+  getLiveGames: () => request('/games/live'),
   getGame: (id) => request(`/games/${id}`),
 
   // Players

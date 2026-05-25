@@ -1600,3 +1600,71 @@ tbody tr:last-child td {
     margin: var(--space-6) 0;
   }
 }
+
+/* Live / in-progress game indicators */
+:root {
+  --color-live: #f97316;                    /* orange-500 */
+  --color-live-bg: rgba(249, 115, 22, 0.10);
+  --color-live-pulse: rgba(249, 115, 22, 0.4);
+  --color-not-completed: var(--color-text-muted);
+  --color-not-completed-bg: rgba(100, 100, 120, 0.06);
+}
+
+/* In-progress (live) fixture rows and pills */
+.fixture-row--live {
+  border-left: 3px solid var(--color-live) !important;
+  background: var(--color-live-bg) !important;
+}
+
+.game-pill--live {
+  border-color: var(--color-live) !important;
+  background: var(--color-live-bg) !important;
+}
+
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-live);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-live);
+  box-shadow: 0 0 0 0 var(--color-live-pulse);
+  animation: live-pulse-anim 1.5s infinite;
+}
+
+@keyframes live-pulse-anim {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(249, 115, 22, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0);
+  }
+}
+
+/* Not-completed (no result available) */
+.fixture-row--not-completed {
+  opacity: 0.55;
+  background: var(--color-not-completed-bg) !important;
+}
+
+.not-completed-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+

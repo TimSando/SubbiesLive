@@ -112,22 +112,26 @@ def upsert_team(session, external_id: int, name: str, club_name: str,
 
 def upsert_game(session, round_id: int, game_data: dict, home_team_id: int, away_team_id: int) -> int:
     result = session.execute(
-        text("SELECT id, home_score FROM games WHERE external_id = :eid"),
+        text("SELECT id, home_score, away_score, status FROM games WHERE external_id = :eid"),
         {"eid": game_data["external_id"]}
     )
     row = result.fetchone()
 
     if row:
-        if game_data["home_score"] is not None and row[1] is None:
+        stored_id, stored_hs, stored_as, stored_status = row
+        # Check if anything changed: status, home_score, or away_score
+        if (game_data["status"] != stored_status or 
+            game_data["home_score"] != stored_hs or 
+            game_data["away_score"] != stored_as):
             session.execute(
                 text("""UPDATE games SET home_score = :hs, away_score = :as_, status = :status 
                         WHERE id = :id"""),
                 {"hs": game_data["home_score"], "as_": game_data["away_score"],
-                 "status": game_data["status"], "id": row[0]}
+                 "status": game_data["status"], "id": stored_id}
             )
             session.commit()
-            logger.info(f"Updated game {game_data['external_id']} with scores")
-        return row[0]
+            logger.info(f"Updated game {game_data['external_id']} (status: {stored_status} -> {game_data['status']}, score: {stored_hs}-{stored_as} -> {game_data['home_score']}-{game_data['away_score']})")
+        return stored_id
 
     result = session.execute(
         text("""INSERT INTO games (round_id, home_team_id, away_team_id, game_date, 

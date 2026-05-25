@@ -99,7 +99,11 @@ async def get_games(
     if team_id:
         stmt = stmt.where((Game.home_team_id == team_id) | (Game.away_team_id == team_id))
     if status:
-        stmt = stmt.where(Game.status == status)
+        if "," in status:
+            statuses = [s.strip() for s in status.split(",") if s.strip()]
+            stmt = stmt.where(Game.status.in_(statuses))
+        else:
+            stmt = stmt.where(Game.status == status)
     if player_id:
         stmt = stmt.join(PlayerHistory, PlayerHistory.game_id == Game.id).where(PlayerHistory.player_id == player_id)
 
