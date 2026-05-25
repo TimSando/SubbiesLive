@@ -27,6 +27,8 @@ def _build_game_base_query():
             Game.location,
             Game.status,
             Game.external_id,
+            Game.video_url,
+            Game.video_url_needs_review,
             Round.name.label("round_name"),
             Competition.name.label("competition_name"),
             Competition.id.label("competition_id"),
@@ -76,7 +78,10 @@ def _row_to_game_dict(row) -> dict:
         "location": data["location"],
         "status": data["status"],
         "external_id": data["external_id"],
+        "video_url": data["video_url"],
+        "video_url_needs_review": data["video_url_needs_review"],
     }
+
 
 
 async def get_games(

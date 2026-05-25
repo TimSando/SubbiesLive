@@ -3,7 +3,7 @@
 import uuid
 
 from datetime import datetime
-from sqlalchemy import ForeignKey, Integer, String, DateTime, Text, Uuid, UniqueConstraint
+from sqlalchemy import ForeignKey, Integer, String, DateTime, Text, Uuid, UniqueConstraint, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.database import Base
@@ -24,6 +24,9 @@ class Game(Base):
     away_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
     status: Mapped[str] = mapped_column(String(30), nullable=False, default="scheduled")
     external_id: Mapped[int] = mapped_column(Integer, unique=True, nullable=False, index=True)
+    video_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    video_url_needs_review: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+
 
     # Relationships
     round: Mapped["Round"] = relationship("Round", back_populates="games")

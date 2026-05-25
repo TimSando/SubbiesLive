@@ -83,11 +83,27 @@ def start_ingestion_scheduler():
         name="Game day ingestion (Sat every 15 min, 9 AM - 6 PM)",
     )
 
+    # NSWRugbyTV video URL ingestion (Sat 7:00 PM)
+    try:
+        from src.scripts.ingest_nswrugbytv import ingest_nswrugbytv_videos
+        _scheduler.add_job(
+            ingest_nswrugbytv_videos,
+            CronTrigger(day_of_week="sat", hour=19, minute=0, timezone=TIMEZONE),
+            args=[engine],
+            id="video_ingestion",
+            name="NSWRugbyTV video ingestion (Sat 7:00 PM)",
+        )
+    except Exception as e:
+        logger.error(f"Failed to schedule video ingestion job: {e}")
+
     _scheduler.start()
+
 
     logger.info("Ingestion scheduler started:")
     logger.info("  • Sun-Fri: Daily at 6:00 AM AEST")
     logger.info("  • Saturday: Every 15 min, 9:00 AM - 6:00 PM AEST")
+    logger.info("  • Saturday: NSWRugbyTV video ingestion at 7:00 PM AEST")
+
 
 
 def stop_ingestion_scheduler():
