@@ -83,20 +83,17 @@ export default function PlayerDetail() {
         {/* Player Profile Header Card */}
         <div className="card" style={{ display: 'flex', gap: 'var(--space-6)', padding: 'var(--space-6)', marginBottom: 'var(--space-8)', flexWrap: 'wrap', alignItems: 'center' }}>
           {/* Avatar Placeholder */}
-          <div style={{
-            width: '80px',
-            height: '80px',
-            borderRadius: '50%',
-            background: 'var(--color-bg-glass)',
-            border: '2px solid rgba(255,255,255,0.1)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '2rem',
-            userSelect: 'none'
-          }}>
-            👤
-          </div>
+          <img 
+            src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" 
+            alt={player.name} 
+            style={{
+              width: '80px',
+              height: '80px',
+              borderRadius: '50%',
+              objectFit: 'cover',
+              border: '2px solid rgba(255,255,255,0.1)'
+            }}
+          />
 
           <div style={{ flex: '1', minWidth: '200px' }}>
             <h1 style={{ margin: '0 0 var(--space-1) 0', fontSize: '2rem' }}>{player.name}</h1>

@@ -37,3 +37,14 @@ async def get_season_overview(
 ):
     """Get high-level season overview stats."""
     return await stats_repo.get_season_overview(db, competition_id, parent_competition, division)
+
+@router.get("/clubs/depth", response_model=List[schemas.ClubDepthRow])
+async def get_club_depth_leaderboard(
+    competition_id: Optional[int] = Query(None),
+    parent_competition: Optional[str] = Query(None),
+    division: Optional[str] = Query(None),
+    db: AsyncSession = Depends(get_db)
+):
+    """Get club depth and squad participation stats."""
+    return await stats_repo.get_club_depth_stats(db, competition_id, parent_competition, division)
+

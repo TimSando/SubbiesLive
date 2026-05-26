@@ -1,7 +1,7 @@
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
-from src.stats.schemas import PlayerStatRow, ClubStatRow, SeasonOverview
+from src.stats.schemas import PlayerStatRow, ClubStatRow, SeasonOverview, ClubDepthRow
 from src.core.cache import ttl_cache
 
 
@@ -277,3 +277,73 @@ async def get_season_overview(
         club_count=club_count,
         player_count=player_count
     )
+
+async def get_club_depth_stats(
+    db: AsyncSession, 
+    competition_id: Optional[int] = None,
+    parent_competition: Optional[str] = None,
+    division: Optional[str] = None
+) -> List[ClubDepthRow]:
+    query = """
+        WITH player_appearances AS (
+            SELECT 
+                ph.player_id,
+                t.club_id,
+                COUNT(DISTINCT ph.game_id) AS games_played,
+                COUNT(DISTINCT ph.team_id) AS teams_played
+            FROM player_history ph
+            JOIN teams t ON ph.team_id = t.id
+            JOIN games g ON ph.game_id = g.id
+            JOIN rounds r ON g.round_id = r.id
+            JOIN competitions comp ON r.competition_id = comp.id
+            LEFT JOIN competition_mapping m ON comp.competition_mapping_id = m.id
+            WHERE 1=1
+    """
+    
+    params = {}
+    if competition_id:
+        query += " AND r.competition_id = :comp_id"
+        params["comp_id"] = competition_id
+    if parent_competition:
+        query += " AND m.parent_competition = :parent"
+        params["parent"] = parent_competition
+    if division:
+        query += " AND m.division = :div"
+        params["div"] = division
+        
+    query += """
+            GROUP BY ph.player_id, t.club_id
+        )
+        SELECT 
+            c.id AS club_id,
+            c.name AS club_name,
+            c.logo_url,
+            COUNT(pa.player_id) AS total_players,
+            SUM(CASE WHEN pa.games_played >= 5 THEN 1 ELSE 0 END) AS core_players,
+            SUM(CASE WHEN pa.teams_played = 1 THEN 1 ELSE 0 END) AS dedicated_players,
+            SUM(CASE WHEN pa.teams_played >= 2 THEN 1 ELSE 0 END) AS swing_players,
+            AVG(pa.games_played) AS avg_games
+        FROM clubs c
+        JOIN player_appearances pa ON c.id = pa.club_id
+        GROUP BY c.id, c.name, c.logo_url
+        ORDER BY total_players DESC
+    """
+    
+    result = await db.execute(text(query), params)
+    rows = result.fetchall()
+    
+    stats = []
+    for i, row in enumerate(rows):
+        stats.append(ClubDepthRow(
+            rank=i + 1,
+            club_id=row.club_id,
+            club_name=row.club_name,
+            logo_url=row.logo_url,
+            total_players=row.total_players or 0,
+            core_players=int(row.core_players or 0),
+            dedicated_players=int(row.dedicated_players or 0),
+            swing_players=int(row.swing_players or 0),
+            avg_games=float(row.avg_games or 0.0)
+        ))
+    return stats
+

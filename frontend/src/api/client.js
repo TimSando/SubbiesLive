@@ -66,6 +66,9 @@ export const api = {
   getClubStats: (params = {}) => {
     return request(`/stats/clubs${buildQuery(params)}`)
   },
+  getClubDepthStats: (params = {}) => {
+    return request(`/stats/clubs/depth${buildQuery(params)}`)
+  },
   getSeasonOverview: (params = {}) => {
     return request(`/stats/overview${buildQuery(params)}`)
   },
