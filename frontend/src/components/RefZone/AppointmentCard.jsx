@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import '../../pages/RefZone.css';
 
 export default function AppointmentCard({ appointment }) {
@@ -27,7 +28,7 @@ export default function AppointmentCard({ appointment }) {
 
   // Format date & time in Sydney timezone
   const matchDate = new Date(match.moment);
-  
+
   const dateStr = matchDate.toLocaleDateString('en-AU', {
     timeZone: 'Australia/Sydney',
     weekday: 'short',
@@ -83,30 +84,44 @@ export default function AppointmentCard({ appointment }) {
         </div>
       </div>
 
-      {appointment.otherReferees && appointment.otherReferees.length > 0 && (
-        <div className="officials-panel">
-          <button
-            type="button"
-            className="officials-panel__trigger"
-            onClick={() => setShowOfficials(!showOfficials)}
+      {appointment.db_game_id && (
+        <div className="appointment-card__actions" style={{ marginTop: 'var(--space-4)' }}>
+          <Link
+            to={`/games/${appointment.db_game_id}`}
+            className="btn btn--primary"
+            style={{ display: 'block', textAlign: 'center', width: '100%', textDecoration: 'none' }}
           >
-            <span>Match Officials ({appointment.otherReferees.length})</span>
-            <span>{showOfficials ? '▲' : '▼'}</span>
-          </button>
-          {showOfficials && (
-            <div className="officials-panel__content">
-              {appointment.otherReferees.map((ref, idx) => (
-                <div className="official-item" key={ref._id || idx}>
-                  <span className="official-name">
-                    {ref.firstname} {ref.lastname}
-                  </span>
-                  <span className="official-role">{ref.type}</span>
-                </div>
-              ))}
-            </div>
-          )}
+            📊 View Stats & Match Centre
+          </Link>
         </div>
       )}
-    </div>
+
+      {
+        appointment.otherReferees && appointment.otherReferees.length > 0 && (
+          <div className="officials-panel">
+            <button
+              type="button"
+              className="officials-panel__trigger"
+              onClick={() => setShowOfficials(!showOfficials)}
+            >
+              <span>Match Officials ({appointment.otherReferees.length})</span>
+              <span>{showOfficials ? '▲' : '▼'}</span>
+            </button>
+            {showOfficials && (
+              <div className="officials-panel__content">
+                {appointment.otherReferees.map((ref, idx) => (
+                  <div className="official-item" key={ref._id || idx}>
+                    <span className="official-name">
+                      {ref.firstname} {ref.lastname}
+                    </span>
+                    <span className="official-role">{ref.type}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )
+      }
+    </div >
   );
 }

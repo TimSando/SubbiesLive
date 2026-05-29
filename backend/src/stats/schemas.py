@@ -44,3 +44,16 @@ class SeasonOverview(BaseModel):
     club_count: int = 0
     player_count: int = 0
 
+
+class ClubDepthRow(BaseModel):
+    rank: int
+    club_id: int
+    club_name: str
+    logo_url: str | None = None
+    total_players: int
+    core_players: int
+    dedicated_players: int
+    swing_players: int
+    avg_games: float
+
+

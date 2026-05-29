@@ -1,13 +1,21 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 
 export default function StatsTable({ 
   title, 
   headers, 
   data, 
   renderRow,
-  viewMode = 'total'
+  viewMode = 'total',
+  paged = false,
+  pageSize = 10
 }) {
   const [sortConfig, setSortConfig] = useState({ key: 'total_points', direction: 'desc' })
+  const [currentPage, setCurrentPage] = useState(1)
+
+  // Reset page when data or sort changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [data, sortConfig])
 
   const sortedData = useMemo(() => {
     let sortableItems = [...data]
@@ -33,6 +41,16 @@ export default function StatsTable({
     }
     return sortableItems
   }, [data, sortConfig])
+
+  const paginatedData = useMemo(() => {
+    if (!paged) return sortedData
+    const start = (currentPage - 1) * pageSize
+    return sortedData.slice(start, start + pageSize)
+  }, [sortedData, paged, currentPage, pageSize])
+
+  const totalPages = useMemo(() => {
+    return Math.ceil(sortedData.length / pageSize) || 1
+  }, [sortedData, pageSize])
 
   const requestSort = (key) => {
     let direction = 'desc'
@@ -77,7 +95,7 @@ export default function StatsTable({
             </tr>
           </thead>
           <tbody>
-            {sortedData.map((row, idx) => (
+            {paginatedData.map((row, idx) => (
               <tr key={idx}>
                 <td>
                   <span className={`rank-badge ${row.rank <= 3 ? `rank-badge--${row.rank}` : ''}`}>
@@ -97,6 +115,37 @@ export default function StatsTable({
           </tbody>
         </table>
       </div>
+
+      {paged && (
+        <div className="pagination-controls" style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 'var(--space-4)',
+          marginTop: 'var(--space-4)',
+          padding: 'var(--space-2)'
+        }}>
+          <button
+            className="btn btn--ghost"
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            style={{ padding: '6px 12px', fontSize: '0.85rem' }}
+          >
+            ◀️ Previous
+          </button>
+          <span style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)' }}>
+            Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+          </span>
+          <button
+            className="btn btn--ghost"
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            style={{ padding: '6px 12px', fontSize: '0.85rem' }}
+          >
+            Next ▶️
+          </button>
+        </div>
+      )}
     </div>
   )
 }

@@ -49,9 +49,22 @@ async def rx_login(body: LoginRequest):
             logger.error(f"RX API error: {exc}")
             raise HTTPException(status_code=503, detail="RugbyXplorer service unavailable")
 
+from datetime import timedelta
+from sqlalchemy import select
+from sqlalchemy.orm import aliased
+from src.core.dependencies import DbSession
+from src.games.models import Game
+from src.clubs.models import Team
+from src.competitions.models import Competition, Round
+from src.refzone.matching import parse_rx_moment_to_sydney, find_matching_game
+
+HomeTeam = aliased(Team, name="home_team")
+AwayTeam = aliased(Team, name="away_team")
+
 @router.get("/appointments")
 async def get_appointments(
     userId: str,
+    db: DbSession,
     authorization: Optional[str] = Header(None)
 ):
     if not authorization or not authorization.startswith("Bearer "):
@@ -95,6 +108,70 @@ async def get_appointments(
                         app["status"] = "pending"
                     appointments.append(app)
                 
+            # Perform game linking matching
+            if appointments:
+                sydney_times = []
+                for app in appointments:
+                    if app.get("match") and app["match"].get("moment"):
+                        syd_dt = parse_rx_moment_to_sydney(app["match"]["moment"])
+                        if syd_dt:
+                            app["match"]["sydney_moment"] = syd_dt
+                            sydney_times.append(syd_dt)
+                
+                if sydney_times:
+                    min_time = min(sydney_times) - timedelta(days=1)
+                    max_time = max(sydney_times) + timedelta(days=1)
+                    
+                    stmt = (
+                        select(
+                            Game.id,
+                            Game.game_date,
+                            HomeTeam.name.label("home_team_name"),
+                            AwayTeam.name.label("away_team_name"),
+                            Competition.name.label("competition_name")
+                        )
+                        .join(Round, Round.id == Game.round_id)
+                        .join(Competition, Competition.id == Round.competition_id)
+                        .join(HomeTeam, HomeTeam.id == Game.home_team_id)
+                        .join(AwayTeam, AwayTeam.id == Game.away_team_id)
+                        .where(Game.game_date >= min_time)
+                        .where(Game.game_date <= max_time)
+                    )
+                    res = await db.execute(stmt)
+                    db_games = [
+                        {
+                            "id": row.id,
+                            "game_date": row.game_date,
+                            "home_team_name": row.home_team_name,
+                            "away_team_name": row.away_team_name,
+                            "competition_name": row.competition_name
+                        }
+                        for row in res.all()
+                    ]
+                    
+                    for app in appointments:
+                        if not app.get("match"):
+                            continue
+                        
+                        syd_dt = app["match"].get("sydney_moment")
+                        home_team = app["match"].get("homeTeam", {}).get("name", "")
+                        away_team = app["match"].get("awayTeam", {}).get("name", "")
+                        comp_name = app["match"].get("competition", {}).get("name", "")
+                        
+                        db_game_id = find_matching_game(
+                            app_moment=syd_dt,
+                            app_home_team=home_team,
+                            app_away_team=away_team,
+                            db_games=db_games,
+                            app_competition_name=comp_name
+                        )
+                        if db_game_id:
+                            app["db_game_id"] = db_game_id
+                        
+                        # Clean up temp key
+                        if "sydney_moment" in app["match"]:
+                            del app["match"]["sydney_moment"]
+
             return appointments
             
         except httpx.RequestError as exc:

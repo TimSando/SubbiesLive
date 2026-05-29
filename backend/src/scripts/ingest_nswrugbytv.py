@@ -225,9 +225,9 @@ def ingest_nswrugbytv_videos(engine=None):
                 best_confidence_review = True
                 
                 for g in db_games:
-                    # Compare date window (within 4 hours)
+                    # Compare date window (within 45 minutes)
                     time_diff = abs((g["game_date"] - scraped_dt).total_seconds())
-                    if time_diff > 4 * 3600:
+                    if time_diff > 45 * 60:
                         continue
                         
                     # Compare home & away team names

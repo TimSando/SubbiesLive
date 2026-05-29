@@ -93,6 +93,11 @@ export default function Stats() {
     () => api.getClubStats(filterParams),
     [filterParams]
   )
+
+  const { data: clubDepthStats, loading: clubDepthLoading } = useApi(
+    () => api.getClubDepthStats(filterParams),
+    [filterParams]
+  )
   
   const { data: overview, loading: overviewLoading } = useApi(
     () => api.getSeasonOverview(filterParams),
@@ -145,6 +150,9 @@ export default function Stats() {
   const displayedClubStats = useMemo(() => 
     applyViewMode(clubStats || []), [clubStats, applyViewMode])
 
+  const displayedClubDepthStats = useMemo(() => 
+    (clubDepthStats || []).map((row, i) => ({ ...row, rank: i + 1 })), [clubDepthStats])
+
   const formatStat = (val) => {
     if (viewMode === 'total') return val
     return val.toFixed(2)
@@ -176,7 +184,7 @@ export default function Stats() {
       <td>
         <Link to={`/players/${player.player_id}`} className="player-cell" style={{ textDecoration: 'none' }}>
           <img 
-            src={player.image_url || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'} 
+            src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" 
             alt={player.player_name} 
             className="player-avatar"
           />
@@ -217,6 +225,26 @@ export default function Stats() {
       <td className="stat-value stat-value--primary">{formatStat(club.total_points)}</td>
       <td className="stat-value" style={{ color: 'var(--color-draw)' }}>{formatStat(club.yellow_cards)}</td>
       <td className="stat-value" style={{ color: 'var(--color-loss)' }}>{formatStat(club.red_cards)}</td>
+    </>
+  )
+
+  const renderClubDepthRow = (club) => (
+    <>
+      <td>
+        <Link to={`/clubs/${club.club_id}`} className="player-cell" style={{ textDecoration: 'none' }}>
+          {club.logo_url ? (
+            <img src={club.logo_url} alt={club.club_name} className="player-avatar" style={{ objectFit: 'contain', padding: '2px' }} />
+          ) : (
+            <div className="player-avatar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg-glass)', fontSize: '0.6rem' }}>🏉</div>
+          )}
+          <span className="player-name">{club.club_name}</span>
+        </Link>
+      </td>
+      <td className="stat-value">{club.total_players}</td>
+      <td className="stat-value">{club.core_players}</td>
+      <td className="stat-value">{club.dedicated_players}</td>
+      <td className="stat-value">{club.swing_players}</td>
+      <td className="stat-value stat-value--primary">{club.avg_games.toFixed(2)}</td>
     </>
   )
 
@@ -370,7 +398,7 @@ export default function Stats() {
                       onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                     >
                       <img 
-                        src={p.thumbnail_url || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'} 
+                        src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" 
                         alt={p.name} 
                         className="player-avatar"
                         style={{ marginRight: '12px' }}
@@ -404,32 +432,55 @@ export default function Stats() {
                 data={displayedPlayerStats}
                 renderRow={renderPlayerRow}
                 viewMode={viewMode}
+                paged={true}
+                pageSize={10}
               />
             )}
           </div>
         )}
 
         {activeTab === 'clubs' && (
-          clubsLoading ? (
+          clubsLoading || clubDepthLoading ? (
             <div className="skeleton" style={{ height: '500px' }} />
           ) : (
-            <StatsTable 
-              title="Club Scoring & Discipline"
-              headers={[
-                { key: 'club_name', label: 'Club', style: { minWidth: '200px' } },
-                { key: 'games_played', label: 'Games' },
-                { key: 'tries', label: 'Tries' },
-                { key: 'conversions', label: 'Conv' },
-                { key: 'penalties', label: 'Pen' },
-                { key: 'drop_goals', label: 'DG' },
-                { key: 'total_points', label: 'Pts' },
-                { key: 'yellow_cards', label: 'YC' },
-                { key: 'red_cards', label: viewMode === 'total' ? 'RC' : 'Avg RC' }
-              ]}
-              data={displayedClubStats}
-              renderRow={renderClubRow}
-              viewMode={viewMode}
-            />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
+              <StatsTable 
+                title="Club Scoring & Discipline"
+                headers={[
+                  { key: 'club_name', label: 'Club', style: { minWidth: '200px' } },
+                  { key: 'games_played', label: 'Games' },
+                  { key: 'tries', label: 'Tries' },
+                  { key: 'conversions', label: 'Conv' },
+                  { key: 'penalties', label: 'Pen' },
+                  { key: 'drop_goals', label: 'DG' },
+                  { key: 'total_points', label: 'Pts' },
+                  { key: 'yellow_cards', label: 'YC' },
+                  { key: 'red_cards', label: viewMode === 'total' ? 'RC' : 'Avg RC' }
+                ]}
+                data={displayedClubStats}
+                renderRow={renderClubRow}
+                viewMode={viewMode}
+                paged={true}
+                pageSize={10}
+              />
+
+              <StatsTable 
+                title="Squad Depth & Participation"
+                headers={[
+                  { key: 'club_name', label: 'Club', style: { minWidth: '200px' } },
+                  { key: 'total_players', label: 'Active Players' },
+                  { key: 'core_players', label: 'Core (>=5 Games)' },
+                  { key: 'dedicated_players', label: 'Dedicated (1 Grade)' },
+                  { key: 'swing_players', label: 'Swing (>=2 Grades)' },
+                  { key: 'avg_games', label: 'Avg Games/Player' }
+                ]}
+                data={displayedClubDepthStats}
+                renderRow={renderClubDepthRow}
+                viewMode="total"
+                paged={true}
+                pageSize={10}
+              />
+            </div>
           )
         )}
 
