@@ -21,11 +21,30 @@ from src.ingestion.game_stats import (
     ingest_player_history_for_game,
 )
 
+import threading
+
 logger = logging.getLogger("ingestion")
+
+_ingestion_lock = threading.Lock()
+_is_ingestion_running = False
+
+
+def is_ingestion_running() -> bool:
+    """Check if the ingestion process is currently running."""
+    return _is_ingestion_running
 
 
 def run_ingestion(session_factory):
     """Run a full data ingestion cycle."""
+    global _is_ingestion_running
+
+    # Acquire the lock to prevent concurrent executions
+    acquired = _ingestion_lock.acquire(blocking=False)
+    if not acquired:
+        logger.warning("Ingestion process is already running. Skipping this trigger.")
+        return
+
+    _is_ingestion_running = True
     start_time = datetime.now()
     logger.info("=" * 60)
     logger.info(f"Starting data ingestion at {start_time.isoformat()}")
@@ -107,3 +126,5 @@ def run_ingestion(session_factory):
         session.rollback()
     finally:
         session.close()
+        _is_ingestion_running = False
+        _ingestion_lock.release()

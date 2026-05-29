@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     app_name: str = "SubbiesStats API"
     app_version: str = "0.1.0"
 
+    # Ingestion Trigger
+    ingestion_password: str = "dbRefresh_"
+
     @model_validator(mode="after")
     def derive_sync_url(self) -> "Settings":
         if not self.database_url_sync:

@@ -72,4 +72,11 @@ export const api = {
   getSeasonOverview: (params = {}) => {
     return request(`/stats/overview${buildQuery(params)}`)
   },
+
+  // Ingestion
+  getIngestionStatus: () => request('/ingestion/status'),
+  triggerIngestion: (password) => request('/ingestion/trigger', {
+    method: 'POST',
+    body: JSON.stringify({ password })
+  }),
 }
