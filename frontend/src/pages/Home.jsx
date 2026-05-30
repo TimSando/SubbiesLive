@@ -35,7 +35,7 @@ function GamePill({ game }) {
           <span className="game-pill__team-name">{game.home_team.club_name || game.home_team.name}</span>
           {showScore && (
             <span className={`game-pill__score ${homeWin ? 'game-pill__score--winner' : ''}`}>
-              {game.home_score}
+              {game.home_score ?? 0}
             </span>
           )}
         </div>
@@ -43,7 +43,7 @@ function GamePill({ game }) {
           <span className="game-pill__team-name">{game.away_team.club_name || game.away_team.name}</span>
           {showScore && (
             <span className={`game-pill__score ${awayWin ? 'game-pill__score--winner' : ''}`}>
-              {game.away_score}
+              {game.away_score ?? 0}
             </span>
           )}
         </div>

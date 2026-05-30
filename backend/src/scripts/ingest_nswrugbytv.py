@@ -37,6 +37,25 @@ ALIASES = {
     "sydney convicts": ["sydney convicts 2nds"],
 }
 
+def clean_comp_name(name: str) -> str:
+    """Normalize competition name for matching."""
+    if not name:
+        return ""
+    name = name.lower().strip()
+    # Remove year if present (e.g. "2026 ", "2025 ")
+    import re
+    name = re.sub(r'\b\d{4}\b', '', name)
+    name = name.replace("colts", "")
+    name = name.replace("(", "").replace(")", "")
+    return " ".join(name.split())
+
+def match_competition_names(db_comp: str, scraped_comp: str) -> bool:
+    db_clean = clean_comp_name(db_comp)
+    scraped_clean = clean_comp_name(scraped_comp)
+    if not db_clean or not scraped_clean:
+        return False
+    return db_clean == scraped_clean or db_clean in scraped_clean or scraped_clean in db_clean
+
 def clean_team_name(name: str) -> str:
     """Normalize team name for matching."""
     if not name:
@@ -225,6 +244,10 @@ def ingest_nswrugbytv_videos(engine=None):
                 best_confidence_review = True
                 
                 for g in db_games:
+                    # Compare competition name
+                    if not match_competition_names(g["competition_name"], comp_name):
+                        continue
+                        
                     # Compare date window (within 45 minutes)
                     time_diff = abs((g["game_date"] - scraped_dt).total_seconds())
                     if time_diff > 45 * 60:

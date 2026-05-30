@@ -99,6 +99,8 @@ export default function GameDetail() {
   }
 
   const isCompleted = game.status === 'completed'
+  const isLive = game.status === 'in_progress'
+  const showScore = isCompleted || isLive
   const homeWin = isCompleted && game.home_score > game.away_score
   const awayWin = isCompleted && game.away_score > game.home_score
   const homeEvents = game.events?.filter(e => e.team_id === game.home_team.id && !e.event_type.includes('coach')) || []
@@ -116,6 +118,11 @@ export default function GameDetail() {
         <div className="match-header card">
           <div className="match-header__meta">
             <span className="badge">{game.competition_name}</span>
+            {isLive && (
+              <span className="live-badge">
+                <span className="live-dot" /> Live
+              </span>
+            )}
             <span style={{ color: 'var(--color-text-muted)' }}>{game.round_name}</span>
           </div>
 
@@ -128,11 +135,11 @@ export default function GameDetail() {
             </div>
 
             <div className="match-header__score">
-              {isCompleted ? (
+              {showScore ? (
                 <>
-                  <span className={`score ${homeWin ? 'score--winner' : ''}`}>{game.home_score}</span>
+                  <span className={`score ${homeWin ? 'score--winner' : ''}`}>{game.home_score ?? 0}</span>
                   <span className="match-header__divider">—</span>
-                  <span className={`score ${awayWin ? 'score--winner' : ''}`}>{game.away_score}</span>
+                  <span className={`score ${awayWin ? 'score--winner' : ''}`}>{game.away_score ?? 0}</span>
                 </>
               ) : (
                 <span className="badge badge--scheduled">vs</span>
@@ -159,7 +166,7 @@ export default function GameDetail() {
               flexDirection: 'column', 
               alignItems: 'center', 
               gap: 'var(--space-3)' 
-            }}>
+              }}>
               <a 
                 href={game.video_url} 
                 target="_blank" 
@@ -174,7 +181,7 @@ export default function GameDetail() {
                   boxShadow: '0 0 15px rgba(59, 130, 246, 0.2)'
                 }}
               >
-                📺 Watch Replay on NSW Rugby TV
+                {isCompleted ? '📺 Watch Replay on NSW Rugby TV' : '📺 Watch Live on NSW Rugby TV'}
               </a>
               {game.video_url_needs_review && (
                 <span className="badge" style={{ 
@@ -191,13 +198,13 @@ export default function GameDetail() {
           )}
         </div>
 
-        {isCompleted && game.events?.length > 0 && (
+        {showScore && game.events?.length > 0 && (
           <section style={{ marginTop: 'var(--space-8)' }}>
             <h2 style={{ marginBottom: 'var(--space-6)' }}>Match Events</h2>
             <div className="events-grid">
               <div className="events-col">
                 <h3 className="events-col__title">
-                  {game.home_team.club_name} ({game.home_score})
+                  {game.home_team.club_name} ({game.home_score ?? 0})
                 </h3>
                 {homeEvents.map((e, i) => <EventRow key={i} event={e} />)}
                 {homeEvents.length === 0 && (
@@ -206,7 +213,7 @@ export default function GameDetail() {
               </div>
               <div className="events-col">
                 <h3 className="events-col__title">
-                  {game.away_team.club_name} ({game.away_score})
+                  {game.away_team.club_name} ({game.away_score ?? 0})
                 </h3>
                 {awayEvents.map((e, i) => <EventRow key={i} event={e} />)}
                 {awayEvents.length === 0 && (

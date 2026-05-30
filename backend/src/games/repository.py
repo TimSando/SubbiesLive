@@ -109,6 +109,12 @@ async def get_games(
             stmt = stmt.where(Game.status.in_(statuses))
         else:
             stmt = stmt.where(Game.status == status)
+        
+        if status == "in_progress":
+            stmt = stmt.where(
+                (Game.location.is_(None)) |
+                (func.lower(func.trim(Game.location)) != "postponed to wet weather week")
+            )
     if player_id:
         stmt = stmt.join(PlayerHistory, PlayerHistory.game_id == Game.id).where(PlayerHistory.player_id == player_id)
 

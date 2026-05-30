@@ -65,13 +65,22 @@ def start_ingestion_scheduler():
     # Set up scheduled jobs
     _scheduler = BackgroundScheduler(timezone=TIMEZONE)
 
-    # Daily sync at 6:00 AM on Sun-Fri
+    # Sunday evening at 6:00 PM
     _scheduler.add_job(
         run_ingestion,
-        CronTrigger(day_of_week="sun,mon,tue,wed,thu,fri", hour=6, minute=0, timezone=TIMEZONE),
+        CronTrigger(day_of_week="sun", hour=18, minute=0, timezone=TIMEZONE),
         args=[Session],
-        id="daily_ingestion",
-        name="Daily ingestion (Sun-Fri 6:00 AM)",
+        id="sunday_evening_ingestion",
+        name="Sunday evening ingestion (Sun 6:00 PM)",
+    )
+
+    # Saturday morning at 1:00 AM
+    _scheduler.add_job(
+        run_ingestion,
+        CronTrigger(day_of_week="sat", hour=1, minute=0, timezone=TIMEZONE),
+        args=[Session],
+        id="saturday_morning_ingestion",
+        name="Saturday morning ingestion (Sat 1:00 AM)",
     )
 
     # Game day sync every 15 min on Saturday, 9 AM - 6 PM
@@ -83,15 +92,15 @@ def start_ingestion_scheduler():
         name="Game day ingestion (Sat every 15 min, 9 AM - 6 PM)",
     )
 
-    # NSWRugbyTV video URL ingestion (Sat 7:00 PM)
+    # NSWRugbyTV video URL ingestion (Sat hourly 9 AM - 7 PM)
     try:
         from src.scripts.ingest_nswrugbytv import ingest_nswrugbytv_videos
         _scheduler.add_job(
             ingest_nswrugbytv_videos,
-            CronTrigger(day_of_week="sat", hour=19, minute=0, timezone=TIMEZONE),
+            CronTrigger(day_of_week="sat", hour="9-19", minute=0, timezone=TIMEZONE),
             args=[engine],
             id="video_ingestion",
-            name="NSWRugbyTV video ingestion (Sat 7:00 PM)",
+            name="NSWRugbyTV video ingestion (Sat hourly 9 AM - 7 PM)",
         )
     except Exception as e:
         logger.error(f"Failed to schedule video ingestion job: {e}")
@@ -100,9 +109,10 @@ def start_ingestion_scheduler():
 
 
     logger.info("Ingestion scheduler started:")
-    logger.info("  • Sun-Fri: Daily at 6:00 AM AEST")
+    logger.info("  • Sunday: 6:00 PM AEST")
+    logger.info("  • Saturday: 1:00 AM AEST")
     logger.info("  • Saturday: Every 15 min, 9:00 AM - 6:00 PM AEST")
-    logger.info("  • Saturday: NSWRugbyTV video ingestion at 7:00 PM AEST")
+    logger.info("  • Saturday: NSWRugbyTV video ingestion hourly, 9:00 AM - 7:00 PM AEST")
 
 
 
