@@ -79,4 +79,11 @@ export const api = {
     method: 'POST',
     body: JSON.stringify({ password })
   }),
+
+  // Notifications
+  getVapidPublicKey: () => request('/notifications/vapid-public-key'),
+  subscribeNotifications: (subscription) => request('/notifications/subscribe', {
+    method: 'POST',
+    body: JSON.stringify(subscription)
+  }),
 }

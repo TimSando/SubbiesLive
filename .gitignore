@@ -34,7 +34,7 @@ docker-compose.override.yml
 .idea/
 *.swp
 *.swo
-./GEMINI.md
+GEMINI.md
 
 # OS
 .DS_Store

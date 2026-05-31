@@ -1,4 +1,5 @@
 import { Outlet, Link, useLocation } from 'react-router-dom'
+import NotificationToggle from '../NotificationToggle/NotificationToggle.jsx'
 import './Layout.css'
 
 const navLinks = [
@@ -31,6 +32,7 @@ export default function Layout() {
                 {link.label}
               </Link>
             ))}
+            <NotificationToggle />
           </div>
         </div>
       </nav>

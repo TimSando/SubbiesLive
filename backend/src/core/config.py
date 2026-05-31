@@ -23,6 +23,11 @@ class Settings(BaseSettings):
     # Ingestion Trigger
     ingestion_password: str = "dbRefresh_"
 
+    # PWA Web Push
+    vapid_public_key: str = "BI3OQJIP5CTGATc4ZKjIqce2uNgOIrjlHRrSmZRx4u5HY3ZJU_-QSt8Yq90ub3geXpVoDbO8dQDDaQeFyHXjkuE"
+    vapid_private_key: str = "wiruot1guHaDvKd231NgPetRYI5x-jRuTKt-VFxLhKI"
+    vapid_mailto: str = "mailto:admin@subbiesstats.calypsolab.xyz"
+
     @model_validator(mode="after")
     def derive_sync_url(self) -> "Settings":
         if not self.database_url_sync:
