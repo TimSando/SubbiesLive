@@ -1,7 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useApi } from '../hooks/useApi.js'
 import { api } from '../api/client.js'
+import { useRefZone } from './RefZone.jsx'
+import { fetchAppointments } from '../api/refzone.js'
+import AppointmentCard from '../components/RefZone/AppointmentCard.jsx'
+import NotificationToggle from '../components/NotificationToggle/NotificationToggle.jsx'
 
 function formatDate(dateStr) {
   const d = new Date(dateStr)
@@ -162,6 +166,51 @@ export default function Home() {
     return () => clearInterval(interval)
   }, [])
 
+  // RefZone context and next appointment
+  const auth = useRefZone()
+  const [nextAppointment, setNextAppointment] = useState(null)
+
+  useEffect(() => {
+    if (auth.userId) {
+      fetchAppointments(auth)
+        .then(appointments => {
+          const upcoming = (appointments || [])
+            .filter(app => app.match?.moment > Date.now())
+            .sort((a, b) => (a.match?.moment || 0) - (b.match?.moment || 0))
+          setNextAppointment(upcoming[0] || null)
+        })
+        .catch(err => console.error('Error fetching appointments for home dashboard:', err))
+    }
+  }, [auth])
+
+  // Favourite Club personalization
+  const [favouriteClubId] = useState(() => localStorage.getItem('subbies_fav_club_id'))
+  const { data: favClub } = useApi(
+    () => favouriteClubId ? api.getClub(favouriteClubId) : Promise.resolve(null),
+    [favouriteClubId]
+  )
+
+  const favTeamId = useMemo(() => {
+    return favClub?.teams && favClub.teams.length > 0 ? favClub.teams[0].id : null
+  }, [favClub])
+
+  const { data: favClubGames } = useApi(
+    () => favTeamId ? api.getGames({ team_id: favTeamId, limit: 1 }) : Promise.resolve(null),
+    [favTeamId]
+  )
+  const favClubGame = favClubGames?.[0] || null
+
+  // Premier Competition Standings
+  const { data: competitions } = useApi(() => api.getCompetitions(), [])
+  const kentwellId = useMemo(() => {
+    return competitions?.find(c => c.name.includes('Kentwell'))?.id
+  }, [competitions])
+
+  const { data: premierStandings } = useApi(
+    () => kentwellId ? api.getStandings(kentwellId) : Promise.resolve(null),
+    [kentwellId]
+  )
+
   return (
     <div className="page">
       <div className="container animate-in">
@@ -176,58 +225,62 @@ export default function Home() {
           </p>
         </header>
 
-        <hr className="home-section-divider" />
+        {/* B. Smart Alerts Banner */}
+        <div className="smart-alert-banner card animate-in">
+          <div className="smart-alert-banner__text">
+            <h3>Enable Alerts</h3>
+            <p>Never miss a try! Enable live score alerts for your favourite clubs.</p>
+          </div>
+          <div className="smart-alert-banner__actions">
+            <NotificationToggle />
+            <Link to="/notifications" className="btn btn--ghost" title="Manage Alert Settings">
+              Manage Alerts
+            </Link>
+          </div>
+        </div>
 
-        {/* 2. Three Navigation Cards */}
-        <section className="home-nav-cards">
-          <Link to="/clubs" className="home-nav-card" id="nav-clubs-card">
-            <div className="home-nav-card__icon">
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-                <polyline points="9 22 9 12 15 12 15 22" />
-              </svg>
-            </div>
-            <h2>
-              Clubs
-              <span className="home-nav-card__arrow">→</span>
-            </h2>
-            <p>Browse all subbies clubs, locate home grounds, check socials, training times, and active grades.</p>
-          </Link>
+        {/* C. Context-Aware RefZone Widget */}
+        {auth.userId && nextAppointment && (
+          <>
+            <hr className="home-section-divider" />
+            <section className="home-section">
+              <div className="game-strip-header">
+                <h2>Your Next Appointment</h2>
+              </div>
+              <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+                <AppointmentCard appointment={nextAppointment} />
+              </div>
+            </section>
+          </>
+        )}
 
-          <Link to="/competitions" className="home-nav-card" id="nav-competitions-card">
-            <div className="home-nav-card__icon">
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
-                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
-                <path d="M4 22h16" />
-                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
-                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
-                <path d="M18 2H6v7a6 6 0 0 0 12 0V2z" />
-              </svg>
-            </div>
-            <h2>
-              Competitions
-              <span className="home-nav-card__arrow">→</span>
-            </h2>
-            <p>View division ladders, follow weekly fixture draws, check kick-off times, and follow live match results.</p>
-          </Link>
+        {/* D. Favourite Club Dashboard */}
+        {favouriteClubId && favClub && (
+          <>
+            <hr className="home-section-divider" />
+            <section className="home-section">
+              <div className="game-strip-header" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                {favClub.logo_url && (
+                  <img 
+                    src={favClub.logo_url} 
+                    alt={favClub.name} 
+                    style={{ width: '40px', height: '40px', objectFit: 'contain' }} 
+                  />
+                )}
+                <h2>Favourite Club: {favClub.name}</h2>
+              </div>
+              {favClubGame ? (
+                <div style={{ maxWidth: '400px' }}>
+                  <GamePill game={favClubGame} />
+                </div>
+              ) : (
+                <p style={{ color: 'var(--color-text-secondary)' }}>No recent or upcoming games scheduled for your favourite club.</p>
+              )}
+            </section>
+          </>
+        )}
 
-          <Link to="/stats" className="home-nav-card" id="nav-stats-card">
-            <div className="home-nav-card__icon">
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="20" x2="18" y2="10" />
-                <line x1="12" y1="20" x2="12" y2="4" />
-                <line x1="6" y1="20" x2="6" y2="14" />
-              </svg>
-            </div>
-            <h2>
-              Statistics
-              <span className="home-nav-card__arrow">→</span>
-            </h2>
-            <p>Deep-dive into player performance, leaderboard rankings, top try-scorers, conversions, and team stats.</p>
-          </Link>
-        </section>
-
+        {/* E. Live Games Strip */}
         {liveGames.length > 0 && (
           <>
             <hr className="home-section-divider" />
@@ -246,9 +299,78 @@ export default function Home() {
           </>
         )}
 
-        <hr className="home-section-divider" />
+        {/* F. Premier Ladder Snippet */}
+        {premierStandings && premierStandings.length > 0 && (
+          <>
+            <hr className="home-section-divider" />
+            <section className="home-section mini-ladder-section">
+              <div className="game-strip-header">
+                <h2>Kentwell Cup Standings</h2>
+                <Link to={`/competitions/${kentwellId}`} className="btn btn--ghost">View Full Standings →</Link>
+              </div>
+              <div className="table-container">
+                <table className="standings-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Team</th>
+                      <th>P</th>
+                      <th>W</th>
+                      <th>L</th>
+                      <th>Pts</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {premierStandings.slice(0, 5).map((row, index) => (
+                      <tr key={row.club_id}>
+                        <td>{index + 1}</td>
+                        <td>
+                          <Link to={`/clubs/${row.club_id}`} className="standings-team-link">
+                            {row.club_name}
+                          </Link>
+                        </td>
+                        <td>{row.played}</td>
+                        <td>{row.won}</td>
+                        <td>{row.lost}</td>
+                        <td><strong>{row.competition_points}</strong></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </>
+        )}
 
-        {/* 3. Recent Results Strip */}
+        {/* G. Stat Leaders Teaser */}
+        {overview && (
+          <>
+            <hr className="home-section-divider" />
+            <section className="home-section">
+              <div className="game-strip-header">
+                <h2>Season Stat Leaders</h2>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
+                <div className="stat-card stat-teaser-card">
+                  <span className="stat-card__label">Top Points Scorer</span>
+                  <span className="stat-teaser-card__name">{overview.top_scorer_name || 'N/A'}</span>
+                  <span className="stat-card__value">{overview.top_scorer_points} pts</span>
+                </div>
+                <div className="stat-card stat-teaser-card">
+                  <span className="stat-card__label">Top Try Scorer</span>
+                  <span className="stat-teaser-card__name">{overview.top_try_scorer_name || 'N/A'}</span>
+                  <span className="stat-card__value">{overview.top_try_scorer_tries} tries</span>
+                </div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Link to="/stats" className="btn btn--ghost">View Full Leaderboards →</Link>
+              </div>
+            </section>
+          </>
+        )}
+
+        {/* H. Recent & Upcoming Fixtures */}
+        <hr className="home-section-divider" />
         <section className="home-section">
           <div className="game-strip-header">
             <h2>Recent Results</h2>
@@ -272,8 +394,6 @@ export default function Home() {
         </section>
 
         <hr className="home-section-divider" />
-
-        {/* 4. Upcoming Fixtures Strip */}
         <section className="home-section">
           <div className="game-strip-header">
             <h2>Upcoming Fixtures</h2>

@@ -8,28 +8,30 @@ import CompetitionDetail from './pages/CompetitionDetail.jsx'
 import GameDetail from './pages/GameDetail.jsx'
 import Stats from './pages/Stats.jsx'
 import PlayerDetail from './pages/PlayerDetail.jsx'
-import RefZone from './pages/RefZone.jsx'
+import RefZone, { RefZoneProvider } from './pages/RefZone.jsx'
 import Notifications from './pages/Notifications.jsx'
 
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/clubs" element={<Clubs />} />
-          <Route path="/clubs/:id" element={<ClubDetail />} />
-          <Route path="/competitions" element={<Competitions />} />
-          <Route path="/competitions/:id" element={<CompetitionDetail />} />
-          <Route path="/games/:id" element={<GameDetail />} />
-          <Route path="/stats" element={<Stats />} />
-          <Route path="/players/:id" element={<PlayerDetail />} />
-          <Route path="/refzone" element={<RefZone />} />
-          <Route path="/notifications" element={<Notifications />} />
+    <RefZoneProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/clubs" element={<Clubs />} />
+            <Route path="/clubs/:id" element={<ClubDetail />} />
+            <Route path="/competitions" element={<Competitions />} />
+            <Route path="/competitions/:id" element={<CompetitionDetail />} />
+            <Route path="/games/:id" element={<GameDetail />} />
+            <Route path="/stats" element={<Stats />} />
+            <Route path="/players/:id" element={<PlayerDetail />} />
+            <Route path="/refzone" element={<RefZone />} />
+            <Route path="/notifications" element={<Notifications />} />
 
-        </Route>
-      </Routes>
-    </BrowserRouter>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </RefZoneProvider>
   )
 }

@@ -14,7 +14,7 @@ export function useRefZone() {
   return context;
 }
 
-export default function RefZone() {
+export function RefZoneProvider({ children }) {
   const [authData, setAuthDataState] = useState(null);
   const [autoLoginLoading, setAutoLoginLoading] = useState(false);
   const timeoutRef = useRef(null);
@@ -127,27 +127,36 @@ export default function RefZone() {
     encryptedEmail: authData ? authData.encryptedEmail : null,
     encryptedPassword: authData ? authData.encryptedPassword : null,
     profile: authData ? authData.profile : null,
+    autoLoginLoading,
     setAuthData,
     clearAuth,
   };
 
   return (
     <RefZoneContext.Provider value={value}>
-      <div className="refzone-wrapper">
-        {autoLoginLoading ? (
-          <div className="container page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: '1.5rem' }}>
-            <div className="card skeleton" style={{ width: '100%', maxWidth: '420px', height: '300px', borderRadius: 'var(--radius-xl)' }}></div>
-            <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-medium)' }}>
-              Signing you in securely to RugbyXplorer...
-            </p>
-          </div>
-        ) : !authData || !authData.accessToken ? (
-          <RefZoneLogin />
-        ) : (
-          <RefZoneDashboard />
-        )}
-      </div>
+      {children}
     </RefZoneContext.Provider>
+  );
+}
+
+export default function RefZone() {
+  const { accessToken, autoLoginLoading } = useRefZone();
+
+  return (
+    <div className="refzone-wrapper">
+      {autoLoginLoading ? (
+        <div className="container page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: '1.5rem' }}>
+          <div className="card skeleton" style={{ width: '100%', maxWidth: '420px', height: '300px', borderRadius: 'var(--radius-xl)' }}></div>
+          <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-medium)' }}>
+            Signing you in securely to RugbyXplorer...
+          </p>
+        </div>
+      ) : !accessToken ? (
+        <RefZoneLogin />
+      ) : (
+        <RefZoneDashboard />
+      )}
+    </div>
   );
 }
 
