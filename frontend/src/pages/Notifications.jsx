@@ -440,6 +440,9 @@ export default function Notifications() {
                   </select>
                 </div>
               </div>
+              <p className="notifications-tip" style={{ marginTop: 'var(--space-4)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)', opacity: 0.8 }}>
+                💡 <strong>Tip:</strong> You can also follow specific matches by selecting the notification bell icon (🔔) on the Game details page.
+              </p>
             </section>
 
             {/* 2. Active Subscriptions List */}

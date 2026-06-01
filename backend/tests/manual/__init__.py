@@ -1,0 +1,1 @@
+# Manual scripts package initialization

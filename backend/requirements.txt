@@ -21,6 +21,6 @@ beautifulsoup4==4.12.3
 httpx>=0.28
 
 # PWA Notifications
-pywebpush==1.14.0
+pywebpush>=2.3.0
 cryptography>=42.0.0
 
