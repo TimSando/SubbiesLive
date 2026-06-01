@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useApi } from '../hooks/useApi.js'
 import { api } from '../api/client.js'
+import PageSubscribeButton from '../components/NotificationToggle/PageSubscribeButton.jsx'
 
 export default function ClubDetail() {
   const { id } = useParams()
@@ -132,9 +133,12 @@ export default function ClubDetail() {
                 </div>
               )}
 
-              <h1 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'var(--font-weight-extrabold)', marginBottom: 'var(--space-1)', color: 'var(--color-text-primary)' }}>
-                {club.name}
-              </h1>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-1)' }}>
+                <h1 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'var(--font-weight-extrabold)', color: 'var(--color-text-primary)', margin: 0 }}>
+                  {club.name}
+                </h1>
+                <PageSubscribeButton topicType="club" topicId={club.id} topicName={club.name} />
+              </div>
 
               {club.division_info && (
                 <span className="badge" style={{ marginTop: 'var(--space-2)', marginBottom: 'var(--space-5)', fontSize: 'var(--font-size-xs)' }}>

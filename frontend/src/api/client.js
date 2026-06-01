@@ -86,4 +86,12 @@ export const api = {
     method: 'POST',
     body: JSON.stringify(subscription)
   }),
+  getMySubscriptions: (endpoint) => request('/notifications/my-subscriptions', {
+    method: 'POST',
+    body: JSON.stringify({ endpoint })
+  }),
+  toggleSubscriptionTopic: (payload) => request('/notifications/toggle-topic', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  }),
 }

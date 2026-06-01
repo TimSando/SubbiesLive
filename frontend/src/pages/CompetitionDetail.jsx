@@ -2,6 +2,7 @@ import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useApi } from '../hooks/useApi.js'
 import { api } from '../api/client.js'
+import PageSubscribeButton from '../components/NotificationToggle/PageSubscribeButton.jsx'
 
 function formatDate(dateStr) {
   const d = new Date(dateStr)
@@ -218,7 +219,10 @@ export default function CompetitionDetail() {
         <Link to="/competitions" className="breadcrumb" onClick={(e) => { e.preventDefault(); navigate(-1); }}>← Back</Link>
 
         <header style={{ marginBottom: 'var(--space-8)' }}>
-          <h1 style={{ marginBottom: 'var(--space-2)' }}>{competition.name}</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-2)' }}>
+            <h1 style={{ margin: 0 }}>{competition.name}</h1>
+            <PageSubscribeButton topicType="competition" topicId={competition.id} topicName={competition.name} />
+          </div>
           <p style={{ color: 'var(--color-text-secondary)' }}>
             {competition.team_count} teams · {competition.rounds?.length} rounds
           </p>

@@ -9,6 +9,7 @@ import GameDetail from './pages/GameDetail.jsx'
 import Stats from './pages/Stats.jsx'
 import PlayerDetail from './pages/PlayerDetail.jsx'
 import RefZone from './pages/RefZone.jsx'
+import Notifications from './pages/Notifications.jsx'
 
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
           <Route path="/stats" element={<Stats />} />
           <Route path="/players/:id" element={<PlayerDetail />} />
           <Route path="/refzone" element={<RefZone />} />
+          <Route path="/notifications" element={<Notifications />} />
 
         </Route>
       </Routes>

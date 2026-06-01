@@ -14,6 +14,8 @@ self.addEventListener('push', (event) => {
       body: data.body || '',
       icon: '/pwa-192x192.png',
       badge: '/favicon.ico',
+      tag: data.tag || undefined,
+      renotify: data.tag ? true : false,
       data: {
         url: data.url || '/'
       }

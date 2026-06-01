@@ -91,6 +91,28 @@ def ingest_game_events(session, game_id: int, game_external_id: int, team_id_map
             )
             events_ingested += 1
 
+            # Notify of this live game event
+            try:
+                from src.notifications.service import notify_game_update
+                msg = event_data.get("text")
+                if not msg:
+                    msg = f"Game Event: {event_data['event_type'].replace('_', ' ').title()}"
+                
+                # Fetch current scores to append to the message body
+                score_row = session.execute(
+                    text("SELECT home_score, away_score FROM games WHERE id = :gid"),
+                    {"gid": game_id}
+                ).fetchone()
+                if score_row:
+                    hs, as_ = score_row
+                    hs_val = hs if hs is not None else 0
+                    as_val = as_ if as_ is not None else 0
+                    msg += f" (Score: {hs_val} - {as_val})"
+                
+                notify_game_update(session, game_id, "event", msg)
+            except Exception as e:
+                logger.error(f"Failed to dispatch notification for game event: {e}")
+
     session.commit()
     if events_ingested > 0:
         logger.info(f"  Ingested {events_ingested} events for game {game_external_id}")

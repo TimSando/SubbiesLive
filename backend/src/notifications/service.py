@@ -74,3 +74,92 @@ def dispatch_push_notifications(title: str, body: str, url: str = "/"):
     for sub in subscriptions:
         thread = threading.Thread(target=_send_webpush_sync, args=(engine, sub, payload), daemon=True)
         thread.start()
+
+
+def notify_game_update(session, game_id: int, update_type: str, detail_message: str):
+    """Notify users who subscribed to a game, its clubs, or its competition.
+    
+    Args:
+        session: Synchronous DB session
+        game_id: Internal game ID
+        update_type: 'outcome' or 'event'
+        detail_message: Body text for the push notification
+    """
+    # 1. Fetch game details: competition_id, home_club_id, away_club_id, team names, parent comp, division
+    game_query = text("""
+        SELECT 
+            g.id,
+            r.competition_id,
+            ht.club_id AS home_club_id,
+            at.club_id AS away_club_id,
+            ht.name AS home_team_name,
+            at.name AS away_team_name,
+            m.parent_competition,
+            m.division
+        FROM games g
+        JOIN rounds r ON g.round_id = r.id
+        JOIN competitions c ON r.competition_id = c.id
+        LEFT JOIN competition_mapping m ON c.competition_mapping_id = m.id
+        JOIN teams ht ON g.home_team_id = ht.id
+        JOIN teams at ON g.away_team_id = at.id
+        WHERE g.id = :gid
+    """)
+    res = session.execute(game_query, {"gid": game_id})
+    row = res.fetchone()
+    if not row:
+        logger.warning(f"Could not notify update for game {game_id}: game not found in DB")
+        return
+        
+    _, competition_id, home_club_id, away_club_id, home_team_name, away_team_name, parent_competition, division = row
+    
+    # 2. Query all unique subscriptions matching the topic rules
+    sub_query = text("""
+        SELECT DISTINCT s.endpoint, s.p256dh, s.auth
+        FROM pwa_subscriptions s
+        JOIN pwa_subscription_topics t ON s.id = t.subscription_id
+        WHERE (
+            (t.topic_type = 'game' AND t.topic_id = :game_id)
+            OR (t.topic_type = 'club' AND t.topic_id IN (:home_club_id, :away_club_id))
+            OR (t.topic_type = 'competition' AND t.topic_id = :comp_id)
+        )
+        AND (
+            (:utype = 'outcome' AND t.notify_outcome = TRUE)
+            OR (:utype = 'event' AND t.notify_events = TRUE)
+        )
+    """)
+    
+    params = {
+        "game_id": game_id,
+        "home_club_id": home_club_id,
+        "away_club_id": away_club_id,
+        "comp_id": competition_id,
+        "utype": update_type
+    }
+    
+    sub_res = session.execute(sub_query, params)
+    subscriptions = [dict(r) for r in sub_res.mappings()]
+    
+    if not subscriptions:
+        logger.debug(f"No subscribers for game {game_id} (update_type: {update_type}). Skipping dispatch.")
+        return
+        
+    logger.info(f"Dispatching game update notifications to {len(subscriptions)} devices...")
+    
+    title = f"🏉 Update: {home_team_name} vs {away_team_name}"
+    if update_type == "outcome":
+        title = f"🏉 Full Time: {home_team_name} vs {away_team_name}"
+        
+    payload = {
+        "title": title,
+        "body": detail_message,
+        "url": f"/games/{game_id}",
+        "tag": f"game-{game_id}"  # To collapse notifications for the same game
+    }
+    
+    from src.ingestion.engine import get_sync_engine
+    engine = get_sync_engine()
+    
+    for sub in subscriptions:
+        thread = threading.Thread(target=_send_webpush_sync, args=(engine, sub, payload), daemon=True)
+        thread.start()
+

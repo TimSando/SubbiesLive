@@ -132,29 +132,28 @@ def upsert_game(session, round_id: int, game_data: dict, home_team_id: int, away
             session.commit()
             logger.info(f"Updated game {game_data['external_id']} (status: {stored_status} -> {game_data['status']}, score: {stored_hs}-{stored_as} -> {game_data['home_score']}-{game_data['away_score']})")
 
-            # Dispatch push notifications on update
+            # Dispatch target-filtered push notifications on update
             try:
-                home_team_name = "Home Team"
-                away_team_name = "Away Team"
-                team_res = session.execute(
-                    text("SELECT id, name FROM teams WHERE id IN (:htid, :atid)"),
-                    {"htid": home_team_id, "atid": away_team_id}
-                )
-                for team_row in team_res.fetchall():
-                    if team_row[0] == home_team_id:
-                        home_team_name = team_row[1]
-                    elif team_row[0] == away_team_id:
-                        away_team_name = team_row[1]
-
                 hs_str = str(game_data['home_score']) if game_data['home_score'] is not None else "0"
                 as_str = str(game_data['away_score']) if game_data['away_score'] is not None else "0"
-                
-                title = f"Game Update: {home_team_name} vs {away_team_name}"
-                body = f"Score: {hs_str} - {as_str} ({game_data['status']})"
-                url = f"/games/{stored_id}"
 
-                from src.notifications.service import dispatch_push_notifications
-                dispatch_push_notifications(title, body, url)
+                from src.notifications.service import notify_game_update
+
+                # 1. Match started (kick-off)
+                if game_data["status"] == "in_progress" and stored_status == "scheduled":
+                    msg = f"Match started! Score: {hs_str} - {as_str}"
+                    notify_game_update(session, stored_id, "event", msg)
+
+                # 2. Match completed (full time)
+                elif game_data["status"] == "completed" and stored_status != "completed":
+                    msg = f"Full Time! Final Score: {hs_str} - {as_str}"
+                    notify_game_update(session, stored_id, "outcome", msg)
+
+                # 3. Simple live score update during play
+                elif game_data["status"] == "in_progress" and (game_data["home_score"] != stored_hs or game_data["away_score"] != stored_as):
+                    msg = f"Score update: {hs_str} - {as_str}"
+                    notify_game_update(session, stored_id, "event", msg)
+
             except Exception as e:
                 logger.error(f"Failed to dispatch game update notifications: {e}")
 

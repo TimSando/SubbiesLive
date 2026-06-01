@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom'
 import { useApi } from '../hooks/useApi.js'
 import { api } from '../api/client.js'
+import PageSubscribeButton from '../components/NotificationToggle/PageSubscribeButton.jsx'
 
 function formatDateTime(dateStr) {
   const d = new Date(dateStr)
@@ -116,14 +117,21 @@ export default function GameDetail() {
         )}
 
         <div className="match-header card">
-          <div className="match-header__meta">
-            <span className="badge">{game.competition_name}</span>
-            {isLive && (
-              <span className="live-badge">
-                <span className="live-dot" /> Live
-              </span>
-            )}
-            <span style={{ color: 'var(--color-text-muted)' }}>{game.round_name}</span>
+          <div className="match-header__meta" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+              <span className="badge">{game.competition_name}</span>
+              {isLive && (
+                <span className="live-badge">
+                  <span className="live-dot" /> Live
+                </span>
+              )}
+              <span style={{ color: 'var(--color-text-muted)' }}>{game.round_name}</span>
+            </div>
+            <PageSubscribeButton 
+              topicType="game" 
+              topicId={game.id} 
+              topicName={`${game.home_team.club_name || game.home_team.name} vs ${game.away_team.club_name || game.away_team.name}`} 
+            />
           </div>
 
           <div className="match-header__teams">
