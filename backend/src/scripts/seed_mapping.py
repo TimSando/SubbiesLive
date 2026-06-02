@@ -27,13 +27,7 @@ def seed_mapping(csv_path: str):
 
     engine = get_engine()
     with engine.begin() as conn:
-        # Check if already seeded
-        res = conn.execute(text("SELECT COUNT(*) FROM competition_mapping"))
-        if res.scalar() > 0:
-            logger.info("competition_mapping already contains data. Skipping seed.")
-            return
-
-        logger.info(f"Seeding competition_mapping from {csv_path}...")
+        logger.info(f"Syncing competition_mapping from {csv_path}...")
         with open(csv_path, mode='r', encoding='utf-8-sig') as f:
             reader = csv.DictReader(f)
             # Map CSV headers to DB columns
@@ -45,7 +39,10 @@ def seed_mapping(csv_path: str):
                     text("""
                         INSERT INTO competition_mapping (parent_competition, name, division, grade)
                         VALUES (:parent, :name, :div, :grade)
-                        ON CONFLICT (name) DO NOTHING
+                        ON CONFLICT (name) DO UPDATE SET
+                            parent_competition = EXCLUDED.parent_competition,
+                            division = EXCLUDED.division,
+                            grade = EXCLUDED.grade
                     """),
                     {
                         "parent": row.get("Parent Competition"),
@@ -55,7 +52,7 @@ def seed_mapping(csv_path: str):
                     }
                 )
                 count += 1
-        logger.info(f"Successfully seeded {count} mapping entries.")
+        logger.info(f"Successfully synced {count} mapping entries.")
     
     # Also seed clubs from JSON if available
     script_dir = os.path.dirname(os.path.abspath(csv_path))
