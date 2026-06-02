@@ -328,8 +328,8 @@ export default function ClubDetail() {
                   <span style={{ fontSize: '1.2rem', filter: 'grayscale(30%)' }}>🚺</span>
                   <div>
                     <h4 style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Women's Rugby</h4>
-                    <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginTop: '2px' }}>
-                      {club.has_womens_team ? "Active Women's Division Team" : "No active women's team registered"}
+                    <p style={{ fontSize: 'var(--font-size-sm)', marginTop: '4px', lineHeight: '1' }}>
+                      {club.has_womens_team ? '✅' : '❌'}
                     </p>
                   </div>
                 </div>
