@@ -3,7 +3,7 @@
    ============================================ */
 
 .refzone-page {
-  padding-top: calc(var(--nav-height) + var(--space-8));
+  padding-top: calc(var(--nav-height) + var(--space-12));
   padding-bottom: var(--space-16);
   min-height: 100vh;
 }
@@ -160,9 +160,15 @@
   border: 2px solid var(--color-accent-primary);
 }
 
+.referee-info {
+  display: flex;
+  flex-direction: column;
+}
+
 .referee-name {
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
 }
 
 .referee-title {
@@ -170,6 +176,77 @@
   color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.dashboard-actions {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.dashboard-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Responsive layout overrides for RefZone on mobile */
+@media (max-width: 768px) {
+  .refzone-page {
+    padding-top: calc(var(--nav-height) + var(--space-10));
+  }
+
+  .dashboard-header {
+    flex-wrap: nowrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+  }
+
+  .referee-profile {
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  .referee-avatar,
+  .referee-avatar-placeholder {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+  }
+
+  .referee-avatar-placeholder {
+    font-size: var(--font-size-xs);
+  }
+
+  .referee-name {
+    font-size: var(--font-size-sm);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+  }
+
+  .referee-title {
+    font-size: 9px;
+  }
+
+  .dashboard-actions {
+    gap: var(--space-2);
+    flex-shrink: 0;
+  }
+
+  .dashboard-actions .dashboard-btn {
+    padding: var(--space-1-5, 6px) var(--space-2);
+    font-size: var(--font-size-xs);
+  }
+
+  .dashboard-actions .dashboard-btn .btn-text {
+    display: none;
+  }
+
+  .dashboard-actions .dashboard-btn .btn-icon {
+    margin-right: 0;
+  }
 }
 
 /* --- Appointment sections --- */

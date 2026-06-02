@@ -17,7 +17,7 @@ function urlBase64ToUint8Array(base64String) {
   return outputArray
 }
 
-export default function NotificationToggle() {
+export default function NotificationToggle({ onSubscriptionChange }) {
   const [isSupported, setIsSupported] = useState(false)
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -33,6 +33,9 @@ export default function NotificationToggle() {
       checkSubscription()
     } else {
       setLoading(false)
+      if (onSubscriptionChange) {
+        onSubscriptionChange(false)
+      }
     }
   }, [])
 
@@ -40,7 +43,11 @@ export default function NotificationToggle() {
     try {
       const registration = await navigator.serviceWorker.ready
       const subscription = await registration.pushManager.getSubscription()
-      setIsSubscribed(!!subscription)
+      const subscribed = !!subscription
+      setIsSubscribed(subscribed)
+      if (onSubscriptionChange) {
+        onSubscriptionChange(subscribed)
+      }
     } catch (err) {
       console.error('Error checking push subscription:', err)
     } finally {
@@ -60,6 +67,9 @@ export default function NotificationToggle() {
           await subscription.unsubscribe()
         }
         setIsSubscribed(false)
+        if (onSubscriptionChange) {
+          onSubscriptionChange(false)
+        }
       } else {
         const perm = await Notification.requestPermission()
         if (perm !== 'granted') {
@@ -77,6 +87,9 @@ export default function NotificationToggle() {
 
         await api.subscribeNotifications(subscription.toJSON())
         setIsSubscribed(true)
+        if (onSubscriptionChange) {
+          onSubscriptionChange(true)
+        }
       }
     } catch (err) {
       console.error('Failed to toggle subscription:', err)

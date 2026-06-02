@@ -115,145 +115,147 @@ export default function RefZoneDashboard() {
   };
 
   return (
-    <div className="container page animate-in">
-      <div className="dashboard-header">
-        <div className="referee-profile">
-          {auth.profile?.headshot ? (
-            <img
-              src={auth.profile.headshot}
-              alt="Referee headshot"
-              className="referee-avatar"
-              onError={(e) => {
-                e.target.style.display = 'none';
-              }}
-            />
-          ) : (
-            <div className="referee-avatar-placeholder">{getInitials()}</div>
-          )}
-          <div>
-            <h1 className="referee-name">
-              {auth.profile
-                ? `${auth.profile.firstname} ${auth.profile.lastname}`
-                : 'Referee Dashboard'}
-            </h1>
-            <div className="referee-title">RugbyXplorer RefZone</div>
+    <div className="page refzone-page animate-in">
+      <div className="container">
+        <div className="dashboard-header">
+          <div className="referee-profile">
+            {auth.profile?.headshot ? (
+              <img
+                src={auth.profile.headshot}
+                alt="Referee headshot"
+                className="referee-avatar"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                }}
+              />
+            ) : (
+              <div className="referee-avatar-placeholder">{getInitials()}</div>
+            )}
+            <div className="referee-info">
+              <h1 className="referee-name">
+                {auth.profile
+                  ? `${auth.profile.firstname} ${auth.profile.lastname}`
+                  : 'Referee Dashboard'}
+              </h1>
+              <div className="referee-title">RugbyXplorer RefZone</div>
+            </div>
+          </div>
+
+          <div className="dashboard-actions">
+            <button type="button" className="btn btn--ghost dashboard-btn" onClick={loadData} disabled={loading}>
+              <span className="btn-icon">🔄</span> <span className="btn-text">{loading ? 'Refreshing...' : 'Refresh'}</span>
+            </button>
+            <button type="button" className="btn btn--ghost dashboard-btn" onClick={auth.clearAuth}>
+              Logout
+            </button>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
-          <button type="button" className="btn btn--ghost" onClick={loadData} disabled={loading}>
-            🔄 {loading ? 'Refreshing...' : 'Refresh'}
-          </button>
-          <button type="button" className="btn btn--ghost" onClick={auth.clearAuth}>
-            Logout
-          </button>
-        </div>
-      </div>
-
-      <div className="tab-bar">
-        <button
-          type="button"
-          className={`tab-bar__tab ${activeTab === 'weekend' ? 'tab-bar__tab--active' : ''}`}
-          onClick={() => setActiveTab('weekend')}
-        >
-          This Weekend ({thisWeekend.length})
-        </button>
-        <button
-          type="button"
-          className={`tab-bar__tab ${activeTab === 'upcoming' ? 'tab-bar__tab--active' : ''}`}
-          onClick={() => setActiveTab('upcoming')}
-        >
-          Coming Up ({upcoming.length})
-        </button>
-        <button
-          type="button"
-          className={`tab-bar__tab ${activeTab === 'past' ? 'tab-bar__tab--active' : ''}`}
-          onClick={() => setActiveTab('past')}
-        >
-          Past Games ({past.length})
-        </button>
-      </div>
-
-      {loading ? (
-        <div className="grid grid--2">
-          <div className="card skeleton" style={{ height: '220px' }}></div>
-          <div className="card skeleton" style={{ height: '220px' }}></div>
-        </div>
-      ) : error ? (
-        <div className="alert-danger" style={{ padding: 'var(--space-6)' }}>
-          <p>{error}</p>
+        <div className="tab-bar">
           <button
             type="button"
-            className="btn btn--primary mt-4"
-            onClick={loadData}
-            style={{ marginTop: 'var(--space-4)' }}
+            className={`tab-bar__tab ${activeTab === 'weekend' ? 'tab-bar__tab--active' : ''}`}
+            onClick={() => setActiveTab('weekend')}
           >
-            Retry Loading
+            This Weekend ({thisWeekend.length})
+          </button>
+          <button
+            type="button"
+            className={`tab-bar__tab ${activeTab === 'upcoming' ? 'tab-bar__tab--active' : ''}`}
+            onClick={() => setActiveTab('upcoming')}
+          >
+            Coming Up ({upcoming.length})
+          </button>
+          <button
+            type="button"
+            className={`tab-bar__tab ${activeTab === 'past' ? 'tab-bar__tab--active' : ''}`}
+            onClick={() => setActiveTab('past')}
+          >
+            Past Games ({past.length})
           </button>
         </div>
-      ) : (
-        <div className="refzone-sections">
-          {activeTab === 'weekend' && (
-            <div>
-              <h2 className="refzone-section__title">
-                🏉 Games This Weekend
-                <span className="refzone-section__count">{thisWeekend.length}</span>
-              </h2>
-              {thisWeekend.length === 0 ? (
-                <div className="no-appointments">
-                  No match appointments scheduled for this upcoming weekend.
-                </div>
-              ) : (
-                <div className="grid grid--2">
-                  {thisWeekend.map((app) => (
-                    <AppointmentCard key={app._id} appointment={app} />
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
 
-          {activeTab === 'upcoming' && (
-            <div>
-              <h2 className="refzone-section__title">
-                📅 Upcoming Pending & Confirmed
-                <span className="refzone-section__count">{upcoming.length}</span>
-              </h2>
-              {upcoming.length === 0 ? (
-                <div className="no-appointments">
-                  No other future appointments scheduled.
-                </div>
-              ) : (
-                <div className="grid grid--2">
-                  {upcoming.map((app) => (
-                    <AppointmentCard key={app._id} appointment={app} />
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+        {loading ? (
+          <div className="grid grid--2">
+            <div className="card skeleton" style={{ height: '220px' }}></div>
+            <div className="card skeleton" style={{ height: '220px' }}></div>
+          </div>
+        ) : error ? (
+          <div className="alert-danger" style={{ padding: 'var(--space-6)' }}>
+            <p>{error}</p>
+            <button
+              type="button"
+              className="btn btn--primary mt-4"
+              onClick={loadData}
+              style={{ marginTop: 'var(--space-4)' }}
+            >
+              Retry Loading
+            </button>
+          </div>
+        ) : (
+          <div className="refzone-sections">
+            {activeTab === 'weekend' && (
+              <div>
+                <h2 className="refzone-section__title">
+                  🏉 Games This Weekend
+                  <span className="refzone-section__count">{thisWeekend.length}</span>
+                </h2>
+                {thisWeekend.length === 0 ? (
+                  <div className="no-appointments">
+                    No match appointments scheduled for this upcoming weekend.
+                  </div>
+                ) : (
+                  <div className="grid grid--2">
+                    {thisWeekend.map((app) => (
+                      <AppointmentCard key={app._id} appointment={app} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
-          {activeTab === 'past' && (
-            <div>
-              <h2 className="refzone-section__title">
-                📜 Past Matches
-                <span className="refzone-section__count">{past.length}</span>
-              </h2>
-              {past.length === 0 ? (
-                <div className="no-appointments">
-                  No past match appointments found.
-                </div>
-              ) : (
-                <div className="grid grid--2">
-                  {past.map((app) => (
-                    <AppointmentCard key={app._id} appointment={app} />
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
+            {activeTab === 'upcoming' && (
+              <div>
+                <h2 className="refzone-section__title">
+                  📅 Upcoming Pending & Confirmed
+                  <span className="refzone-section__count">{upcoming.length}</span>
+                </h2>
+                {upcoming.length === 0 ? (
+                  <div className="no-appointments">
+                    No other future appointments scheduled.
+                  </div>
+                ) : (
+                  <div className="grid grid--2">
+                    {upcoming.map((app) => (
+                      <AppointmentCard key={app._id} appointment={app} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'past' && (
+              <div>
+                <h2 className="refzone-section__title">
+                  📜 Past Matches
+                  <span className="refzone-section__count">{past.length}</span>
+                </h2>
+                {past.length === 0 ? (
+                  <div className="no-appointments">
+                    No past match appointments found.
+                  </div>
+                ) : (
+                  <div className="grid grid--2">
+                    {past.map((app) => (
+                      <AppointmentCard key={app._id} appointment={app} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -71,6 +71,23 @@ function GamePill({ game }) {
 export default function Home() {
   const [liveGames, setLiveGames] = useState([])
   const [loadingLive, setLoadingLive] = useState(true)
+  const [isSubscribed, setIsSubscribed] = useState(true)
+
+  useEffect(() => {
+    if ('serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window) {
+      navigator.serviceWorker.ready
+        .then((registration) => registration.pushManager.getSubscription())
+        .then((subscription) => {
+          setIsSubscribed(!!subscription)
+        })
+        .catch((err) => {
+          console.error('Error checking subscription in Home:', err)
+          setIsSubscribed(false)
+        })
+    } else {
+      setIsSubscribed(false)
+    }
+  }, [])
 
   const [isSyncing, setIsSyncing] = useState(false)
   const [showModal, setShowModal] = useState(false)
@@ -226,18 +243,20 @@ export default function Home() {
         </header>
 
         {/* B. Smart Alerts Banner */}
-        <div className="smart-alert-banner card animate-in">
-          <div className="smart-alert-banner__text">
-            <h3>Enable Alerts</h3>
-            <p>Never miss a try! Enable live score alerts for your favourite clubs.</p>
+        {!isSubscribed && (
+          <div className="smart-alert-banner card animate-in">
+            <div className="smart-alert-banner__text">
+              <h3>Enable Alerts</h3>
+              <p>Never miss a try! Enable live score alerts for your favourite clubs.</p>
+            </div>
+            <div className="smart-alert-banner__actions">
+              <NotificationToggle onSubscriptionChange={setIsSubscribed} />
+              <Link to="/notifications" className="btn btn--ghost" title="Manage Alert Settings">
+                Manage Alerts
+              </Link>
+            </div>
           </div>
-          <div className="smart-alert-banner__actions">
-            <NotificationToggle />
-            <Link to="/notifications" className="btn btn--ghost" title="Manage Alert Settings">
-              Manage Alerts
-            </Link>
-          </div>
-        </div>
+        )}
 
         {/* C. Context-Aware RefZone Widget */}
         {auth.userId && nextAppointment && (
