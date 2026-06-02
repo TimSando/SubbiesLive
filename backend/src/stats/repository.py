@@ -1,7 +1,7 @@
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
-from src.stats.schemas import PlayerStatRow, ClubStatRow, SeasonOverview, ClubDepthRow
+from src.stats.schemas import PlayerStatRow, ClubStatRow, SeasonOverview, ClubDepthRow, TeamFormStats
 from src.core.cache import ttl_cache
 
 
@@ -346,4 +346,49 @@ async def get_club_depth_stats(
             avg_games=float(row.avg_games or 0.0)
         ))
     return stats
+
+
+async def get_team_form_stats(db: AsyncSession, team_id: int) -> TeamFormStats:
+    """Fetch aggregated tries and cards for a team's last 5 games."""
+    query = """
+        WITH recent_games AS (
+            SELECT id FROM games 
+            WHERE (home_team_id = :team_id OR away_team_id = :team_id)
+            AND status = 'completed'
+            ORDER BY game_date DESC
+            LIMIT 5
+        )
+        SELECT 
+            :team_id as team_id,
+            COUNT(DISTINCT ph.game_id) as games_played,
+            COALESCE(SUM(ph.tries), 0) as total_tries,
+            COALESCE(SUM(ph.conversions), 0) as total_conversions,
+            COALESCE(SUM(ph.yellow_cards), 0) as total_yellow_cards,
+            COALESCE(SUM(ph.red_cards), 0) as total_red_cards
+        FROM player_history ph
+        WHERE ph.team_id = :team_id
+        AND ph.game_id IN (SELECT id FROM recent_games)
+    """
+    result = await db.execute(text(query), {"team_id": team_id})
+    row = result.fetchone()
+    
+    if not row or row.games_played == 0:
+        return TeamFormStats(
+            team_id=team_id,
+            games_played=0,
+            total_tries=0,
+            total_conversions=0,
+            total_yellow_cards=0,
+            total_red_cards=0
+        )
+        
+    return TeamFormStats(
+        team_id=row.team_id,
+        games_played=row.games_played,
+        total_tries=row.total_tries,
+        total_conversions=row.total_conversions,
+        total_yellow_cards=row.total_yellow_cards,
+        total_red_cards=row.total_red_cards
+    )
+
 

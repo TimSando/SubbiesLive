@@ -37,11 +37,13 @@ def _build_game_base_query():
             HomeTeam.name.label("home_team_name"),
             HomeClub.name.label("home_club_name"),
             HomeClub.id.label("home_club_id"),
+            HomeClub.logo_url.label("home_club_logo_url"),
             # Away team
             AwayTeam.id.label("away_team_id"),
             AwayTeam.name.label("away_team_name"),
             AwayClub.name.label("away_club_name"),
             AwayClub.id.label("away_club_id"),
+            AwayClub.logo_url.label("away_club_logo_url"),
         )
         .join(Round, Round.id == Game.round_id)
         .join(Competition, Competition.id == Round.competition_id)
@@ -65,12 +67,14 @@ def _row_to_game_dict(row) -> dict:
             "name": data["home_team_name"],
             "club_name": data["home_club_name"],
             "club_id": data["home_club_id"],
+            "logo_url": data["home_club_logo_url"],
         },
         "away_team": {
             "id": data["away_team_id"],
             "name": data["away_team_name"],
             "club_name": data["away_club_name"],
             "club_id": data["away_club_id"],
+            "logo_url": data["away_club_logo_url"],
         },
         "home_score": data["home_score"],
         "away_score": data["away_score"],

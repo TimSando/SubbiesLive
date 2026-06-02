@@ -48,3 +48,10 @@ async def get_club_depth_leaderboard(
     """Get club depth and squad participation stats."""
     return await stats_repo.get_club_depth_stats(db, competition_id, parent_competition, division)
 
+
+@router.get("/team/{team_id}/form", response_model=schemas.TeamFormStats)
+async def get_team_form(team_id: int, db: AsyncSession = Depends(get_db)):
+    """Get aggregated form stats (last 5 games) for a specific team."""
+    return await stats_repo.get_team_form_stats(db, team_id)
+
+

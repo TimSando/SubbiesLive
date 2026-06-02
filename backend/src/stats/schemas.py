@@ -57,3 +57,12 @@ class ClubDepthRow(BaseModel):
     avg_games: float
 
 
+class TeamFormStats(BaseModel):
+    team_id: int
+    games_played: int
+    total_tries: int
+    total_conversions: int
+    total_yellow_cards: int
+    total_red_cards: int
+
+

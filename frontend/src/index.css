@@ -1910,5 +1910,14 @@ tbody tr:last-child td {
   gap: var(--space-3);
 }
 
+/* --- Form Game Link (Match Prep Form Guide) --- */
+.form-game-link {
+  transition: all var(--transition-fast) !important;
+  cursor: pointer;
+}
 
-
+.form-game-link:hover {
+  background: var(--color-bg-glass-hover) !important;
+  border-color: var(--color-border-hover) !important;
+  transform: translateX(4px);
+}

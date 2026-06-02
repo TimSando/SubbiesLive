@@ -10,6 +10,7 @@ class TeamInGame(BaseModel):
     name: str
     club_name: str = ""
     club_id: int | None = None
+    logo_url: str | None = None
 
     class Config:
         from_attributes = True

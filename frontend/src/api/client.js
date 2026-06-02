@@ -72,6 +72,8 @@ export const api = {
   getSeasonOverview: (params = {}) => {
     return request(`/stats/overview${buildQuery(params)}`)
   },
+  getTeamFormStats: (teamId) => request(`/stats/team/${teamId}/form`),
+
 
   // Ingestion
   getIngestionStatus: () => request('/ingestion/status'),

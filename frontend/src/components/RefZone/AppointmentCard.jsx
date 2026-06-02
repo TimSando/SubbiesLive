@@ -87,11 +87,11 @@ export default function AppointmentCard({ appointment }) {
       {appointment.db_game_id && (
         <div className="appointment-card__actions" style={{ marginTop: 'var(--space-4)' }}>
           <Link
-            to={`/games/${appointment.db_game_id}`}
+            to={isPast || statusText === 'past' ? `/games/${appointment.db_game_id}` : `/games/${appointment.db_game_id}/prep`}
             className="btn btn--primary"
             style={{ display: 'block', textAlign: 'center', width: '100%', textDecoration: 'none' }}
           >
-            📊 View Stats & Match Centre
+            {isPast || statusText === 'past' ? '📊 View Stats & Match Centre' : '📋 Match Preparation (Form Guide)'}
           </Link>
         </div>
       )}
