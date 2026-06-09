@@ -35,7 +35,7 @@ async def test_rx_login_returns_401_for_bad_credentials(client):
     """Valid token, wrong user credentials -> propagate 401."""
     mock_resp = MagicMock(status_code=401, text='{"message":"Incorrect email or password"}')
 
-    with patch("src.refzone.router.fetch_fresh_rx_basic_token", new_callable=AsyncMock) as mock_scrape:
+    with patch("src.refzone.router.fetch_fresh_rx_basic_token", new_callable=AsyncMock):
         with patch("src.refzone.router.httpx.AsyncClient") as mock_cls:
             mock_cls.return_value.__aenter__.return_value.post = AsyncMock(return_value=mock_resp)
             r = await client.post("/api/refzone/login", json={"email": "bad@test.com", "password": "wrong"})

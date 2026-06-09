@@ -6,7 +6,6 @@ from fastapi import HTTPException
 from src.refzone.router import (
     fetch_fresh_rx_basic_token,
     rx_login,
-    get_rx_headers,
     LoginRequest,
 )
 import src.refzone.router as rx_router
@@ -26,7 +25,6 @@ async def test_scraping():
 async def test_retry_flow():
     print("\n--- Testing Login Retry Flow with Poisoned Token ---")
     # Poison the token cache
-    original_token = rx_router._cached_basic_token
     rx_router._cached_basic_token = "invalid_token_to_force_failure"
     print(f"Poisoned token cache. Current: {rx_router._cached_basic_token}")
 
@@ -77,7 +75,7 @@ async def test_retry_flow():
 
 async def main():
     try:
-        scraped = await test_scraping()
+        await test_scraping()
         await test_retry_flow()
     except Exception as e:
         print(f"Test suite failed: {e}")

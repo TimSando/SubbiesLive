@@ -1,5 +1,4 @@
-import pytest
-from datetime import datetime, timezone
+from datetime import datetime
 from src.refzone.matching import (
     clean_team_name,
     match_team_names,

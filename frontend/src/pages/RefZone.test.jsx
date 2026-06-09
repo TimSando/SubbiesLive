@@ -81,10 +81,12 @@ describe('RefZone page and auth integration', () => {
     })
 
     // It should render games in "This Weekend" tab by default
-    expect(screen.getByText(/Games This Weekend/i)).toBeInTheDocument()
-    expect(screen.getByText('Colleagues')).toBeInTheDocument()
-    expect(screen.getByText('Mosman')).toBeInTheDocument()
-    expect(screen.getByText(/Kentwell Cup/i)).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText(/Games This Weekend/i)).toBeInTheDocument()
+      expect(screen.getByText('Colleagues')).toBeInTheDocument()
+      expect(screen.getByText('Mosman')).toBeInTheDocument()
+      expect(screen.getByText(/Kentwell Cup/i)).toBeInTheDocument()
+    })
 
     // Test show officials in AppointmentCard (on weekend tab)
     const officialsTrigger = screen.getByRole('button', { name: /Match Officials/i })

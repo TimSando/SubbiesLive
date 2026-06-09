@@ -10,9 +10,8 @@ Note: Bonus points require try-level data which we track, but for simplicity
 in v1 we use the standard W/D/L point system without bonus points.
 """
 
-from collections import defaultdict
 
-from sqlalchemy import select, func
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.competitions.models import Competition

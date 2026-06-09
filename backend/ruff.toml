@@ -1,0 +1,16 @@
+# Ruff configuration file
+
+# Exclude legacy/ingestion scripts that are not part of the active web app
+exclude = [
+    "src/scripts",
+    "src/stats/test_depth.py",
+]
+
+[lint]
+# Ignore specific rules
+ignore = [
+    "E402", # Module level import not at top of file (conftest.py must set env before imports)
+    "F821", # Undefined name (SQLAlchemy relationship type hints in string literals)
+    "E701", # Multiple statements on one line (colon)
+    "E711", # Comparison to None (SQLAlchemy expressions use != None for IS NOT NULL check)
+]

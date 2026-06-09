@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.players.models import Player
 from src.clubs.models import Club, Team
 from src.competitions.models import Competition
-from src.games.models import GameEvent, Game, PlayerHistory
+from src.games.models import Game, PlayerHistory
 
 
 async def get_players(

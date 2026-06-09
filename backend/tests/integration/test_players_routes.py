@@ -9,8 +9,8 @@ async def test_list_players_empty(client):
     assert response.json() == []
 
 async def test_list_players_search_and_pagination(client, db_session):
-    p1 = await make_player(db_session, name="David Campese", external_id=1001)
-    p2 = await make_player(db_session, name="Michael Lynagh", external_id=1002)
+    await make_player(db_session, name="David Campese", external_id=1001)
+    await make_player(db_session, name="Michael Lynagh", external_id=1002)
 
     response = await client.get("/api/players", params={"search": "David"})
     assert response.status_code == 200

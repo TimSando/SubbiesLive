@@ -1,6 +1,6 @@
 import pytest
 import base64
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 from src.refzone.router import fetch_fresh_rx_basic_token, CLIENT_SECRET_RE
 
 pytestmark = pytest.mark.asyncio

@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 pytestmark = pytest.mark.asyncio
 
@@ -8,7 +8,7 @@ async def test_trigger_ingestion_wrong_password(client):
     assert response.status_code == 401
 
 async def test_trigger_ingestion_success(client):
-    with patch("src.ingestion.router.run_ingestion") as mock_run:
+    with patch("src.ingestion.router.run_ingestion"):
         with patch("src.ingestion.router.is_ingestion_running", return_value=False):
             response = await client.post("/api/ingestion/trigger", json={"password": "testpass"})
             assert response.status_code == 200

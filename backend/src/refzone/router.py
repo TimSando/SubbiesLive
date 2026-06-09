@@ -2,8 +2,8 @@ import logging
 import re
 import base64
 from pathlib import Path
-from typing import Dict, Any, List, Optional
-from fastapi import APIRouter, Header, HTTPException, Query
+from typing import Dict, Optional
+from fastapi import APIRouter, Header, HTTPException
 from pydantic import BaseModel
 import httpx
 

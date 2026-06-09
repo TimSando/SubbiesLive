@@ -2,7 +2,6 @@
 
 from sqlalchemy import select, func, case
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
 from src.competitions.models import Competition, Round, CompetitionMapping
 from src.clubs.models import Team, Club

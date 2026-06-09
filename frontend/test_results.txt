@@ -1,10 +1,10 @@
 
  RUN  v2.1.9 /home/sandersont/personal/subbiesStats/frontend
 
- ✓ src/api/client.test.js (4 tests) 74ms
- ✓ src/hooks/useApi.test.js (2 tests) 149ms
- ✓ src/pages/Competitions.test.jsx (4 tests) 365ms
- ✓ src/pages/Clubs.test.jsx (4 tests) 383ms
+ ✓ src/api/client.test.js (4 tests) 43ms
+ ✓ src/hooks/useApi.test.js (2 tests) 128ms
+ ✓ src/pages/Competitions.test.jsx (4 tests) 211ms
+ ✓ src/pages/Clubs.test.jsx (4 tests) 230ms
 stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > displays error message on invalid credentials login attempt
 RefZone: Encrypting credentials in browser...
 RefZone: Submitting encrypted credentials to backend...
@@ -28,6 +28,7 @@ RefZone: Encrypting credentials in browser...
 RefZone: Submitting encrypted credentials to backend...
 RefZone: Authentication successful!
 
+ ✓ src/pages/Stats.test.jsx (8 tests) 609ms
 stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > saves credentials in localStorage and performs auto-login on mount if Remember Me is checked
 RefZone: Fetching appointments...
 RefZone: Scheduling proactive token refresh in 55.0 minutes
@@ -43,12 +44,10 @@ stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > perfor
 RefZone: Fetching appointments...
 RefZone: Scheduling proactive token refresh in 55.0 minutes
 
- ✓ src/pages/RefZone.test.jsx (5 tests) 1008ms
-   ✓ RefZone page and auth integration > successful login transitions to Dashboard and displays appointments 342ms
- ✓ src/pages/Stats.test.jsx (8 tests) 1080ms
+ ✓ src/pages/RefZone.test.jsx (5 tests) 633ms
 
  Test Files  6 passed (6)
       Tests  27 passed (27)
-   Start at  11:42:12
-   Duration  2.70s (transform 607ms, setup 1.42s, collect 1.83s, tests 3.06s, environment 3.25s, prepare 742ms)
+   Start at  12:42:25
+   Duration  2.08s (transform 422ms, setup 1.49s, collect 1.27s, tests 1.85s, environment 3.48s, prepare 582ms)
 

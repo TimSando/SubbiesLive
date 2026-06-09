@@ -7,7 +7,7 @@ multiple times with the same data.
 
 import logging
 from sqlalchemy import text
-from src.ingestion.transformers import extract_club_name, extract_round_number
+from src.ingestion.transformers import extract_round_number
 
 logger = logging.getLogger("ingestion")
 

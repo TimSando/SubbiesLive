@@ -16,7 +16,7 @@ async def test_list_games_returns_data(client, db_session):
     team1 = await make_team(db_session, club_id=club1.id, competition_id=comp.id, name="Colleagues 1st", external_id=5001)
     team2 = await make_team(db_session, club_id=club2.id, competition_id=comp.id, name="Mosman 1st", external_id=5002)
     
-    game = await make_game(db_session, round_id=r.id, home_team_id=team1.id, away_team_id=team2.id, external_id=10001)
+    await make_game(db_session, round_id=r.id, home_team_id=team1.id, away_team_id=team2.id, external_id=10001)
 
     response = await client.get("/api/games")
     assert response.status_code == 200
