@@ -84,25 +84,27 @@ export default function Stats() {
     return params
   }, [filter])
 
-  const { data: playerStats, loading: playersLoading } = useApi(
+  const { data: playerStats, loading: playersLoading, error: playersError } = useApi(
     () => api.getPlayerStats(filterParams),
     [filterParams]
   )
   
-  const { data: clubStats, loading: clubsLoading } = useApi(
+  const { data: clubStats, loading: clubsLoading, error: clubsError } = useApi(
     () => api.getClubStats(filterParams),
     [filterParams]
   )
 
-  const { data: clubDepthStats, loading: clubDepthLoading } = useApi(
+  const { data: clubDepthStats, loading: clubDepthLoading, error: clubDepthError } = useApi(
     () => api.getClubDepthStats(filterParams),
     [filterParams]
   )
   
-  const { data: overview, loading: overviewLoading } = useApi(
+  const { data: overview, loading: overviewLoading, error: overviewError } = useApi(
     () => api.getSeasonOverview(filterParams),
     [filterParams]
   )
+
+  const statsError = playersError || clubsError || clubDepthError || overviewError
 
   // Group competitions by parent then division
   const groupedHierarchy = useMemo(() => {
@@ -260,8 +262,9 @@ export default function Stats() {
           </div>
 
           <div className="stats-filter-group">
-            <label className="stats-filter-label">Filter By</label>
+            <label className="stats-filter-label" htmlFor="stats-filter-select">Filter By</label>
             <select 
+              id="stats-filter-select"
               className="stats-select" 
               value={`${filter.type}:${filter.value}`} 
               onChange={handleFilterChange}
@@ -304,6 +307,12 @@ export default function Stats() {
             <ToggleSwitch value={viewMode} onChange={setViewMode} />
           </div>
         </header>
+
+        {statsError && (
+          <div className="alert-danger" style={{ marginBottom: 'var(--space-4)' }}>
+            Failed to load stats: {statsError}
+          </div>
+        )}
 
         {hasLiveGames && (
           <div style={{

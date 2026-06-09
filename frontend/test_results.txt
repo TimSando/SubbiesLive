@@ -1,0 +1,54 @@
+
+ RUN  v2.1.9 /home/sandersont/personal/subbiesStats/frontend
+
+ ✓ src/api/client.test.js (4 tests) 74ms
+ ✓ src/hooks/useApi.test.js (2 tests) 149ms
+ ✓ src/pages/Competitions.test.jsx (4 tests) 365ms
+ ✓ src/pages/Clubs.test.jsx (4 tests) 383ms
+stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > displays error message on invalid credentials login attempt
+RefZone: Encrypting credentials in browser...
+RefZone: Submitting encrypted credentials to backend...
+
+stderr | src/pages/RefZone.test.jsx > RefZone page and auth integration > displays error message on invalid credentials login attempt
+RefZone: Login failed: Error: Login failed: 401
+    at Module.loginToRX (/home/sandersont/personal/subbiesStats/frontend/src/api/refzone.js:13:11)
+    at handleSubmit (/home/sandersont/personal/subbiesStats/frontend/src/pages/RefZoneLogin.jsx:31:25)
+
+stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > successful login transitions to Dashboard and displays appointments
+RefZone: Encrypting credentials in browser...
+RefZone: Submitting encrypted credentials to backend...
+RefZone: Authentication successful!
+
+stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > successful login transitions to Dashboard and displays appointments
+RefZone: Fetching appointments...
+RefZone: Scheduling proactive token refresh in 55.0 minutes
+
+stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > saves credentials in localStorage and performs auto-login on mount if Remember Me is checked
+RefZone: Encrypting credentials in browser...
+RefZone: Submitting encrypted credentials to backend...
+RefZone: Authentication successful!
+
+stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > saves credentials in localStorage and performs auto-login on mount if Remember Me is checked
+RefZone: Fetching appointments...
+RefZone: Scheduling proactive token refresh in 55.0 minutes
+
+stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > saves credentials in localStorage and performs auto-login on mount if Remember Me is checked
+RefZone: Clearing authentication context
+
+stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > performs auto-login on startup if valid credentials exist in localStorage
+RefZone: Found stored credentials, attempting auto-login...
+RefZone: Auto-login successful!
+
+stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > performs auto-login on startup if valid credentials exist in localStorage
+RefZone: Fetching appointments...
+RefZone: Scheduling proactive token refresh in 55.0 minutes
+
+ ✓ src/pages/RefZone.test.jsx (5 tests) 1008ms
+   ✓ RefZone page and auth integration > successful login transitions to Dashboard and displays appointments 342ms
+ ✓ src/pages/Stats.test.jsx (8 tests) 1080ms
+
+ Test Files  6 passed (6)
+      Tests  27 passed (27)
+   Start at  11:42:12
+   Duration  2.70s (transform 607ms, setup 1.42s, collect 1.83s, tests 3.06s, environment 3.25s, prepare 742ms)
+
