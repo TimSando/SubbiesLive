@@ -1,4 +1,7 @@
 import logging
+import re
+import base64
+from pathlib import Path
 from typing import Dict, Any, List, Optional
 from fastapi import APIRouter, Header, HTTPException, Query
 from pydantic import BaseModel
@@ -8,10 +11,63 @@ router = APIRouter()
 logger = logging.getLogger("uvicorn")
 
 RX_BASE_URL = "https://api.rugbyxplorer.com.au"
+RX_AUTH_PAGE = "https://auth.rugbyxplorer.com.au"
+CLIENT_SECRET_RE = re.compile(r'["\']auth["\'],\s*\w+=\s*["\']supersecretoken["\'],\s*\w+=\s*["\']([A-Za-z0-9]{40,60})["\']')
+SKIP_CHUNK_PREFIXES = ('polyfills', 'webpack', 'framework', 'main', '_buildManifest', '_ssgManifest')
+
+# In-memory cache for RugbyXplorer basic authorization token (base64 portion only)
+_cached_basic_token: str = "YXV0aDozanowbkRsZGtQVERFcGdKT2I2bXlYTmhMN0h4Nk4zVnM5eFJHcDcyQ1c1V0w0UmtWTw=="
 
 class LoginRequest(BaseModel):
     email: str
     password: str
+
+async def fetch_fresh_rx_basic_token(client: httpx.AsyncClient) -> str:
+    """Scrapes the RugbyXplorer auth page to extract the current Basic auth token."""
+    logger.info("Scraping RugbyXplorer auth page for fresh basic token...")
+    login_page = await client.get(
+        f"{RX_AUTH_PAGE}/login",
+        params={"clientId": "portal"},
+        timeout=10.0
+    )
+    login_page.raise_for_status()
+    
+    # Extract JS chunk URLs from the HTML
+    chunk_urls = re.findall(r'src="([^"]*_next/static/[^"]+\.js)"', login_page.text)
+    
+    # Skip framework/polyfill chunks that won't contain the token
+    candidate_chunks = [
+        u for u in chunk_urls
+        if not any(Path(u).name.startswith(p) for p in SKIP_CHUNK_PREFIXES)
+    ]
+    
+    for chunk_path in candidate_chunks:
+        # Resolve full URL
+        if chunk_path.startswith("http://") or chunk_path.startswith("https://"):
+            url = chunk_path
+        elif chunk_path.startswith("/"):
+            url = f"{RX_AUTH_PAGE}{chunk_path}"
+        else:
+            url = f"{RX_AUTH_PAGE}/{chunk_path}"
+            
+        logger.info(f"Checking chunk: {url}")
+        try:
+            chunk_res = await client.get(url, timeout=10.0)
+            if chunk_res.status_code != 200:
+                continue
+            match = CLIENT_SECRET_RE.search(chunk_res.text)
+            if match:
+                secret = match.group(1)
+                logger.info("Found fresh RugbyXplorer client secret in chunk.")
+                raw_auth = f"auth:{secret}"
+                fresh_token = base64.b64encode(raw_auth.encode('utf-8')).decode('utf-8')
+                return fresh_token
+        except Exception as chunk_err:
+            logger.warning(f"Error fetching chunk {url}: {chunk_err}")
+            continue
+    
+    raise RuntimeError("Could not extract Basic auth token from RugbyXplorer auth page")
+
 
 def get_rx_headers(token: Optional[str] = None) -> Dict[str, str]:
     headers = {
@@ -24,11 +80,12 @@ def get_rx_headers(token: Optional[str] = None) -> Dict[str, str]:
     if token:
         headers['Authorization'] = f'Bearer {token}'
     else:
-        headers['Authorization'] = 'Basic YXV0aDozanowbkRsZGtQVERFcGdKT2I2bXlYTmhMN0h4Nk4zVnM5eFJHcDcyQ1c1V0w0UmtWTw=='
+        headers['Authorization'] = f'Basic {_cached_basic_token}'
     return headers
 
 @router.post("/login")
 async def rx_login(body: LoginRequest):
+    global _cached_basic_token
     url = f"{RX_BASE_URL}/rau/api/v3/login"
     payload = {
         "email": body.email,
@@ -36,14 +93,26 @@ async def rx_login(body: LoginRequest):
         "password": body.password,
         "samlRequest": {}
     }
-    headers = get_rx_headers()
     
     async with httpx.AsyncClient() as client:
         try:
+            headers = get_rx_headers()
             r = await client.post(url, json=payload, headers=headers, timeout=10.0)
+            
             if r.status_code != 200:
-                logger.error(f"RX Login failed: status={r.status_code}, response={r.text}")
+                logger.warning(f"RX Login failed (status={r.status_code}), attempting basic token refresh...")
+                try:
+                    fresh_token = await fetch_fresh_rx_basic_token(client)
+                    _cached_basic_token = fresh_token
+                    headers = get_rx_headers()
+                    r = await client.post(url, json=payload, headers=headers, timeout=10.0)
+                except Exception as refresh_err:
+                    logger.error(f"RX basic token refresh/retry failed: {refresh_err}")
+            
+            if r.status_code != 200:
+                logger.error(f"RX Login failed after retry: status={r.status_code}, response={r.text}")
                 raise HTTPException(status_code=r.status_code, detail=f"Login failed: {r.text}")
+                
             return r.json()
         except httpx.RequestError as exc:
             logger.error(f"RX API error: {exc}")
