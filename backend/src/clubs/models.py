@@ -18,13 +18,17 @@ class Club(Base):
     name: Mapped[str] = mapped_column(String(150), nullable=False, unique=True)
     short_name: Mapped[str | None] = mapped_column(String(50), nullable=True)
     logo_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    competition_mapping_id: Mapped[int | None] = mapped_column(ForeignKey("competition_mapping.id"), nullable=True)
-    
+    competition_mapping_id: Mapped[int | None] = mapped_column(
+        ForeignKey("competition_mapping.id"), nullable=True
+    )
+
     about_text: Mapped[str | None] = mapped_column(String(5000), nullable=True)
     division_info: Mapped[str | None] = mapped_column(String(200), nullable=True)
     grades_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
     training_info: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    has_womens_team: Mapped[bool | None] = mapped_column(Boolean, nullable=True, default=False)
+    has_womens_team: Mapped[bool | None] = mapped_column(
+        Boolean, nullable=True, default=False
+    )
     home_ground_name: Mapped[str | None] = mapped_column(String(250), nullable=True)
     home_ground_map_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     website_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
@@ -33,8 +37,12 @@ class Club(Base):
     tiktok_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
 
     # Relationships
-    competition_mapping: Mapped["CompetitionMapping | None"] = relationship("CompetitionMapping", back_populates="clubs")
-    teams: Mapped[list["Team"]] = relationship("Team", back_populates="club", cascade="all, delete-orphan")
+    competition_mapping: Mapped["CompetitionMapping | None"] = relationship(
+        "CompetitionMapping", back_populates="clubs"
+    )
+    teams: Mapped[list["Team"]] = relationship(
+        "Team", back_populates="club", cascade="all, delete-orphan"
+    )
 
     def __repr__(self) -> str:
         return f"<Club(id={self.id}, name='{self.name}')>"
@@ -50,16 +58,28 @@ class Team(Base):
     __tablename__ = "teams"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    club_id: Mapped[int] = mapped_column(ForeignKey("clubs.id"), nullable=False, index=True)
-    competition_id: Mapped[int] = mapped_column(ForeignKey("competitions.id"), nullable=False, index=True)
+    club_id: Mapped[int] = mapped_column(
+        ForeignKey("clubs.id"), nullable=False, index=True
+    )
+    competition_id: Mapped[int] = mapped_column(
+        ForeignKey("competitions.id"), nullable=False, index=True
+    )
     name: Mapped[str] = mapped_column(String(200), nullable=False)
-    external_id: Mapped[int] = mapped_column(Integer, unique=True, nullable=False, index=True)
+    external_id: Mapped[int] = mapped_column(
+        Integer, unique=True, nullable=False, index=True
+    )
 
     # Relationships
     club: Mapped["Club"] = relationship("Club", back_populates="teams")
-    competition: Mapped["Competition"] = relationship("Competition", back_populates="teams")
-    home_games: Mapped[list["Game"]] = relationship("Game", foreign_keys="Game.home_team_id", back_populates="home_team")
-    away_games: Mapped[list["Game"]] = relationship("Game", foreign_keys="Game.away_team_id", back_populates="away_team")
+    competition: Mapped["Competition"] = relationship(
+        "Competition", back_populates="teams"
+    )
+    home_games: Mapped[list["Game"]] = relationship(
+        "Game", foreign_keys="Game.home_team_id", back_populates="home_team"
+    )
+    away_games: Mapped[list["Game"]] = relationship(
+        "Game", foreign_keys="Game.away_team_id", back_populates="away_team"
+    )
 
     def __repr__(self) -> str:
         return f"<Team(id={self.id}, name='{self.name}')>"

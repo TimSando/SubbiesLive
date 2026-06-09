@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class PlayerStatRow(BaseModel):
     rank: int
     player_id: int
@@ -16,6 +17,7 @@ class PlayerStatRow(BaseModel):
     games_played: int
     image_url: str | None = None
 
+
 class ClubStatRow(BaseModel):
     rank: int
     club_id: int
@@ -29,6 +31,7 @@ class ClubStatRow(BaseModel):
     red_cards: int
     games_played: int
     logo_url: str | None = None
+
 
 class SeasonOverview(BaseModel):
     total_tries: int
@@ -64,5 +67,3 @@ class TeamFormStats(BaseModel):
     total_conversions: int
     total_yellow_cards: int
     total_red_cards: int
-
-

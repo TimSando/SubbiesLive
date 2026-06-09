@@ -5,11 +5,15 @@ from src.refzone.router import fetch_fresh_rx_basic_token, CLIENT_SECRET_RE
 
 pytestmark = pytest.mark.asyncio
 
+
 async def test_client_secret_regex_matches_expected_format():
-    sample = 'var j="auth",U="supersecretoken",F="3jz0nDldkPTDEpgJOb6myXNhL7Hx6N3Vs9xRGp72"'
+    sample = (
+        'var j="auth",U="supersecretoken",F="3jz0nDldkPTDEpgJOb6myXNhL7Hx6N3Vs9xRGp72"'
+    )
     match = CLIENT_SECRET_RE.search(sample)
     assert match is not None
     assert match.group(1) == "3jz0nDldkPTDEpgJOb6myXNhL7Hx6N3Vs9xRGp72"
+
 
 async def test_fetch_fresh_token_builds_correct_base64():
     """End-to-end: regex match -> base64 encode -> correct output."""

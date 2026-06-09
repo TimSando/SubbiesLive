@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 class PlayerStatSummary(BaseModel):
     """Aggregated stats for a player."""
+
     total_tries: int = 0
     total_conversions: int = 0
     total_penalty_goals: int = 0
@@ -18,6 +19,7 @@ class PlayerStatSummary(BaseModel):
 
 class PlayerTeamInfo(BaseModel):
     """Team association for a player."""
+
     team_id: int
     team_name: str
     club_name: str = ""
@@ -29,6 +31,7 @@ class PlayerTeamInfo(BaseModel):
 
 class PlayerBrief(BaseModel):
     """Player summary for list views."""
+
     id: int
     name: str
     external_id: int
@@ -41,6 +44,7 @@ class PlayerBrief(BaseModel):
 
 class PlayerDetail(BaseModel):
     """Full player detail with stats and team history."""
+
     id: int
     name: str
     dob: date | None = None

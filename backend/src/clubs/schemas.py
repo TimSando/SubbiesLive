@@ -9,6 +9,7 @@ from src.games.schemas import GameBrief
 
 class TeamBrief(BaseModel):
     """Brief team info for club listings."""
+
     id: int
     name: str
     competition_name: str = ""
@@ -23,6 +24,7 @@ class TeamBrief(BaseModel):
 
 class ClubBrief(BaseModel):
     """Club summary for list views."""
+
     id: int
     name: str
     short_name: str | None = None
@@ -42,13 +44,14 @@ class ClubBrief(BaseModel):
 
 class ClubDetail(BaseModel):
     """Full club detail with teams across competitions."""
+
     id: int
     name: str
     short_name: str | None = None
     logo_url: str | None = None
     competition_mapping: CompetitionMappingBrief | None = None
     teams: list[TeamBrief] = []
-    
+
     about_text: str | None = None
     division_info: str | None = None
     grades_count: int | None = None
@@ -60,7 +63,7 @@ class ClubDetail(BaseModel):
     facebook_url: str | None = None
     instagram_url: str | None = None
     tiktok_url: str | None = None
-    
+
     recent_fixtures: list[GameBrief] = []
     upcoming_fixtures: list[GameBrief] = []
 

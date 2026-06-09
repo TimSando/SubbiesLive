@@ -10,6 +10,7 @@ from src.refzone.router import (
 )
 import src.refzone.router as rx_router
 
+
 async def test_scraping():
     print("--- Testing Token Scraping ---")
     async with httpx.AsyncClient() as client:
@@ -21,6 +22,7 @@ async def test_scraping():
         except Exception as e:
             print(f"❌ Failed to scrape token: {e}")
             raise e
+
 
 async def test_retry_flow():
     print("\n--- Testing Login Retry Flow with Poisoned Token ---")
@@ -43,13 +45,17 @@ async def test_retry_flow():
             response = await rx_login(body)
             print("✅ Login succeeded after token refresh!")
             assert isinstance(response, dict), "Expected dictionary response from login"
-            assert "accessToken" in response or "id" in response or "userId" in response, "Response did not contain user authentication details"
+            assert (
+                "accessToken" in response or "id" in response or "userId" in response
+            ), "Response did not contain user authentication details"
             print("✅ Verified login response payload is correct.")
         except Exception as e:
             print(f"❌ Login with real credentials failed: {e}")
             raise e
     else:
-        print("No test credentials in environment. Falling back to dummy credentials check...")
+        print(
+            "No test credentials in environment. Falling back to dummy credentials check..."
+        )
         body = LoginRequest(email="test_user@example.com", password="dummy_password")
         try:
             await rx_login(body)
@@ -58,7 +64,9 @@ async def test_retry_flow():
         except HTTPException as e:
             print(f"✅ Caught expected HTTPException: status_code={e.status_code}")
             # Correct Basic token + incorrect user credentials returns 401 Unauthorized
-            assert e.status_code == 401, f"Expected status 401 for bad credentials, got {e.status_code}"
+            assert e.status_code == 401, (
+                f"Expected status 401 for bad credentials, got {e.status_code}"
+            )
             print("✅ Verified correct HTTP 401 was returned.")
         except Exception as e:
             print(f"❌ Caught unexpected exception: {e}")
@@ -73,6 +81,7 @@ async def test_retry_flow():
     else:
         print("✅ Token cache was successfully restored/updated to a valid token!")
 
+
 async def main():
     try:
         await test_scraping()
@@ -80,6 +89,7 @@ async def main():
     except Exception as e:
         print(f"Test suite failed: {e}")
         exit(1)
+
 
 if __name__ == "__main__":
     asyncio.run(main())

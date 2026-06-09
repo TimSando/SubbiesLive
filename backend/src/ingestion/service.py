@@ -70,7 +70,9 @@ def run_ingestion(session_factory):
 
             for raw_round in comp_info.get("round_objects", []):
                 try:
-                    round_id = upsert_round(session, comp_id, raw_round["id"], raw_round["name"])
+                    round_id = upsert_round(
+                        session, comp_id, raw_round["id"], raw_round["name"]
+                    )
 
                     for raw_game in raw_round.get("games", []):
                         try:
@@ -79,22 +81,34 @@ def run_ingestion(session_factory):
                             ht = game_data["home_team"]
                             at = game_data["away_team"]
                             home_team_id = upsert_team(
-                                session, ht["external_id"], ht["name"],
-                                ht["club_name"], comp_id, ht["logo_url"]
+                                session,
+                                ht["external_id"],
+                                ht["name"],
+                                ht["club_name"],
+                                comp_id,
+                                ht["logo_url"],
                             )
                             away_team_id = upsert_team(
-                                session, at["external_id"], at["name"],
-                                at["club_name"], comp_id, at["logo_url"]
+                                session,
+                                at["external_id"],
+                                at["name"],
+                                at["club_name"],
+                                comp_id,
+                                at["logo_url"],
                             )
 
                             if home_team_id is None or away_team_id is None:
-                                logger.debug(f"    Skipping game {game_data['external_id']} due to missing team info")
+                                logger.debug(
+                                    f"    Skipping game {game_data['external_id']} due to missing team info"
+                                )
                                 continue
 
                             team_id_map[ht["external_id"]] = home_team_id
                             team_id_map[at["external_id"]] = away_team_id
 
-                            game_id = upsert_game(session, round_id, game_data, home_team_id, away_team_id)
+                            game_id = upsert_game(
+                                session, round_id, game_data, home_team_id, away_team_id
+                            )
 
                             # Ingest stats for completed and in-progress games.
                             # For completed games already fully ingested, both helpers
@@ -104,17 +118,37 @@ def run_ingestion(session_factory):
                                 shared_game_info = None
                                 if game_data["status"] == "in_progress":
                                     try:
-                                        shared_game_info = get_game_info(game_data["external_id"])
+                                        shared_game_info = get_game_info(
+                                            game_data["external_id"]
+                                        )
                                     except Exception as e:
-                                        logger.warning(f"    Failed to fetch in-progress game {game_data['external_id']}: {e}")
-                                ingest_game_events(session, game_id, game_data["external_id"], team_id_map, shared_game_info)
-                                ingest_player_history_for_game(session, game_id, game_data["external_id"], team_id_map, shared_game_info)
+                                        logger.warning(
+                                            f"    Failed to fetch in-progress game {game_data['external_id']}: {e}"
+                                        )
+                                ingest_game_events(
+                                    session,
+                                    game_id,
+                                    game_data["external_id"],
+                                    team_id_map,
+                                    shared_game_info,
+                                )
+                                ingest_player_history_for_game(
+                                    session,
+                                    game_id,
+                                    game_data["external_id"],
+                                    team_id_map,
+                                    shared_game_info,
+                                )
                         except Exception as e:
-                            logger.error(f"    Failed to process game {raw_game.get('id')}: {e}")
+                            logger.error(
+                                f"    Failed to process game {raw_game.get('id')}: {e}"
+                            )
                             session.rollback()
                             continue
                 except Exception as e:
-                    logger.error(f"  Failed to process round {raw_round.get('id')}: {e}")
+                    logger.error(
+                        f"  Failed to process round {raw_round.get('id')}: {e}"
+                    )
                     session.rollback()
                     continue
 

@@ -1,15 +1,21 @@
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
-from src.stats.schemas import PlayerStatRow, ClubStatRow, SeasonOverview, ClubDepthRow, TeamFormStats
+from src.stats.schemas import (
+    PlayerStatRow,
+    ClubStatRow,
+    SeasonOverview,
+    ClubDepthRow,
+    TeamFormStats,
+)
 from src.core.cache import ttl_cache
 
 
 async def get_player_stats(
-    db: AsyncSession, 
+    db: AsyncSession,
     competition_id: Optional[int] = None,
     parent_competition: Optional[str] = None,
-    division: Optional[str] = None
+    division: Optional[str] = None,
 ) -> List[PlayerStatRow]:
     query = """
         SELECT 
@@ -36,7 +42,7 @@ async def get_player_stats(
         LEFT JOIN competition_mapping m ON comp.competition_mapping_id = m.id
         WHERE 1=1
     """
-    
+
     params = {}
     if competition_id:
         query += " AND r.competition_id = :comp_id"
@@ -47,41 +53,44 @@ async def get_player_stats(
     if division:
         query += " AND m.division = :div"
         params["div"] = division
-        
+
     query += """
         GROUP BY p.id, p.name, c.id, c.name, p.thumbnail_url
         ORDER BY total_points DESC, tries DESC
         LIMIT 50
     """
-    
+
     result = await db.execute(text(query), params)
     rows = result.fetchall()
-    
+
     stats = []
     for i, row in enumerate(rows):
-        stats.append(PlayerStatRow(
-            rank=i + 1,
-            player_id=row.player_id,
-            player_name=row.player_name,
-            club_name=row.club_name,
-            club_id=row.club_id,
-            tries=row.tries or 0,
-            conversions=row.conversions or 0,
-            penalties=row.penalties or 0,
-            drop_goals=row.drop_goals or 0,
-            total_points=row.total_points or 0,
-            yellow_cards=row.yellow_cards or 0,
-            red_cards=row.red_cards or 0,
-            games_played=row.games_played or 0,
-            image_url=row.image_url
-        ))
+        stats.append(
+            PlayerStatRow(
+                rank=i + 1,
+                player_id=row.player_id,
+                player_name=row.player_name,
+                club_name=row.club_name,
+                club_id=row.club_id,
+                tries=row.tries or 0,
+                conversions=row.conversions or 0,
+                penalties=row.penalties or 0,
+                drop_goals=row.drop_goals or 0,
+                total_points=row.total_points or 0,
+                yellow_cards=row.yellow_cards or 0,
+                red_cards=row.red_cards or 0,
+                games_played=row.games_played or 0,
+                image_url=row.image_url,
+            )
+        )
     return stats
 
+
 async def get_club_stats(
-    db: AsyncSession, 
+    db: AsyncSession,
     competition_id: Optional[int] = None,
     parent_competition: Optional[str] = None,
-    division: Optional[str] = None
+    division: Optional[str] = None,
 ) -> List[ClubStatRow]:
     query = """
         SELECT 
@@ -105,7 +114,7 @@ async def get_club_stats(
         LEFT JOIN competition_mapping m ON comp.competition_mapping_id = m.id
         WHERE 1=1
     """
-    
+
     params = {}
     if competition_id:
         query += " AND r.competition_id = :comp_id"
@@ -116,43 +125,46 @@ async def get_club_stats(
     if division:
         query += " AND m.division = :div"
         params["div"] = division
-        
+
     query += """
         GROUP BY c.id, c.name, c.logo_url
         ORDER BY total_points DESC
         LIMIT 50
     """
-    
+
     result = await db.execute(text(query), params)
     rows = result.fetchall()
-    
+
     stats = []
     for i, row in enumerate(rows):
-        stats.append(ClubStatRow(
-            rank=i + 1,
-            club_id=row.club_id,
-            club_name=row.club_name,
-            tries=row.tries or 0,
-            conversions=row.conversions or 0,
-            penalties=row.penalties or 0,
-            drop_goals=row.drop_goals or 0,
-            total_points=row.total_points or 0,
-            yellow_cards=row.yellow_cards or 0,
-            red_cards=row.red_cards or 0,
-            games_played=row.games_played or 0,
-            logo_url=row.logo_url
-        ))
+        stats.append(
+            ClubStatRow(
+                rank=i + 1,
+                club_id=row.club_id,
+                club_name=row.club_name,
+                tries=row.tries or 0,
+                conversions=row.conversions or 0,
+                penalties=row.penalties or 0,
+                drop_goals=row.drop_goals or 0,
+                total_points=row.total_points or 0,
+                yellow_cards=row.yellow_cards or 0,
+                red_cards=row.red_cards or 0,
+                games_played=row.games_played or 0,
+                logo_url=row.logo_url,
+            )
+        )
     return stats
+
 
 @ttl_cache(ttl_seconds=300)
 async def get_season_overview(
-    db: AsyncSession, 
+    db: AsyncSession,
     competition_id: Optional[int] = None,
     parent_competition: Optional[str] = None,
-    division: Optional[str] = None
+    division: Optional[str] = None,
 ) -> SeasonOverview:
     params = {}
-    
+
     # 1. General counts from player_history
     query_base = """
         SELECT 
@@ -168,7 +180,7 @@ async def get_season_overview(
         LEFT JOIN competition_mapping m ON comp.competition_mapping_id = m.id
         WHERE 1=1
     """
-    
+
     if competition_id:
         query_base += " AND r.competition_id = :comp_id"
         params["comp_id"] = competition_id
@@ -178,10 +190,10 @@ async def get_season_overview(
     if division:
         query_base += " AND m.division = :div"
         params["div"] = division
-        
+
     res_base = await db.execute(text(query_base), params)
     row_base = res_base.fetchone()
-    
+
     # 2. Games played (from games table)
     query_games = """
         SELECT COUNT(*) 
@@ -197,14 +209,16 @@ async def get_season_overview(
         query_games += " AND m.parent_competition = :parent"
     if division:
         query_games += " AND m.division = :div"
-        
+
     res_games = await db.execute(text(query_games), params)
     games_played = res_games.scalar()
-    
+
     # 3. Top scorer (reuses the refactored player stats function)
-    player_stats = await get_player_stats(db, competition_id, parent_competition, division)
+    player_stats = await get_player_stats(
+        db, competition_id, parent_competition, division
+    )
     top_scorer = player_stats[0] if player_stats else None
-    
+
     # 4. Top try scorer specifically
     query_try = """
         SELECT p.name, SUM(ph.tries) as tries
@@ -223,7 +237,7 @@ async def get_season_overview(
     if division:
         query_try += " AND m.division = :div"
     query_try += " GROUP BY p.id, p.name ORDER BY tries DESC LIMIT 1"
-    
+
     res_try = await db.execute(text(query_try), params)
     row_try = res_try.fetchone()
 
@@ -262,7 +276,7 @@ async def get_season_overview(
         query_players += " AND m.division = :div"
     res_players = await db.execute(text(query_players), params)
     player_count = res_players.scalar() or 0
-    
+
     return SeasonOverview(
         total_tries=row_base.total_tries or 0,
         total_conversions=row_base.total_conversions or 0,
@@ -275,14 +289,15 @@ async def get_season_overview(
         top_try_scorer_tries=row_try.tries if row_try else 0,
         games_played=games_played or 0,
         club_count=club_count,
-        player_count=player_count
+        player_count=player_count,
     )
 
+
 async def get_club_depth_stats(
-    db: AsyncSession, 
+    db: AsyncSession,
     competition_id: Optional[int] = None,
     parent_competition: Optional[str] = None,
-    division: Optional[str] = None
+    division: Optional[str] = None,
 ) -> List[ClubDepthRow]:
     query = """
         WITH player_appearances AS (
@@ -299,7 +314,7 @@ async def get_club_depth_stats(
             LEFT JOIN competition_mapping m ON comp.competition_mapping_id = m.id
             WHERE 1=1
     """
-    
+
     params = {}
     if competition_id:
         query += " AND r.competition_id = :comp_id"
@@ -310,7 +325,7 @@ async def get_club_depth_stats(
     if division:
         query += " AND m.division = :div"
         params["div"] = division
-        
+
     query += """
             GROUP BY ph.player_id, t.club_id
         )
@@ -328,23 +343,25 @@ async def get_club_depth_stats(
         GROUP BY c.id, c.name, c.logo_url
         ORDER BY total_players DESC
     """
-    
+
     result = await db.execute(text(query), params)
     rows = result.fetchall()
-    
+
     stats = []
     for i, row in enumerate(rows):
-        stats.append(ClubDepthRow(
-            rank=i + 1,
-            club_id=row.club_id,
-            club_name=row.club_name,
-            logo_url=row.logo_url,
-            total_players=row.total_players or 0,
-            core_players=int(row.core_players or 0),
-            dedicated_players=int(row.dedicated_players or 0),
-            swing_players=int(row.swing_players or 0),
-            avg_games=float(row.avg_games or 0.0)
-        ))
+        stats.append(
+            ClubDepthRow(
+                rank=i + 1,
+                club_id=row.club_id,
+                club_name=row.club_name,
+                logo_url=row.logo_url,
+                total_players=row.total_players or 0,
+                core_players=int(row.core_players or 0),
+                dedicated_players=int(row.dedicated_players or 0),
+                swing_players=int(row.swing_players or 0),
+                avg_games=float(row.avg_games or 0.0),
+            )
+        )
     return stats
 
 
@@ -371,7 +388,7 @@ async def get_team_form_stats(db: AsyncSession, team_id: int) -> TeamFormStats:
     """
     result = await db.execute(text(query), {"team_id": team_id})
     row = result.fetchone()
-    
+
     if not row or row.games_played == 0:
         return TeamFormStats(
             team_id=team_id,
@@ -379,16 +396,14 @@ async def get_team_form_stats(db: AsyncSession, team_id: int) -> TeamFormStats:
             total_tries=0,
             total_conversions=0,
             total_yellow_cards=0,
-            total_red_cards=0
+            total_red_cards=0,
         )
-        
+
     return TeamFormStats(
         team_id=row.team_id,
         games_played=row.games_played,
         total_tries=row.total_tries,
         total_conversions=row.total_conversions,
         total_yellow_cards=row.total_yellow_cards,
-        total_red_cards=row.total_red_cards
+        total_red_cards=row.total_red_cards,
     )
-
-

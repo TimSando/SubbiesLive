@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 class RoundBrief(BaseModel):
     """Brief round info for competition listings."""
+
     id: int
     name: str
     number: int | None = None
@@ -18,6 +19,7 @@ class RoundBrief(BaseModel):
 
 class CompetitionMappingBrief(BaseModel):
     """Brief mapping info."""
+
     id: int
     parent_competition: str | None = None
     name: str
@@ -30,6 +32,7 @@ class CompetitionMappingBrief(BaseModel):
 
 class CompetitionBrief(BaseModel):
     """Competition summary for list views."""
+
     id: int
     name: str
     external_id: int
@@ -48,6 +51,7 @@ class CompetitionBrief(BaseModel):
 
 class CompetitionDetail(BaseModel):
     """Full competition detail with rounds."""
+
     id: int
     name: str
     external_id: int

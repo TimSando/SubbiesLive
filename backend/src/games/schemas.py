@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 class TeamInGame(BaseModel):
     """Team info as shown within a game context."""
+
     id: int
     name: str
     club_name: str = ""
@@ -18,6 +19,7 @@ class TeamInGame(BaseModel):
 
 class GameEventSchema(BaseModel):
     """A scoring or disciplinary event within a game."""
+
     id: str
     event_type: str
     team_id: int
@@ -35,6 +37,7 @@ class GameEventSchema(BaseModel):
 
 class GameBrief(BaseModel):
     """Game summary for list views."""
+
     id: int
     round_name: str = ""
     competition_name: str = ""
@@ -56,6 +59,7 @@ class GameBrief(BaseModel):
 
 class GameDetail(BaseModel):
     """Full game detail with events."""
+
     id: int
     round_name: str = ""
     competition_name: str = ""
@@ -74,4 +78,3 @@ class GameDetail(BaseModel):
 
     class Config:
         from_attributes = True
-

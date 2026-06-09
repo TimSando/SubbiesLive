@@ -13,33 +13,41 @@ from src.ingestion.upserts import upsert_player
 logger = logging.getLogger("ingestion")
 
 
-def ingest_game_events(session, game_id: int, game_external_id: int, team_id_map: dict,
-                       game_info: dict | None = None):
+def ingest_game_events(
+    session,
+    game_id: int,
+    game_external_id: int,
+    team_id_map: dict,
+    game_info: dict | None = None,
+):
     """Fetch and ingest game events for a completed/in-progress game.
-    
+
     Accepts an optional pre-fetched game_info dict to avoid a redundant HTTP call
     when called alongside ingest_player_history_for_game.
-    
+
     For completed games whose events are already fully ingested, skips the network
     call entirely so startup re-syncs stay fast.
     """
     # Fetch status of the game from the DB
     status = session.execute(
-        text("SELECT status FROM games WHERE id = :gid"),
-        {"gid": game_id}
+        text("SELECT status FROM games WHERE id = :gid"), {"gid": game_id}
     ).scalar()
-    
+
     if status == "not_completed":
-        logger.debug(f"  Skipping game_events fetch for game {game_external_id} — game status is not_completed")
+        logger.debug(
+            f"  Skipping game_events fetch for game {game_external_id} — game status is not_completed"
+        )
         return
-        
+
     if status == "completed":
         existing_count = session.execute(
             text("SELECT COUNT(*) FROM game_events WHERE game_id = :gid"),
-            {"gid": game_id}
+            {"gid": game_id},
         ).scalar()
         if existing_count > 0:
-            logger.debug(f"  Skipping game_events fetch for game {game_external_id} — already ingested ({existing_count} events)")
+            logger.debug(
+                f"  Skipping game_events fetch for game {game_external_id} — already ingested ({existing_count} events)"
+            )
             return
 
     if game_info is None:
@@ -72,7 +80,7 @@ def ingest_game_events(session, game_id: int, game_external_id: int, team_id_map
 
             result = session.execute(
                 text("SELECT id FROM game_events WHERE external_id = :eid"),
-                {"eid": str(event_data["external_id"])}
+                {"eid": str(event_data["external_id"])},
             )
             if result.fetchone():
                 continue
@@ -82,33 +90,38 @@ def ingest_game_events(session, game_id: int, game_external_id: int, team_id_map
                         player_number, points, text, external_created_at, external_id) 
                         VALUES (:gid, :tid, :pid, :et, :pn, :pts, :txt, :eca, :eid)"""),
                 {
-                    "gid": game_id, "tid": db_team_id, "pid": player_id,
-                    "et": event_data["event_type"], "pn": event_data["player_number"],
-                    "pts": event_data["points"], "txt": event_data["text"],
+                    "gid": game_id,
+                    "tid": db_team_id,
+                    "pid": player_id,
+                    "et": event_data["event_type"],
+                    "pn": event_data["player_number"],
+                    "pts": event_data["points"],
+                    "txt": event_data["text"],
                     "eca": event_data["external_created_at"],
                     "eid": str(event_data["external_id"]),
-                }
+                },
             )
             events_ingested += 1
 
             # Notify of this live game event
             try:
                 from src.notifications.service import notify_game_update
+
                 msg = event_data.get("text")
                 if not msg:
                     msg = f"Game Event: {event_data['event_type'].replace('_', ' ').title()}"
-                
+
                 # Fetch current scores to append to the message body
                 score_row = session.execute(
                     text("SELECT home_score, away_score FROM games WHERE id = :gid"),
-                    {"gid": game_id}
+                    {"gid": game_id},
                 ).fetchone()
                 if score_row:
                     hs, as_ = score_row
                     hs_val = hs if hs is not None else 0
                     as_val = as_ if as_ is not None else 0
                     msg += f" (Score: {hs_val} - {as_val})"
-                
+
                 notify_game_update(session, game_id, "event", msg)
             except Exception as e:
                 logger.error(f"Failed to dispatch notification for game event: {e}")
@@ -118,9 +131,11 @@ def ingest_game_events(session, game_id: int, game_external_id: int, team_id_map
         logger.info(f"  Ingested {events_ingested} events for game {game_external_id}")
 
 
-def ingest_player_history(session, game_id: int, score_sheet_id: str, team_id_map: dict):
+def ingest_player_history(
+    session, game_id: int, score_sheet_id: str, team_id_map: dict
+):
     """Fetch a score sheet and upsert player_history records.
-    
+
     Args:
         session:        SQLAlchemy session
         game_id:        Internal DB game ID
@@ -148,8 +163,7 @@ def ingest_player_history(session, game_id: int, score_sheet_id: str, team_id_ma
 
     # Fetch status of the game from the DB
     status = session.execute(
-        text("SELECT status FROM games WHERE id = :gid"),
-        {"gid": game_id}
+        text("SELECT status FROM games WHERE id = :gid"), {"gid": game_id}
     ).scalar()
 
     if status == "not_completed":
@@ -157,8 +171,10 @@ def ingest_player_history(session, game_id: int, score_sheet_id: str, team_id_ma
 
     if status == "completed" and db_team_id:
         existing = session.execute(
-            text("SELECT COUNT(*) FROM player_history WHERE game_id = :gid AND team_id = :tid"),
-            {"gid": game_id, "tid": db_team_id}
+            text(
+                "SELECT COUNT(*) FROM player_history WHERE game_id = :gid AND team_id = :tid"
+            ),
+            {"gid": game_id, "tid": db_team_id},
         ).scalar()
         if existing > 0:
             return  # Already processed this score sheet
@@ -185,7 +201,9 @@ def ingest_player_history(session, game_id: int, score_sheet_id: str, team_id_ma
         team_ext_id = record.get("team_id")
         db_team_id = team_id_map.get(team_ext_id)
         if not db_team_id:
-            logger.debug(f"  Skipping player {member['name']}: unknown team ext_id {team_ext_id}")
+            logger.debug(
+                f"  Skipping player {member['name']}: unknown team ext_id {team_ext_id}"
+            )
             continue
 
         # Upsert the player_history record
@@ -224,68 +242,84 @@ def ingest_player_history(session, game_id: int, score_sheet_id: str, team_id_ma
                     card_text     = EXCLUDED.card_text
             """),
             {
-                "pid": player_id, "gid": game_id, "tid": db_team_id,
+                "pid": player_id,
+                "gid": game_id,
+                "tid": db_team_id,
                 "pos": record.get("position_id"),
                 "pnum": record.get("player_number"),
                 "pts": record.get("points", 0),
                 "tries": record.get("rugby_union_try", 0),
-                "conv":  record.get("rugby_union_conversion", 0),
-                "pen":   record.get("rugby_union_penalty_goal", 0),
-                "dg":    record.get("rugby_union_drop_goal", 0),
-                "yc":    record.get("rugby_union_yellow_card", 0),
-                "rc":    record.get("rugby_union_red_card", 0),
-                "bc":    record.get("rugby_union_blue_card", 0),
-                "m1":    record.get("rugby_union_medal_points_1", 0),
-                "m2":    record.get("rugby_union_medal_points_2", 0),
-                "m3":    record.get("rugby_union_medal_points_3", 0),
-                "c1":    record.get("rugby_union_coach_points_1", 0),
-                "c2":    record.get("rugby_union_coach_points_2", 0),
-                "c3":    record.get("rugby_union_coach_points_3", 0),
+                "conv": record.get("rugby_union_conversion", 0),
+                "pen": record.get("rugby_union_penalty_goal", 0),
+                "dg": record.get("rugby_union_drop_goal", 0),
+                "yc": record.get("rugby_union_yellow_card", 0),
+                "rc": record.get("rugby_union_red_card", 0),
+                "bc": record.get("rugby_union_blue_card", 0),
+                "m1": record.get("rugby_union_medal_points_1", 0),
+                "m2": record.get("rugby_union_medal_points_2", 0),
+                "m3": record.get("rugby_union_medal_points_3", 0),
+                "c1": record.get("rugby_union_coach_points_1", 0),
+                "c2": record.get("rugby_union_coach_points_2", 0),
+                "c3": record.get("rugby_union_coach_points_3", 0),
                 "ctext": record.get("card_text") or None,
-            }
+            },
         )
         inserted += 1
 
     session.commit()
     if inserted > 0:
-        logger.info(f"  Ingested {inserted} player_history rows for score sheet {score_sheet_id}")
+        logger.info(
+            f"  Ingested {inserted} player_history rows for score sheet {score_sheet_id}"
+        )
 
 
-def ingest_player_history_for_game(session, game_id: int, game_external_id: int, team_id_map: dict,
-                                    game_info: dict | None = None):
+def ingest_player_history_for_game(
+    session,
+    game_id: int,
+    game_external_id: int,
+    team_id_map: dict,
+    game_info: dict | None = None,
+):
     """Fetch game details to get score sheet IDs and ingest history.
-    
+
     Accepts an optional pre-fetched game_info dict to avoid a redundant HTTP call
     when called alongside ingest_game_events.
-    
+
     For completed games whose player_history rows are already fully ingested for
     both teams, skips the network call entirely.
     """
     # Fetch status of the game from the DB
     status = session.execute(
-        text("SELECT status FROM games WHERE id = :gid"),
-        {"gid": game_id}
+        text("SELECT status FROM games WHERE id = :gid"), {"gid": game_id}
     ).scalar()
 
     if status == "not_completed":
-        logger.debug(f"  Skipping player_history fetch for game {game_external_id} — game status is not_completed")
+        logger.debug(
+            f"  Skipping player_history fetch for game {game_external_id} — game status is not_completed"
+        )
         return
 
     if status == "completed":
         # Skip if both score sheets are already recorded in player_history.
         existing_sheets = session.execute(
-            text("SELECT COUNT(DISTINCT team_id) FROM player_history WHERE game_id = :gid"),
-            {"gid": game_id}
+            text(
+                "SELECT COUNT(DISTINCT team_id) FROM player_history WHERE game_id = :gid"
+            ),
+            {"gid": game_id},
         ).scalar()
         if existing_sheets >= 2:
-            logger.debug(f"  Skipping player_history fetch for game {game_external_id} — both score sheets already ingested")
+            logger.debug(
+                f"  Skipping player_history fetch for game {game_external_id} — both score sheets already ingested"
+            )
             return
 
     if game_info is None:
         try:
             game_info = get_game_info(game_external_id)
         except Exception as e:
-            logger.warning(f"Failed to fetch game {game_external_id} details for history: {e}")
+            logger.warning(
+                f"Failed to fetch game {game_external_id} details for history: {e}"
+            )
             return
 
     for sheet_key in ["home_score_sheet", "away_score_sheet"]:

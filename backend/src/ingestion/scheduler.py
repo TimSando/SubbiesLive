@@ -36,7 +36,10 @@ def start_ingestion_scheduler():
     def _initial_run():
         logger.info("Checking for competition mapping seed...")
         try:
-            csv_path = os.environ.get("MAPPING_CSV_PATH", "/app/src/scripts/competition_parent_mapping - Sheet1.csv")
+            csv_path = os.environ.get(
+                "MAPPING_CSV_PATH",
+                "/app/src/scripts/competition_parent_mapping - Sheet1.csv",
+            )
             seed_mapping(csv_path)
         except Exception as e:
             logger.error(f"Failed to seed mapping: {e}")
@@ -47,6 +50,7 @@ def start_ingestion_scheduler():
         logger.info("Checking for missing club details to seed...")
         try:
             from src.scripts.seed_club_details import seed_club_details_if_empty
+
             seed_club_details_if_empty()
         except Exception as e:
             logger.error(f"Failed to automatically seed club details: {e}")
@@ -54,7 +58,10 @@ def start_ingestion_scheduler():
         logger.info("Checking for missing club competition mappings...")
         try:
             from src.scripts.seed_mapping import seed_clubs_from_json
-            json_path = os.environ.get("PARENT_CLUB_JSON_PATH", "/app/src/scripts/parent_club.json")
+
+            json_path = os.environ.get(
+                "PARENT_CLUB_JSON_PATH", "/app/src/scripts/parent_club.json"
+            )
             seed_clubs_from_json(json_path)
         except Exception as e:
             logger.error(f"Failed to automatically seed club competition mappings: {e}")
@@ -86,7 +93,9 @@ def start_ingestion_scheduler():
     # Game day sync every 15 min on Saturday, 9 AM - 6 PM
     _scheduler.add_job(
         run_ingestion,
-        CronTrigger(day_of_week="sat", hour="9-20", minute="0,15,30,45", timezone=TIMEZONE),
+        CronTrigger(
+            day_of_week="sat", hour="9-20", minute="0,15,30,45", timezone=TIMEZONE
+        ),
         args=[Session],
         id="gameday_ingestion",
         name="Game day ingestion (Sat every 15 min, 9 AM - 6 PM)",
@@ -95,6 +104,7 @@ def start_ingestion_scheduler():
     # NSWRugbyTV video URL ingestion (Sat hourly 9 AM - 7 PM)
     try:
         from src.scripts.ingest_nswrugbytv import ingest_nswrugbytv_videos
+
         _scheduler.add_job(
             ingest_nswrugbytv_videos,
             CronTrigger(day_of_week="sat", hour="9-19", minute=0, timezone=TIMEZONE),
@@ -107,13 +117,13 @@ def start_ingestion_scheduler():
 
     _scheduler.start()
 
-
     logger.info("Ingestion scheduler started:")
     logger.info("  • Sunday: 6:00 PM AEST")
     logger.info("  • Saturday: 1:00 AM AEST")
     logger.info("  • Saturday: Every 15 min, 9:00 AM - 6:00 PM AEST")
-    logger.info("  • Saturday: NSWRugbyTV video ingestion hourly, 9:00 AM - 7:00 PM AEST")
-
+    logger.info(
+        "  • Saturday: NSWRugbyTV video ingestion hourly, 9:00 AM - 7:00 PM AEST"
+    )
 
 
 def stop_ingestion_scheduler():

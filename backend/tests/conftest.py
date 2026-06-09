@@ -28,36 +28,42 @@ from src.core.database import Base, get_db
 import src.core.database
 from src.main import app
 
+
 @pytest.fixture(scope="session", autouse=True)
 def init_database():
     """Initialize database tables once for the test session using a separate loop."""
     db_url = f"postgresql+asyncpg://{parts[1]}"
-    
+
     # Run setup synchronously in a dedicated loop
     loop = asyncio.new_event_loop()
     try:
+
         async def setup():
             engine = create_async_engine(db_url, echo=False)
             async with engine.begin() as conn:
                 await conn.run_sync(Base.metadata.create_all)
             await engine.dispose()
+
         loop.run_until_complete(setup())
     finally:
         loop.close()
-        
+
     yield
-    
+
     # Teardown: drop tables
     loop = asyncio.new_event_loop()
     try:
+
         async def teardown():
             engine = create_async_engine(db_url, echo=False)
             async with engine.begin() as conn:
                 await conn.run_sync(Base.metadata.drop_all)
             await engine.dispose()
+
         loop.run_until_complete(teardown())
     finally:
         loop.close()
+
 
 @pytest_asyncio.fixture()
 async def test_engine():
@@ -67,6 +73,7 @@ async def test_engine():
     yield engine
     await engine.dispose()
 
+
 @pytest_asyncio.fixture()
 async def db_conn(test_engine):
     """Yields a connection that is enrolled in a transaction that gets rolled back."""
@@ -74,6 +81,7 @@ async def db_conn(test_engine):
         transaction = await conn.begin()
         yield conn
         await transaction.rollback()
+
 
 @pytest_asyncio.fixture()
 async def db_session(db_conn) -> AsyncSession:
@@ -84,6 +92,7 @@ async def db_session(db_conn) -> AsyncSession:
     async with session_factory() as session:
         yield session
 
+
 @pytest_asyncio.fixture(autouse=True)
 def patch_global_engine(test_engine):
     """Patch src.core.database.engine to use the function-scoped test_engine to prevent loop conflicts on shutdown."""
@@ -92,26 +101,29 @@ def patch_global_engine(test_engine):
     yield
     src.core.database.engine = orig_engine
 
+
 @pytest_asyncio.fixture()
 async def client(db_session):
     """
     FastAPI AsyncClient overriding get_db with our rolled-back session.
     Also suppresses the background scheduler from running during lifespan setup.
     """
+
     async def override_get_db():
         yield db_session
 
     app.dependency_overrides[get_db] = override_get_db
-    
+
     # Suppress the background scheduler during client startup
     with pytest.MonkeyPatch.context() as mp:
         mp.setattr("src.ingestion.scheduler.start_ingestion_scheduler", lambda: None)
         mp.setattr("src.ingestion.scheduler.stop_ingestion_scheduler", lambda: None)
-        
+
         from httpx import AsyncClient, ASGITransport
+
         async with AsyncClient(
             transport=ASGITransport(app=app), base_url="http://test"
         ) as c:
             yield c
-            
+
     app.dependency_overrides.clear()

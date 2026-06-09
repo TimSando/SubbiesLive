@@ -16,10 +16,14 @@ class Player(Base):
     dob: Mapped[str | None] = mapped_column(Date, nullable=True)
     image_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     thumbnail_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    external_id: Mapped[int] = mapped_column(Integer, unique=True, nullable=False, index=True)
+    external_id: Mapped[int] = mapped_column(
+        Integer, unique=True, nullable=False, index=True
+    )
 
     # Relationships
-    events: Mapped[list["GameEvent"]] = relationship("GameEvent", back_populates="player")
+    events: Mapped[list["GameEvent"]] = relationship(
+        "GameEvent", back_populates="player"
+    )
 
     def __repr__(self) -> str:
         return f"<Player(id={self.id}, name='{self.name}')>"

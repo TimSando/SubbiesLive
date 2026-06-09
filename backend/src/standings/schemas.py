@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 class StandingsRow(BaseModel):
     """A single row in the standings/ladder table."""
+
     position: int
     team_id: int
     team_name: str
@@ -23,6 +24,7 @@ class StandingsRow(BaseModel):
 
 class StandingsResponse(BaseModel):
     """Full standings for a competition."""
+
     competition_id: int
     competition_name: str
     standings: list[StandingsRow] = []

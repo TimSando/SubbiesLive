@@ -18,8 +18,12 @@ class CompetitionMapping(Base):
     grade: Mapped[str | None] = mapped_column(String(50), nullable=True)
 
     # Relationships
-    competitions: Mapped[list["Competition"]] = relationship("Competition", back_populates="competition_mapping")
-    clubs: Mapped[list["Club"]] = relationship("Club", back_populates="competition_mapping")
+    competitions: Mapped[list["Competition"]] = relationship(
+        "Competition", back_populates="competition_mapping"
+    )
+    clubs: Mapped[list["Club"]] = relationship(
+        "Club", back_populates="competition_mapping"
+    )
 
     def __repr__(self) -> str:
         return f"<CompetitionMapping(id={self.id}, name='{self.name}')>"
@@ -31,13 +35,21 @@ class Competition(Base):
     __tablename__ = "competitions"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    competition_mapping_id: Mapped[int | None] = mapped_column(ForeignKey("competition_mapping.id"), nullable=True)
+    competition_mapping_id: Mapped[int | None] = mapped_column(
+        ForeignKey("competition_mapping.id"), nullable=True
+    )
     name: Mapped[str] = mapped_column(String(200), nullable=False)
-    external_id: Mapped[int] = mapped_column(Integer, unique=True, nullable=False, index=True)
+    external_id: Mapped[int] = mapped_column(
+        Integer, unique=True, nullable=False, index=True
+    )
 
     # Relationships (use string references to avoid circular imports)
-    competition_mapping: Mapped["CompetitionMapping | None"] = relationship("CompetitionMapping", back_populates="competitions")
-    rounds: Mapped[list["Round"]] = relationship("Round", back_populates="competition", cascade="all, delete-orphan")
+    competition_mapping: Mapped["CompetitionMapping | None"] = relationship(
+        "CompetitionMapping", back_populates="competitions"
+    )
+    rounds: Mapped[list["Round"]] = relationship(
+        "Round", back_populates="competition", cascade="all, delete-orphan"
+    )
     teams: Mapped[list["Team"]] = relationship("Team", back_populates="competition")
 
     def __repr__(self) -> str:
@@ -50,14 +62,22 @@ class Round(Base):
     __tablename__ = "rounds"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    competition_id: Mapped[int] = mapped_column(ForeignKey("competitions.id"), nullable=False, index=True)
+    competition_id: Mapped[int] = mapped_column(
+        ForeignKey("competitions.id"), nullable=False, index=True
+    )
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     number: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    external_id: Mapped[int] = mapped_column(Integer, unique=True, nullable=False, index=True)
+    external_id: Mapped[int] = mapped_column(
+        Integer, unique=True, nullable=False, index=True
+    )
 
     # Relationships
-    competition: Mapped["Competition"] = relationship("Competition", back_populates="rounds")
-    games: Mapped[list["Game"]] = relationship("Game", back_populates="round", cascade="all, delete-orphan")
+    competition: Mapped["Competition"] = relationship(
+        "Competition", back_populates="rounds"
+    )
+    games: Mapped[list["Game"]] = relationship(
+        "Game", back_populates="round", cascade="all, delete-orphan"
+    )
 
     def __repr__(self) -> str:
         return f"<Round(id={self.id}, name='{self.name}', competition_id={self.competition_id})>"

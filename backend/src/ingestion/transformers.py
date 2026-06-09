@@ -9,12 +9,13 @@ logger = logging.getLogger(__name__)
 
 import re
 
+
 def extract_club_name(team_name: str) -> str | None:
     """Extract the club name from a FuseSport team name.
 
     e.g., "Mosman - Kentwell Cup" -> "Mosman"
           "Blue Mountains - Barbour Cup (Colts)" -> "Blue Mountains"
-          
+
     Also filters out invalid club names and duplicates like "2nds", returning None.
     """
     raw_name = team_name
@@ -22,31 +23,35 @@ def extract_club_name(team_name: str) -> str | None:
         raw_name = team_name.split(" - ")[0].strip()
     else:
         raw_name = team_name.strip()
-        
+
     # Invalid markers to ignore completely (case-insensitive)
     invalid_patterns = [
-        r"(?i)wet weather", 
-        r"(?i)king's birthday", 
-        r"(?i)anzac day", 
-        r"(?i)blank", 
-        r"(?i)^Rd \d+ published soon", 
+        r"(?i)wet weather",
+        r"(?i)king's birthday",
+        r"(?i)anzac day",
+        r"(?i)blank",
+        r"(?i)^Rd \d+ published soon",
         r"(?i)^draw to be published",
-        r"(?i)bye"
+        r"(?i)bye",
     ]
-    
+
     if not raw_name:
         return None
-        
+
     for pattern in invalid_patterns:
         if re.search(pattern, raw_name):
             return None
 
     # Remove trailing numbers/grades/colts like " 2nds", " 6ths", " II", " 2", " Colts", " 5th Grade"
     # Matches patterns like "Balmain 2nds", "Colleagues II", "Manly 2", "Gordon*", "Colleagues Colts", "Easts 5th Grade"
-    cleaned_name = re.sub(r'(?i)\s+(?:[1-6]ths|[1-6]sts|[1-6]nds|[1-6]rds|II|IV|V|VI|[1-6]|Colts|[1-6]th Grade|\*)$', '', raw_name).strip()
+    cleaned_name = re.sub(
+        r"(?i)\s+(?:[1-6]ths|[1-6]sts|[1-6]nds|[1-6]rds|II|IV|V|VI|[1-6]|Colts|[1-6]th Grade|\*)$",
+        "",
+        raw_name,
+    ).strip()
     # also remove trailing asterisks and remaining dash artifacts if any
-    cleaned_name = re.sub(r'\*$', '', cleaned_name).strip()
-    
+    cleaned_name = re.sub(r"\*$", "", cleaned_name).strip()
+
     if cleaned_name:
         if cleaned_name.lower() == "colleagues colts":
             cleaned_name = "Colleagues"

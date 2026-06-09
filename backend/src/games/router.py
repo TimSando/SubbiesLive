@@ -15,25 +15,31 @@ async def list_games(
     competition_id: int | None = Query(None, description="Filter by competition"),
     round_id: int | None = Query(None, description="Filter by round"),
     team_id: int | None = Query(None, description="Filter by team"),
-    status: str | None = Query(None, description="Filter by status (scheduled/in_progress/completed/not_completed)"),
+    status: str | None = Query(
+        None,
+        description="Filter by status (scheduled/in_progress/completed/not_completed)",
+    ),
     player_id: int | None = Query(None, description="Filter by player"),
     limit: int = Query(50, ge=1, le=200, description="Max results"),
     offset: int = Query(0, ge=0, description="Offset for pagination"),
 ):
     """List games with optional filters."""
     return await service.list_games(
-        db, competition_id=competition_id, round_id=round_id,
-        team_id=team_id, status=status, player_id=player_id,
-        limit=limit, offset=offset
+        db,
+        competition_id=competition_id,
+        round_id=round_id,
+        team_id=team_id,
+        status=status,
+        player_id=player_id,
+        limit=limit,
+        offset=offset,
     )
 
 
 @router.get("/live", response_model=list[GameBrief])
 async def list_live_games(db: DbSession):
     """List all live (in_progress) games."""
-    return await service.list_games(
-        db, status="in_progress", limit=50
-    )
+    return await service.list_games(db, status="in_progress", limit=50)
 
 
 @router.get("/{game_id}", response_model=GameDetail)

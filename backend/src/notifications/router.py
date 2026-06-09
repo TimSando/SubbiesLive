@@ -66,7 +66,7 @@ async def subscribe_user(db: DbSession, sub_input: PushSubscriptionInput):
     new_sub = PwaSubscription(
         endpoint=sub_input.endpoint,
         p256dh=sub_input.keys.p256dh,
-        auth=sub_input.keys.auth
+        auth=sub_input.keys.auth,
     )
     db.add(new_sub)
     logger.info(f"Registered new PWA push subscription: {sub_input.endpoint[:30]}...")
@@ -82,7 +82,9 @@ async def get_my_subscriptions(db: DbSession, payload: MySubscriptionsInput):
     if not sub:
         return {"subscriptions": []}
 
-    topic_stmt = select(PwaSubscriptionTopic).where(PwaSubscriptionTopic.subscription_id == sub.id)
+    topic_stmt = select(PwaSubscriptionTopic).where(
+        PwaSubscriptionTopic.subscription_id == sub.id
+    )
     topic_res = await db.execute(topic_stmt)
     topics = topic_res.scalars().all()
 
@@ -93,11 +95,14 @@ async def get_my_subscriptions(db: DbSession, payload: MySubscriptionsInput):
             club_res = await db.execute(select(Club.name).where(Club.id == t.topic_id))
             topic_name = club_res.scalar() or "Unknown Club"
         elif t.topic_type == "competition":
-            comp_res = await db.execute(select(Competition.name).where(Competition.id == t.topic_id))
+            comp_res = await db.execute(
+                select(Competition.name).where(Competition.id == t.topic_id)
+            )
             topic_name = comp_res.scalar() or "Unknown Competition"
         elif t.topic_type == "game":
             from sqlalchemy.orm import aliased
             from src.clubs.models import Team
+
             HomeTeam = aliased(Team)
             AwayTeam = aliased(Team)
             game_stmt = (
@@ -115,13 +120,15 @@ async def get_my_subscriptions(db: DbSession, payload: MySubscriptionsInput):
             else:
                 topic_name = "Unknown Match"
 
-        result.append({
-            "topic_type": t.topic_type,
-            "topic_id": t.topic_id,
-            "topic_name": topic_name,
-            "notify_outcome": t.notify_outcome,
-            "notify_events": t.notify_events
-        })
+        result.append(
+            {
+                "topic_type": t.topic_type,
+                "topic_id": t.topic_id,
+                "topic_name": topic_name,
+                "notify_outcome": t.notify_outcome,
+                "notify_events": t.notify_events,
+            }
+        )
 
     return {"subscriptions": result}
 
@@ -135,14 +142,14 @@ async def toggle_topic(db: DbSession, payload: ToggleTopicInput):
     if not sub:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Push subscription not found. Please enable push notifications on your device first."
+            detail="Push subscription not found. Please enable push notifications on your device first.",
         )
 
     if payload.subscribe:
         topic_stmt = select(PwaSubscriptionTopic).where(
             PwaSubscriptionTopic.subscription_id == sub.id,
             PwaSubscriptionTopic.topic_type == payload.topic_type,
-            PwaSubscriptionTopic.topic_id == payload.topic_id
+            PwaSubscriptionTopic.topic_id == payload.topic_id,
         )
         topic_res = await db.execute(topic_stmt)
         existing_topic = topic_res.scalars().first()
@@ -156,7 +163,7 @@ async def toggle_topic(db: DbSession, payload: ToggleTopicInput):
                 topic_type=payload.topic_type,
                 topic_id=payload.topic_id,
                 notify_outcome=payload.notify_outcome,
-                notify_events=payload.notify_events
+                notify_events=payload.notify_events,
             )
             db.add(new_topic)
         await db.commit()
@@ -164,7 +171,7 @@ async def toggle_topic(db: DbSession, payload: ToggleTopicInput):
         delete_stmt = delete(PwaSubscriptionTopic).where(
             PwaSubscriptionTopic.subscription_id == sub.id,
             PwaSubscriptionTopic.topic_type == payload.topic_type,
-            PwaSubscriptionTopic.topic_id == payload.topic_id
+            PwaSubscriptionTopic.topic_id == payload.topic_id,
         )
         await db.execute(delete_stmt)
         await db.commit()

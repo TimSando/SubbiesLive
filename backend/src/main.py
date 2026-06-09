@@ -26,7 +26,11 @@ logger = logging.getLogger("uvicorn")
 async def lifespan(app: FastAPI):
     """Application lifespan handler for startup/shutdown events."""
     # Startup — launch ingestion scheduler in background
-    from src.ingestion.scheduler import start_ingestion_scheduler, stop_ingestion_scheduler
+    from src.ingestion.scheduler import (
+        start_ingestion_scheduler,
+        stop_ingestion_scheduler,
+    )
+
     logger.info("Starting ingestion scheduler...")
     start_ingestion_scheduler()
 
@@ -35,6 +39,7 @@ async def lifespan(app: FastAPI):
     # Shutdown
     stop_ingestion_scheduler()
     from src.core.database import engine
+
     await engine.dispose()
 
 
@@ -52,14 +57,20 @@ app = FastAPI(
 # CORS — allow frontend dev server in development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost", "http://localhost:8081"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost",
+        "http://localhost:8081",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # Register routers
-app.include_router(competitions_router, prefix="/api/competitions", tags=["Competitions"])
+app.include_router(
+    competitions_router, prefix="/api/competitions", tags=["Competitions"]
+)
 app.include_router(clubs_router, prefix="/api/clubs", tags=["Clubs"])
 app.include_router(games_router, prefix="/api/games", tags=["Games"])
 app.include_router(players_router, prefix="/api/players", tags=["Players"])
@@ -67,8 +78,9 @@ app.include_router(standings_router, prefix="/api/standings", tags=["Standings"]
 app.include_router(stats_router, prefix="/api/stats", tags=["Stats"])
 app.include_router(refzone_router, prefix="/api/refzone", tags=["RefZone"])
 app.include_router(ingestion_router, prefix="/api/ingestion", tags=["Ingestion"])
-app.include_router(notifications_router, prefix="/api/notifications", tags=["Notifications"])
-
+app.include_router(
+    notifications_router, prefix="/api/notifications", tags=["Notifications"]
+)
 
 
 @app.get("/api/health", tags=["Health"])

@@ -32,10 +32,12 @@ def get_teams():
         comp_id = team["competition"]["id"]
         if comp_id not in seen_ids:
             seen_ids.add(comp_id)
-            competitions.append({
-                "id": comp_id,
-                "name": team["competition"]["name"],
-            })
+            competitions.append(
+                {
+                    "id": comp_id,
+                    "name": team["competition"]["name"],
+                }
+            )
 
     logger.info(f"Found {len(competitions)} competitions")
     return competitions, r.json()

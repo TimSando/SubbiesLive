@@ -4,8 +4,9 @@ from src.refzone.matching import (
     match_team_names,
     parse_rx_moment_to_sydney,
     match_competition_names,
-    find_matching_game
+    find_matching_game,
 )
+
 
 def test_clean_team_name():
     assert clean_team_name("Colleagues - Kentwell Cup") == "colleagues"
@@ -14,15 +15,18 @@ def test_clean_team_name():
     assert clean_team_name("Sydney University Women's") == "sydney uni womens"
     assert clean_team_name(None) == ""
 
+
 def test_match_team_names_exact():
     is_match, needs_review = match_team_names("Mosman", "Mosman RUFC")
     assert is_match
     assert not needs_review
 
+
 def test_match_team_names_aliases():
     is_match, needs_review = match_team_names("UNSW", "University of New South Wales")
     assert is_match
     assert not needs_review
+
 
 def test_match_team_names_overlap():
     # Length of "Hunters" (7) < 20 * 0.6 (12) -> should trigger needs_review
@@ -30,9 +34,11 @@ def test_match_team_names_overlap():
     assert is_match
     assert needs_review
 
+
 def test_match_team_names_no_match():
     is_match, _ = match_team_names("Colleagues", "Mosman")
     assert not is_match
+
 
 def test_parse_rx_moment_to_sydney():
     # Unix timestamp in ms: 1717887600000 is 2024-06-08 23:00 UTC (09:00 AEST)
@@ -47,9 +53,11 @@ def test_parse_rx_moment_to_sydney():
     assert dt2.hour == 17
     assert dt2.minute == 0
 
+
 def test_match_competition_names():
     assert match_competition_names("Subbies Kentwell Cup", "Kentwell Cup")
     assert not match_competition_names("Subbies", "Shute Shield")
+
 
 def test_find_matching_game():
     db_games = [
@@ -57,14 +65,14 @@ def test_find_matching_game():
             "id": 1,
             "game_date": datetime(2024, 6, 9, 15, 0),
             "home_team_name": "Colleagues RUFC",
-            "away_team_name": "Mosman Whales"
+            "away_team_name": "Mosman Whales",
         },
         {
             "id": 2,
             "game_date": datetime(2024, 6, 9, 15, 10),
             "home_team_name": "Barker Old Boys",
-            "away_team_name": "Hunters Hill"
-        }
+            "away_team_name": "Hunters Hill",
+        },
     ]
 
     # Match Colleagues vs Mosman (time close enough, teams match)
@@ -72,7 +80,7 @@ def test_find_matching_game():
         app_moment=datetime(2024, 6, 9, 15, 5),
         app_home_team="Colleagues",
         app_away_team="Mosman",
-        db_games=db_games
+        db_games=db_games,
     )
     assert match_id == 1
 
@@ -81,6 +89,6 @@ def test_find_matching_game():
         app_moment=datetime(2024, 6, 9, 16, 30),
         app_home_team="Colleagues",
         app_away_team="Mosman",
-        db_games=db_games
+        db_games=db_games,
     )
     assert match_id2 is None

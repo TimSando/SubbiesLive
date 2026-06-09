@@ -13,7 +13,9 @@ class Settings(BaseSettings):
     environment: str = "development"
 
     # Database
-    database_url: str = "postgresql+asyncpg://subbiesstats:subbiesstats_dev_2026@db:5432/subbiesstats"
+    database_url: str = (
+        "postgresql+asyncpg://subbiesstats:subbiesstats_dev_2026@db:5432/subbiesstats"
+    )
     database_url_sync: Optional[str] = None
 
     # App metadata

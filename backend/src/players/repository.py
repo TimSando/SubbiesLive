@@ -17,22 +17,22 @@ async def get_players(
     offset: int = 0,
 ) -> list[dict]:
     """Fetch players with optional search and team filter."""
-    stmt = (
-        select(
-            Player.id,
-            Player.name,
-            Player.external_id,
-            Player.thumbnail_url,
-        )
+    stmt = select(
+        Player.id,
+        Player.name,
+        Player.external_id,
+        Player.thumbnail_url,
     )
 
     if search:
         stmt = stmt.where(Player.name.ilike(f"%{search}%"))
 
     if team_id:
-        stmt = stmt.join(
-            PlayerHistory, PlayerHistory.player_id == Player.id
-        ).where(PlayerHistory.team_id == team_id).distinct()
+        stmt = (
+            stmt.join(PlayerHistory, PlayerHistory.player_id == Player.id)
+            .where(PlayerHistory.team_id == team_id)
+            .distinct()
+        )
 
     stmt = stmt.order_by(Player.name).limit(limit).offset(offset)
     result = await db.execute(stmt)
@@ -68,19 +68,16 @@ async def get_player_by_id(db: AsyncSession, player_id: int) -> dict | None:
     teams = [row._asdict() for row in teams_result.all()]
 
     # Get aggregated stats from player history
-    stats_stmt = (
-        select(
-            func.sum(PlayerHistory.tries).label("tries"),
-            func.sum(PlayerHistory.conversions).label("conversions"),
-            func.sum(PlayerHistory.penalty_goals).label("penalty_goals"),
-            func.sum(PlayerHistory.drop_goals).label("drop_goals"),
-            func.sum(PlayerHistory.yellow_cards).label("yellow_cards"),
-            func.sum(PlayerHistory.red_cards).label("red_cards"),
-            func.sum(PlayerHistory.points).label("points"),
-            func.count(PlayerHistory.game_id).label("games_played"),
-        )
-        .where(PlayerHistory.player_id == player_id)
-    )
+    stats_stmt = select(
+        func.sum(PlayerHistory.tries).label("tries"),
+        func.sum(PlayerHistory.conversions).label("conversions"),
+        func.sum(PlayerHistory.penalty_goals).label("penalty_goals"),
+        func.sum(PlayerHistory.drop_goals).label("drop_goals"),
+        func.sum(PlayerHistory.yellow_cards).label("yellow_cards"),
+        func.sum(PlayerHistory.red_cards).label("red_cards"),
+        func.sum(PlayerHistory.points).label("points"),
+        func.count(PlayerHistory.game_id).label("games_played"),
+    ).where(PlayerHistory.player_id == player_id)
     stats_result = await db.execute(stats_stmt)
     row = stats_result.one_or_none()
 
@@ -105,7 +102,6 @@ async def get_player_by_id(db: AsyncSession, player_id: int) -> dict | None:
         stats["total_points"] = int(row.points or 0)
         stats["games_played"] = int(row.games_played or 0)
 
-
     # Get most recent club name
     recent_club_stmt = (
         select(Club.name)
@@ -118,7 +114,7 @@ async def get_player_by_id(db: AsyncSession, player_id: int) -> dict | None:
         .limit(1)
     )
     recent_club = (await db.execute(recent_club_stmt)).scalar_one_or_none()
-    
+
     if not recent_club and teams:
         recent_club = teams[0]["club_name"]
 

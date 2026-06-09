@@ -16,9 +16,14 @@ async def list_games(
 ) -> list[dict]:
     """Get games with optional filters."""
     return await repository.get_games(
-        db, competition_id=competition_id, round_id=round_id,
-        team_id=team_id, status=status, player_id=player_id,
-        limit=limit, offset=offset
+        db,
+        competition_id=competition_id,
+        round_id=round_id,
+        team_id=team_id,
+        status=status,
+        player_id=player_id,
+        limit=limit,
+        offset=offset,
     )
 
 

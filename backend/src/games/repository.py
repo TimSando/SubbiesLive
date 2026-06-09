@@ -87,7 +87,6 @@ def _row_to_game_dict(row) -> dict:
     }
 
 
-
 async def get_games(
     db: AsyncSession,
     competition_id: int | None = None,
@@ -106,21 +105,28 @@ async def get_games(
     if round_id:
         stmt = stmt.where(Round.id == round_id)
     if team_id:
-        stmt = stmt.where((Game.home_team_id == team_id) | (Game.away_team_id == team_id))
+        stmt = stmt.where(
+            (Game.home_team_id == team_id) | (Game.away_team_id == team_id)
+        )
     if status:
         if "," in status:
             statuses = [s.strip() for s in status.split(",") if s.strip()]
             stmt = stmt.where(Game.status.in_(statuses))
         else:
             stmt = stmt.where(Game.status == status)
-        
+
         if status == "in_progress":
             stmt = stmt.where(
-                (Game.location.is_(None)) |
-                (func.lower(func.trim(Game.location)) != "postponed to wet weather week")
+                (Game.location.is_(None))
+                | (
+                    func.lower(func.trim(Game.location))
+                    != "postponed to wet weather week"
+                )
             )
     if player_id:
-        stmt = stmt.join(PlayerHistory, PlayerHistory.game_id == Game.id).where(PlayerHistory.player_id == player_id)
+        stmt = stmt.join(PlayerHistory, PlayerHistory.game_id == Game.id).where(
+            PlayerHistory.player_id == player_id
+        )
 
     stmt = stmt.order_by(desc(Game.game_date)).limit(limit).offset(offset)
 

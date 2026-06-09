@@ -27,13 +27,18 @@ async def get_all_competitions(db: AsyncSession) -> list[dict]:
         .outerjoin(Team, Team.competition_id == Competition.id)
         .outerjoin(Club, Team.club_id == Club.id)
         .outerjoin(Round, Round.competition_id == Competition.id)
-        .outerjoin(CompetitionMapping, Competition.competition_mapping_id == CompetitionMapping.id)
+        .outerjoin(
+            CompetitionMapping,
+            Competition.competition_mapping_id == CompetitionMapping.id,
+        )
         .group_by(
-            Competition.id, Competition.name, Competition.external_id, 
+            Competition.id,
+            Competition.name,
+            Competition.external_id,
             Competition.competition_mapping_id,
             CompetitionMapping.parent_competition,
             CompetitionMapping.division,
-            CompetitionMapping.grade
+            CompetitionMapping.grade,
         )
         .order_by(Competition.name)
     )
@@ -58,9 +63,9 @@ async def get_competition_by_id(db: AsyncSession, competition_id: int) -> dict |
             Round.number,
             Round.external_id,
             func.count(Game.id).label("game_count"),
-            func.sum(
-                case((Game.status == "completed", 1), else_=0)
-            ).label("completed_game_count"),
+            func.sum(case((Game.status == "completed", 1), else_=0)).label(
+                "completed_game_count"
+            ),
             func.max(Game.game_date).label("latest_game_date"),
         )
         .outerjoin(Game, Game.round_id == Round.id)
