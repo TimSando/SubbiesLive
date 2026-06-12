@@ -1,11 +1,14 @@
 import logging
 import re
 import base64
+import json
+import time
 from pathlib import Path
 from typing import Dict, Optional
-from fastapi import APIRouter, Header, HTTPException
+from fastapi import APIRouter, Header, HTTPException, Response, Request
 from pydantic import BaseModel
 import httpx
+from src.core.config import get_settings
 
 router = APIRouter()
 logger = logging.getLogger("uvicorn")
@@ -29,10 +32,62 @@ _cached_basic_token: str = (
     "YXV0aDozanowbkRsZGtQVERFcGdKT2I2bXlYTmhMN0h4Nk4zVnM5eFJHcDcyQ1c1V0w0UmtWTw=="
 )
 
+# In-memory cache for profiles to avoid downstream failures
+_cached_profiles: Dict[str, dict] = {}
+
 
 class LoginRequest(BaseModel):
     email: str
     password: str
+
+
+class Verify2FARequest(BaseModel):
+    code: str
+    token: str
+
+
+def decode_jwt_payload(token: str) -> dict:
+    try:
+        parts = token.split(".")
+        if len(parts) != 3:
+            return {}
+        payload_b64 = parts[1]
+        # Pad payload if necessary
+        padding = len(payload_b64) % 4
+        if padding:
+            payload_b64 += "=" * (4 - padding)
+        decoded = base64.urlsafe_b64decode(payload_b64).decode("utf-8")
+        return json.loads(decoded)
+    except Exception as e:
+        logger.error(f"Failed to decode JWT payload: {e}")
+        return {}
+
+
+def set_auth_cookies(response: Response, access_token: str, refresh_token: str):
+    settings = get_settings()
+    secure = settings.cookie_secure
+    samesite = "lax" if not secure else "strict"
+    
+    # Set rx_access_token (1 hour max_age = 3600)
+    response.set_cookie(
+        key="rx_access_token",
+        value=access_token,
+        httponly=True,
+        secure=secure,
+        samesite=samesite,
+        path="/api/refzone",
+        max_age=3600,
+    )
+    # Set rx_refresh_token (7 days max_age = 7 * 86400)
+    response.set_cookie(
+        key="rx_refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=secure,
+        samesite=samesite,
+        path="/api/refzone/refresh",
+        max_age=7 * 24 * 3600,
+    )
 
 
 async def fetch_fresh_rx_basic_token(client: httpx.AsyncClient) -> str:
@@ -97,7 +152,7 @@ def get_rx_headers(token: Optional[str] = None) -> Dict[str, str]:
 
 
 @router.post("/login")
-async def rx_login(body: LoginRequest):
+async def rx_login(body: LoginRequest, response: Response):
     global _cached_basic_token
     url = f"{RX_BASE_URL}/rau/api/v3/login"
     payload = {
@@ -134,12 +189,139 @@ async def rx_login(body: LoginRequest):
                     status_code=r.status_code, detail=f"Login failed: {r.text}"
                 )
 
-            return r.json()
+            rx_data = r.json()
+            # Check for MFA challenge
+            if rx_data.get("isMfaEnabled") is True:
+                return {"status": "mfa_required", "mfa_token": rx_data.get("token")}
+
+            if "jwtTokens" in rx_data and "accessToken" in rx_data["jwtTokens"]:
+                jwt_tokens = rx_data["jwtTokens"]
+                access_token = jwt_tokens.get("accessToken")
+                refresh_token = jwt_tokens.get("refreshToken")
+                set_auth_cookies(response, access_token, refresh_token)
+                user_id = rx_data.get("userId")
+                if user_id and "profile" in rx_data:
+                    _cached_profiles[str(user_id)] = rx_data["profile"]
+                return {"status": "ok", "userId": user_id}
+
+            return rx_data
         except httpx.RequestError as exc:
             logger.error(f"RX API error: {exc}")
             raise HTTPException(
                 status_code=503, detail="RugbyXplorer service unavailable"
             )
+
+
+@router.post("/verify-2fa")
+async def verify_2fa(body: Verify2FARequest, response: Response):
+    url = f"{RX_BASE_URL}/rau/api/v1/mfa-verify"
+    raw_auth = f"{body.token}:{body.code}"
+    basic_val = base64.b64encode(raw_auth.encode("utf-8")).decode("utf-8")
+    
+    headers = {
+        "clientId": "portal",
+        "Content-Type": "application/json",
+        "Origin": "https://auth.rugbyxplorer.com.au",
+        "Referer": "https://auth.rugbyxplorer.com.au/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0",
+        "Authorization": f"Basic {basic_val}"
+    }
+
+    async with httpx.AsyncClient() as client:
+        try:
+            r = await client.post(url, headers=headers, json={}, timeout=10.0)
+            if r.status_code != 200:
+                logger.error(f"RX MFA verify failed: status={r.status_code}, response={r.text}")
+                raise HTTPException(
+                    status_code=r.status_code, detail=f"MFA verification failed: {r.text}"
+                )
+
+            rx_data = r.json()
+            logger.info(f"verify_2fa response from RX: {rx_data}")
+            if "jwtTokens" in rx_data and "accessToken" in rx_data["jwtTokens"]:
+                jwt_tokens = rx_data["jwtTokens"]
+                access_token = jwt_tokens.get("accessToken")
+                refresh_token = jwt_tokens.get("refreshToken")
+                set_auth_cookies(response, access_token, refresh_token)
+                
+                user_id = rx_data.get("userId")
+                if user_id and "profile" in rx_data:
+                    _cached_profiles[str(user_id)] = rx_data["profile"]
+                
+                # Strip jwtTokens block and return other fields like userId
+                out_data = {k: v for k, v in rx_data.items() if k != "jwtTokens"}
+                return out_data
+
+            raise HTTPException(
+                status_code=500, detail="MFA verification succeeded but no tokens returned"
+            )
+        except httpx.RequestError as exc:
+            logger.error(f"RX API error verifying 2FA: {exc}")
+            raise HTTPException(
+                status_code=503, detail="RugbyXplorer service unavailable"
+            )
+
+
+@router.get("/status")
+async def get_status(request: Request):
+    token = request.cookies.get("rx_access_token")
+    if not token:
+        return {"authenticated": False, "userId": None}
+    
+    payload = decode_jwt_payload(token)
+    user_id = payload.get("userId") or payload.get("sub")
+    if not user_id:
+        return {"authenticated": False, "userId": None}
+        
+    exp = payload.get("exp")
+    if exp and time.time() > exp:
+        return {"authenticated": False, "userId": None}
+            
+    return {"authenticated": True, "userId": str(user_id)}
+
+
+@router.post("/refresh")
+async def rx_refresh(request: Request, response: Response):
+    refresh_token = request.cookies.get("rx_refresh_token")
+    if not refresh_token:
+        raise HTTPException(status_code=401, detail="Missing refresh token cookie")
+        
+    url = f"{RX_BASE_URL}/rau/api/v2/token/refresh"
+    headers = get_rx_headers(refresh_token)
+    
+    async with httpx.AsyncClient() as client:
+        try:
+            r = await client.post(url, headers=headers, json={}, timeout=10.0)
+            if r.status_code != 200:
+                logger.error(f"RX token refresh failed: status={r.status_code}, response={r.text}")
+                raise HTTPException(status_code=r.status_code, detail="Token refresh failed")
+                
+            rx_data = r.json()
+            if "jwtTokens" in rx_data and "accessToken" in rx_data["jwtTokens"]:
+                jwt_tokens = rx_data["jwtTokens"]
+                access_token = jwt_tokens.get("accessToken")
+                new_refresh_token = jwt_tokens.get("refreshToken") or refresh_token
+                set_auth_cookies(response, access_token, new_refresh_token)
+                return {"status": "ok"}
+                
+            raise HTTPException(status_code=500, detail="Tokens missing in refresh response")
+        except httpx.RequestError as exc:
+            logger.error(f"RX API error refreshing token: {exc}")
+            raise HTTPException(status_code=503, detail="RugbyXplorer service unavailable")
+
+
+@router.post("/logout")
+async def rx_logout(request: Request, response: Response):
+    token = request.cookies.get("rx_access_token")
+    if token:
+        payload = decode_jwt_payload(token)
+        user_id = payload.get("userId") or payload.get("sub")
+        if user_id:
+            _cached_profiles.pop(str(user_id), None)
+            
+    response.delete_cookie(key="rx_access_token", path="/api/refzone")
+    response.delete_cookie(key="rx_refresh_token", path="/api/refzone/refresh")
+    return {"status": "logged_out"}
 
 
 from datetime import timedelta
@@ -157,14 +339,14 @@ AwayTeam = aliased(Team, name="away_team")
 
 @router.get("/appointments")
 async def get_appointments(
-    userId: str, db: DbSession, authorization: Optional[str] = Header(None)
+    userId: str, db: DbSession, request: Request
 ):
-    if not authorization or not authorization.startswith("Bearer "):
+    token = request.cookies.get("rx_access_token")
+    if not token:
         raise HTTPException(
-            status_code=401, detail="Missing or invalid Authorization header"
+            status_code=401, detail="Missing rx_access_token cookie"
         )
 
-    token = authorization.split(" ")[1]
     headers = get_rx_headers(token)
 
     confirmed_url = f"{RX_BASE_URL}/rau/api/v3/appointments/user/{userId}"
@@ -284,29 +466,43 @@ async def get_appointments(
 
 
 @router.get("/profile")
-async def get_profile(userId: str, authorization: Optional[str] = Header(None)):
-    if not authorization or not authorization.startswith("Bearer "):
+async def get_profile(userId: str, request: Request):
+    token = request.cookies.get("rx_access_token")
+    if not token:
         raise HTTPException(
-            status_code=401, detail="Missing or invalid Authorization header"
+            status_code=401, detail="Missing rx_access_token cookie"
         )
 
-    token = authorization.split(" ")[1]
+    if userId in _cached_profiles:
+        logger.info(f"Serving profile for {userId} from memory cache")
+        return _cached_profiles[userId]
+
     headers = get_rx_headers(token)
 
     url = f"{RX_BASE_URL}/rau/api/v2/myprofile/{userId}"
 
     async with httpx.AsyncClient() as client:
         try:
-            res = await client.get(url, headers=headers, timeout=10.0)
+            res = await client.request(
+                "GET", url, headers=headers, json={"userID": userId}, timeout=10.0
+            )
+            logger.info(f"myprofile req headers: {res.request.headers}")
+            logger.info(f"myprofile req content: {res.request.read()}")
+            logger.info(f"myprofile res status: {res.status_code}")
+            logger.info(f"myprofile res body: {res.text}")
             if res.status_code == 401:
                 raise HTTPException(status_code=401, detail="RugbyXplorer unauthorized")
             elif res.status_code != 200:
-                raise HTTPException(
-                    status_code=res.status_code, detail="Failed to fetch profile"
+                logger.warning(
+                    f"Failed to fetch profile for {userId} from RugbyXplorer (status={res.status_code}). Using fallback profile."
                 )
-            return res.json()
+                return {"firstname": "Referee", "lastname": "", "headshot": ""}
+            
+            profile_data = res.json()
+            if isinstance(profile_data, dict):
+                _cached_profiles[userId] = profile_data
+            return profile_data
         except httpx.RequestError as exc:
             logger.error(f"RX API error fetching profile: {exc}")
-            raise HTTPException(
-                status_code=503, detail="RugbyXplorer service unavailable"
-            )
+            logger.warning(f"Error fetching profile from RugbyXplorer: {exc}. Using fallback profile.")
+            return {"firstname": "Referee", "lastname": "", "headshot": ""}

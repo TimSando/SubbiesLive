@@ -1,13 +1,14 @@
 const API_BASE = '/api/refzone';
 
-export async function loginToRX(encryptedEmail, encryptedPassword) {
+export async function loginToRX(email, password) {
   const url = `${API_BASE}/login`;
   const res = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ email: encryptedEmail, password: encryptedPassword }),
+    credentials: 'include',
+    body: JSON.stringify({ email, password }),
   });
   if (!res.ok) {
     throw new Error(`Login failed: ${res.status}`);
@@ -15,44 +16,77 @@ export async function loginToRX(encryptedEmail, encryptedPassword) {
   return res.json();
 }
 
-export async function fetchWithRefresh(url, options, authContext) {
-  let headers = {
-    'Content-Type': 'application/json',
-    ...options.headers,
-  };
-  
-  if (authContext && authContext.accessToken) {
-    headers['Authorization'] = `Bearer ${authContext.accessToken}`;
-  }
-
-  let res = await fetch(url, {
-    ...options,
-    headers,
+export async function verify2FA(mfaCode, mfaToken) {
+  const url = `${API_BASE}/verify-2fa`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify({ code: mfaCode, token: mfaToken }),
   });
+  if (!res.ok) {
+    throw new Error(`2FA failed: ${res.status}`);
+  }
+  return res.json();
+}
 
-  if (res.status === 401 && authContext && authContext.encryptedEmail && authContext.encryptedPassword) {
-    console.log('RefZone: Access token expired. Attempting silent re-login...');
+export async function logoutFromRX() {
+  const url = `${API_BASE}/logout`;
+  const res = await fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+  });
+  if (!res.ok) {
+    throw new Error(`Logout failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function checkSession() {
+  const url = `${API_BASE}/status`;
+  const res = await fetch(url, {
+    method: 'GET',
+    credentials: 'include',
+  });
+  if (!res.ok) {
+    return null;
+  }
+  return res.json();
+}
+
+export async function fetchWithRefresh(url, options = {}, authContext = null) {
+  const fetchOptions = {
+    ...options,
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  };
+
+  let res = await fetch(url, fetchOptions);
+
+  if (res.status === 401) {
+    console.log('RefZone: Access token expired. Attempting cookie refresh...');
     try {
-      const loginData = await loginToRX(authContext.encryptedEmail, authContext.encryptedPassword);
-      const newAccessToken = loginData.jwtTokens.accessToken;
-      const newUserId = loginData.userId;
-      
-      // Update auth context state
-      authContext.setAuthData({
-        accessToken: newAccessToken,
-        userId: newUserId,
-        profile: loginData.profile,
+      const refreshRes = await fetch(`${API_BASE}/refresh`, {
+        method: 'POST',
+        credentials: 'include',
       });
 
-      // Retry the original request
-      headers['Authorization'] = `Bearer ${newAccessToken}`;
-      res = await fetch(url, {
-        ...options,
-        headers,
-      });
+      if (!refreshRes.ok) {
+        throw new Error('Refresh endpoint returned non-200');
+      }
+
+      // Retry original request
+      res = await fetch(url, fetchOptions);
     } catch (err) {
-      console.error('RefZone: Silent re-login failed, logging out:', err);
-      authContext.clearAuth();
+      console.error('RefZone: Silent token refresh failed, logging out:', err);
+      if (authContext && typeof authContext.clearAuth === 'function') {
+        authContext.clearAuth();
+      }
       throw err;
     }
   }
@@ -65,11 +99,13 @@ export async function fetchWithRefresh(url, options, authContext) {
 }
 
 export async function fetchAppointments(authContext) {
-  const url = `${API_BASE}/appointments?userId=${authContext.userId}`;
+  const userId = authContext && typeof authContext === 'object' ? authContext.userId : authContext;
+  const url = `${API_BASE}/appointments?userId=${userId}`;
   return fetchWithRefresh(url, { method: 'GET' }, authContext);
 }
 
 export async function fetchProfile(authContext) {
-  const url = `${API_BASE}/profile?userId=${authContext.userId}`;
+  const userId = authContext && typeof authContext === 'object' ? authContext.userId : authContext;
+  const url = `${API_BASE}/profile?userId=${userId}`;
   return fetchWithRefresh(url, { method: 'GET' }, authContext);
 }

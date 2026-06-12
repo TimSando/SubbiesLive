@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     # Ingestion Trigger
     ingestion_password: str = "dbRefresh_"
 
+    # Cookie security
+    cookie_secure: Optional[bool] = None
+
     # PWA Web Push
     vapid_public_key: str = "BI3OQJIP5CTGATc4ZKjIqce2uNgOIrjlHRrSmZRx4u5HY3ZJU_-QSt8Yq90ub3geXpVoDbO8dQDDaQeFyHXjkuE"
     vapid_private_key: str = "wiruot1guHaDvKd231NgPetRYI5x-jRuTKt-VFxLhKI"
@@ -34,11 +37,14 @@ class Settings(BaseSettings):
     def derive_sync_url(self) -> "Settings":
         if not self.database_url_sync:
             self.database_url_sync = self.database_url.replace("+asyncpg", "")
+        if self.cookie_secure is None:
+            self.cookie_secure = self.environment != "development"
         return self
 
     class Config:
         env_file = ".env"
         case_sensitive = False
+        extra = "ignore"
 
 
 @lru_cache

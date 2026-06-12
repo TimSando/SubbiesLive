@@ -1,8 +1,7 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import RefZoneLogin from './RefZoneLogin';
 import RefZoneDashboard from './RefZoneDashboard';
-import { parseJwtExpiry } from '../utils/tokenUtils';
-import { loginToRX } from '../api/refzone';
+import { checkSession, fetchProfile, logoutFromRX } from '../api/refzone';
 
 export const RefZoneContext = createContext(null);
 
@@ -17,15 +16,10 @@ export function useRefZone() {
 export function RefZoneProvider({ children }) {
   const [authData, setAuthDataState] = useState(null);
   const [autoLoginLoading, setAutoLoginLoading] = useState(false);
-  const timeoutRef = useRef(null);
 
   const clearAuth = () => {
     console.log('RefZone: Clearing authentication context');
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-    localStorage.removeItem('rx_auth_remember');
+    logoutFromRX().catch((err) => console.error('RefZone: Logout request failed:', err));
     setAuthDataState(null);
   };
 
@@ -38,94 +32,38 @@ export function RefZoneProvider({ children }) {
     });
   };
 
-  // Attempt auto-login on mount
+  // Attempt auto-login on mount by checking the session cookie
   useEffect(() => {
-    const tryAutoLogin = async () => {
-      const stored = localStorage.getItem('rx_auth_remember');
-      if (!stored) return;
-
+    const trySessionRestore = async () => {
+      console.log('RefZone: Checking for existing session cookie...');
+      setAutoLoginLoading(true);
       try {
-        const { encryptedEmail, encryptedPassword, expiresAt } = JSON.parse(stored);
-        if (Date.now() > expiresAt) {
-          console.log('RefZone: Remembered session has expired.');
-          localStorage.removeItem('rx_auth_remember');
-          return;
-        }
-
-        console.log('RefZone: Found stored credentials, attempting auto-login...');
-        setAutoLoginLoading(true);
-        const loginData = await loginToRX(encryptedEmail, encryptedPassword);
-        
-        if (loginData && loginData.jwtTokens && loginData.jwtTokens.accessToken) {
+        const session = await checkSession();
+        if (session && session.authenticated) {
+          console.log('RefZone: Active session found. Fetching referee profile...');
+          const profileData = await fetchProfile(session.userId);
           setAuthDataState({
-            accessToken: loginData.jwtTokens.accessToken,
-            userId: loginData.userId,
-            encryptedEmail,
-            encryptedPassword,
-            profile: loginData.profile || {
+            userId: session.userId,
+            profile: profileData || {
               firstname: 'Referee',
               lastname: '',
               headshot: '',
             },
           });
-          console.log('RefZone: Auto-login successful!');
+          console.log('RefZone: Session restored successfully!');
         }
       } catch (err) {
-        console.error('RefZone: Auto-login failed:', err);
-        localStorage.removeItem('rx_auth_remember');
+        console.error('RefZone: Cookie session restoration failed:', err);
       } finally {
         setAutoLoginLoading(false);
       }
     };
 
-    tryAutoLogin();
+    trySessionRestore();
   }, []);
 
-
-  // Handle proactive token refresh
-  useEffect(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-
-    if (authData && authData.accessToken && authData.encryptedEmail && authData.encryptedPassword) {
-      const exp = parseJwtExpiry(authData.accessToken);
-      if (exp) {
-        const refreshBuffer = 5 * 60 * 1000; // 5 minutes before expiry
-        const delay = Math.max(0, (exp - Date.now()) - refreshBuffer);
-        
-        console.log(`RefZone: Scheduling proactive token refresh in ${(delay / 1000 / 60).toFixed(1)} minutes`);
-        
-        timeoutRef.current = setTimeout(async () => {
-          console.log('RefZone: Performing proactive token refresh...');
-          try {
-            const loginData = await loginToRX(authData.encryptedEmail, authData.encryptedPassword);
-            setAuthData({
-              accessToken: loginData.jwtTokens.accessToken,
-              userId: loginData.userId,
-              profile: loginData.profile,
-            });
-          } catch (err) {
-            console.error('RefZone: Proactive token refresh failed:', err);
-            clearAuth();
-          }
-        }, delay);
-      }
-    }
-
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, [authData && authData.accessToken, authData && authData.encryptedEmail, authData && authData.encryptedPassword]);
-
   const value = {
-    accessToken: authData ? authData.accessToken : null,
     userId: authData ? authData.userId : null,
-    encryptedEmail: authData ? authData.encryptedEmail : null,
-    encryptedPassword: authData ? authData.encryptedPassword : null,
     profile: authData ? authData.profile : null,
     autoLoginLoading,
     setAuthData,
@@ -140,7 +78,7 @@ export function RefZoneProvider({ children }) {
 }
 
 export default function RefZone() {
-  const { accessToken, autoLoginLoading } = useRefZone();
+  const { userId, autoLoginLoading } = useRefZone();
 
   return (
     <div className="refzone-wrapper">
@@ -151,7 +89,7 @@ export default function RefZone() {
             Signing you in securely to RugbyXplorer...
           </p>
         </div>
-      ) : !accessToken ? (
+      ) : !userId ? (
         <RefZoneLogin />
       ) : (
         <RefZoneDashboard />
@@ -159,4 +97,3 @@ export default function RefZone() {
     </div>
   );
 }
-
