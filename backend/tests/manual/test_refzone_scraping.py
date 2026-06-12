@@ -65,9 +65,9 @@ async def test_retry_flow():
         except HTTPException as e:
             print(f"✅ Caught expected HTTPException: status_code={e.status_code}")
             # Correct Basic token + incorrect user credentials returns 401 Unauthorized
-            assert e.status_code == 401, (
-                f"Expected status 401 for bad credentials, got {e.status_code}"
-            )
+            assert (
+                e.status_code == 401
+            ), f"Expected status 401 for bad credentials, got {e.status_code}"
             print("✅ Verified correct HTTP 401 was returned.")
         except Exception as e:
             print(f"❌ Caught unexpected exception: {e}")
