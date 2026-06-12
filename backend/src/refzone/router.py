@@ -5,7 +5,7 @@ import json
 import time
 from pathlib import Path
 from typing import Dict, Optional
-from fastapi import APIRouter, Header, HTTPException, Response, Request
+from fastapi import APIRouter, HTTPException, Response, Request
 from pydantic import BaseModel
 import httpx
 from src.core.config import get_settings
@@ -67,7 +67,7 @@ def set_auth_cookies(response: Response, access_token: str, refresh_token: str):
     settings = get_settings()
     secure = settings.cookie_secure
     samesite = "lax" if not secure else "strict"
-    
+
     # Set rx_access_token (1 hour max_age = 3600)
     response.set_cookie(
         key="rx_access_token",
@@ -217,23 +217,26 @@ async def verify_2fa(body: Verify2FARequest, response: Response):
     url = f"{RX_BASE_URL}/rau/api/v1/mfa-verify"
     raw_auth = f"{body.token}:{body.code}"
     basic_val = base64.b64encode(raw_auth.encode("utf-8")).decode("utf-8")
-    
+
     headers = {
         "clientId": "portal",
         "Content-Type": "application/json",
         "Origin": "https://auth.rugbyxplorer.com.au",
         "Referer": "https://auth.rugbyxplorer.com.au/",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0",
-        "Authorization": f"Basic {basic_val}"
+        "Authorization": f"Basic {basic_val}",
     }
 
     async with httpx.AsyncClient() as client:
         try:
             r = await client.post(url, headers=headers, json={}, timeout=10.0)
             if r.status_code != 200:
-                logger.error(f"RX MFA verify failed: status={r.status_code}, response={r.text}")
+                logger.error(
+                    f"RX MFA verify failed: status={r.status_code}, response={r.text}"
+                )
                 raise HTTPException(
-                    status_code=r.status_code, detail=f"MFA verification failed: {r.text}"
+                    status_code=r.status_code,
+                    detail=f"MFA verification failed: {r.text}",
                 )
 
             rx_data = r.json()
@@ -243,17 +246,18 @@ async def verify_2fa(body: Verify2FARequest, response: Response):
                 access_token = jwt_tokens.get("accessToken")
                 refresh_token = jwt_tokens.get("refreshToken")
                 set_auth_cookies(response, access_token, refresh_token)
-                
+
                 user_id = rx_data.get("userId")
                 if user_id and "profile" in rx_data:
                     _cached_profiles[str(user_id)] = rx_data["profile"]
-                
+
                 # Strip jwtTokens block and return other fields like userId
                 out_data = {k: v for k, v in rx_data.items() if k != "jwtTokens"}
                 return out_data
 
             raise HTTPException(
-                status_code=500, detail="MFA verification succeeded but no tokens returned"
+                status_code=500,
+                detail="MFA verification succeeded but no tokens returned",
             )
         except httpx.RequestError as exc:
             logger.error(f"RX API error verifying 2FA: {exc}")
@@ -267,16 +271,16 @@ async def get_status(request: Request):
     token = request.cookies.get("rx_access_token")
     if not token:
         return {"authenticated": False, "userId": None}
-    
+
     payload = decode_jwt_payload(token)
     user_id = payload.get("userId") or payload.get("sub")
     if not user_id:
         return {"authenticated": False, "userId": None}
-        
+
     exp = payload.get("exp")
     if exp and time.time() > exp:
         return {"authenticated": False, "userId": None}
-            
+
     return {"authenticated": True, "userId": str(user_id)}
 
 
@@ -285,17 +289,21 @@ async def rx_refresh(request: Request, response: Response):
     refresh_token = request.cookies.get("rx_refresh_token")
     if not refresh_token:
         raise HTTPException(status_code=401, detail="Missing refresh token cookie")
-        
+
     url = f"{RX_BASE_URL}/rau/api/v2/token/refresh"
     headers = get_rx_headers(refresh_token)
-    
+
     async with httpx.AsyncClient() as client:
         try:
             r = await client.post(url, headers=headers, json={}, timeout=10.0)
             if r.status_code != 200:
-                logger.error(f"RX token refresh failed: status={r.status_code}, response={r.text}")
-                raise HTTPException(status_code=r.status_code, detail="Token refresh failed")
-                
+                logger.error(
+                    f"RX token refresh failed: status={r.status_code}, response={r.text}"
+                )
+                raise HTTPException(
+                    status_code=r.status_code, detail="Token refresh failed"
+                )
+
             rx_data = r.json()
             if "jwtTokens" in rx_data and "accessToken" in rx_data["jwtTokens"]:
                 jwt_tokens = rx_data["jwtTokens"]
@@ -303,11 +311,15 @@ async def rx_refresh(request: Request, response: Response):
                 new_refresh_token = jwt_tokens.get("refreshToken") or refresh_token
                 set_auth_cookies(response, access_token, new_refresh_token)
                 return {"status": "ok"}
-                
-            raise HTTPException(status_code=500, detail="Tokens missing in refresh response")
+
+            raise HTTPException(
+                status_code=500, detail="Tokens missing in refresh response"
+            )
         except httpx.RequestError as exc:
             logger.error(f"RX API error refreshing token: {exc}")
-            raise HTTPException(status_code=503, detail="RugbyXplorer service unavailable")
+            raise HTTPException(
+                status_code=503, detail="RugbyXplorer service unavailable"
+            )
 
 
 @router.post("/logout")
@@ -318,7 +330,7 @@ async def rx_logout(request: Request, response: Response):
         user_id = payload.get("userId") or payload.get("sub")
         if user_id:
             _cached_profiles.pop(str(user_id), None)
-            
+
     response.delete_cookie(key="rx_access_token", path="/api/refzone")
     response.delete_cookie(key="rx_refresh_token", path="/api/refzone/refresh")
     return {"status": "logged_out"}
@@ -338,14 +350,10 @@ AwayTeam = aliased(Team, name="away_team")
 
 
 @router.get("/appointments")
-async def get_appointments(
-    userId: str, db: DbSession, request: Request
-):
+async def get_appointments(userId: str, db: DbSession, request: Request):
     token = request.cookies.get("rx_access_token")
     if not token:
-        raise HTTPException(
-            status_code=401, detail="Missing rx_access_token cookie"
-        )
+        raise HTTPException(status_code=401, detail="Missing rx_access_token cookie")
 
     headers = get_rx_headers(token)
 
@@ -469,9 +477,7 @@ async def get_appointments(
 async def get_profile(userId: str, request: Request):
     token = request.cookies.get("rx_access_token")
     if not token:
-        raise HTTPException(
-            status_code=401, detail="Missing rx_access_token cookie"
-        )
+        raise HTTPException(status_code=401, detail="Missing rx_access_token cookie")
 
     if userId in _cached_profiles:
         logger.info(f"Serving profile for {userId} from memory cache")
@@ -497,12 +503,14 @@ async def get_profile(userId: str, request: Request):
                     f"Failed to fetch profile for {userId} from RugbyXplorer (status={res.status_code}). Using fallback profile."
                 )
                 return {"firstname": "Referee", "lastname": "", "headshot": ""}
-            
+
             profile_data = res.json()
             if isinstance(profile_data, dict):
                 _cached_profiles[userId] = profile_data
             return profile_data
         except httpx.RequestError as exc:
             logger.error(f"RX API error fetching profile: {exc}")
-            logger.warning(f"Error fetching profile from RugbyXplorer: {exc}. Using fallback profile.")
+            logger.warning(
+                f"Error fetching profile from RugbyXplorer: {exc}. Using fallback profile."
+            )
             return {"firstname": "Referee", "lastname": "", "headshot": ""}
