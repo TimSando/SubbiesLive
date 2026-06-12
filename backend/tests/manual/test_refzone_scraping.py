@@ -5,7 +5,7 @@ import httpx
 from fastapi import HTTPException
 from src.refzone.router import (
     fetch_fresh_rx_basic_token,
-    rx_login,
+    perform_login,
     LoginRequest,
 )
 import src.refzone.router as rx_router
@@ -37,16 +37,17 @@ async def test_retry_flow():
         print("Real credentials found in environment. Testing full login success...")
         body = LoginRequest(email=email, password=password)
         try:
-            # Call rx_login. This should:
+            # Call perform_login. This should:
             # 1. Attempt login with "invalid_token_to_force_failure" (fails)
             # 2. Trigger warning and token refresh
             # 3. Fetch fresh token and update cache
             # 4. Retry login with fresh token and real credentials (succeeds!)
-            response = await rx_login(body)
+            response = await perform_login(body)
             print("✅ Login succeeded after token refresh!")
             assert isinstance(response, dict), "Expected dictionary response from login"
+            # Since perform_login returns the raw rx_data, check inside jwtTokens
             assert (
-                "accessToken" in response or "id" in response or "userId" in response
+                "jwtTokens" in response or "userId" in response
             ), "Response did not contain user authentication details"
             print("✅ Verified login response payload is correct.")
         except Exception as e:
@@ -58,7 +59,7 @@ async def test_retry_flow():
         )
         body = LoginRequest(email="test_user@example.com", password="dummy_password")
         try:
-            await rx_login(body)
+            await perform_login(body)
             print("❌ Expected login to fail with dummy credentials but it succeeded!")
             raise AssertionError("Login succeeded with dummy credentials")
         except HTTPException as e:

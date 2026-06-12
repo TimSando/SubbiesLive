@@ -151,8 +151,7 @@ def get_rx_headers(token: Optional[str] = None) -> Dict[str, str]:
     return headers
 
 
-@router.post("/login")
-async def rx_login(body: LoginRequest, response: Response):
+async def perform_login(body: LoginRequest) -> dict:
     global _cached_basic_token
     url = f"{RX_BASE_URL}/rau/api/v3/login"
     payload = {
@@ -189,27 +188,33 @@ async def rx_login(body: LoginRequest, response: Response):
                     status_code=r.status_code, detail=f"Login failed: {r.text}"
                 )
 
-            rx_data = r.json()
-            # Check for MFA challenge
-            if rx_data.get("isMfaEnabled") is True:
-                return {"status": "mfa_required", "mfa_token": rx_data.get("token")}
-
-            if "jwtTokens" in rx_data and "accessToken" in rx_data["jwtTokens"]:
-                jwt_tokens = rx_data["jwtTokens"]
-                access_token = jwt_tokens.get("accessToken")
-                refresh_token = jwt_tokens.get("refreshToken")
-                set_auth_cookies(response, access_token, refresh_token)
-                user_id = rx_data.get("userId")
-                if user_id and "profile" in rx_data:
-                    _cached_profiles[str(user_id)] = rx_data["profile"]
-                return {"status": "ok", "userId": user_id}
-
-            return rx_data
+            return r.json()
         except httpx.RequestError as exc:
             logger.error(f"RX API error: {exc}")
             raise HTTPException(
                 status_code=503, detail="RugbyXplorer service unavailable"
             )
+
+
+@router.post("/login")
+async def rx_login(body: LoginRequest, response: Response):
+    rx_data = await perform_login(body)
+
+    # Check for MFA challenge
+    if rx_data.get("isMfaEnabled") is True:
+        return {"status": "mfa_required", "mfa_token": rx_data.get("token")}
+
+    if "jwtTokens" in rx_data and "accessToken" in rx_data["jwtTokens"]:
+        jwt_tokens = rx_data["jwtTokens"]
+        access_token = jwt_tokens.get("accessToken")
+        refresh_token = jwt_tokens.get("refreshToken")
+        set_auth_cookies(response, access_token, refresh_token)
+        user_id = rx_data.get("userId")
+        if user_id and "profile" in rx_data:
+            _cached_profiles[str(user_id)] = rx_data["profile"]
+        return {"status": "ok", "userId": user_id}
+
+    return rx_data
 
 
 @router.post("/verify-2fa")
