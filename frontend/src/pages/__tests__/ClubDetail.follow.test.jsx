@@ -31,9 +31,9 @@ describe('ClubDetail Follow Integration', () => {
     const title = await screen.findByText('Colleagues')
     expect(title).toBeInTheDocument()
 
-    // The button title should be "Follow club" and show empty star '☆'
+    // The button title should be "Follow club"
     const button = screen.getByTitle('Follow club')
-    expect(button.textContent).toBe('☆')
+    expect(button).not.toHaveClass('page-subscribe-btn--active')
 
     // Click to follow
     await userEvent.click(button)
@@ -43,8 +43,8 @@ describe('ClubDetail Follow Integration', () => {
     expect(following).toHaveLength(1)
     expect(following[0]).toEqual({ id: 1, name: 'Colleagues', logo_url: null })
 
-    // Button should now show filled star '⭐' and title "Unfollow club"
-    expect(button.textContent).toBe('⭐')
+    // Button should now be active and title "Unfollow club"
+    expect(button).toHaveClass('page-subscribe-btn--active')
     expect(screen.getByTitle('Unfollow club')).toBeInTheDocument()
 
     // Event should be dispatched
@@ -71,7 +71,7 @@ describe('ClubDetail Follow Integration', () => {
     expect(title).toBeInTheDocument()
 
     const button = await screen.findByTitle('Unfollow club')
-    expect(button.textContent).toBe('⭐')
+    expect(button).toHaveClass('page-subscribe-btn--active')
 
     // Click to unfollow
     await userEvent.click(button)
@@ -81,7 +81,7 @@ describe('ClubDetail Follow Integration', () => {
     expect(following).toHaveLength(0)
 
     // Button reverts
-    expect(button.textContent).toBe('☆')
+    expect(button).not.toHaveClass('page-subscribe-btn--active')
     expect(screen.getByTitle('Follow club')).toBeInTheDocument()
   })
 
@@ -102,6 +102,6 @@ describe('ClubDetail Follow Integration', () => {
 
     await screen.findByText('Colleagues')
     const button = await screen.findByTitle('Unfollow club')
-    expect(button.textContent).toBe('⭐')
+    expect(button).toHaveClass('page-subscribe-btn--active')
   })
 })

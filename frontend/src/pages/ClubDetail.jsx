@@ -165,16 +165,20 @@ export default function ClubDetail() {
                 <button
                   onClick={toggleFollow}
                   title={isFollowing ? 'Unfollow club' : 'Follow club'}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '1.3rem',
-                    padding: 'var(--space-1)',
-                    transition: 'transform 0.2s ease',
-                  }}
+                  className={`page-subscribe-btn ${isFollowing ? 'page-subscribe-btn--active' : ''}`}
                 >
-                  {isFollowing ? '⭐' : '☆'}
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    fill={isFollowing ? 'currentColor' : 'none'}
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
                 </button>
               </div>
 
