@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     # Ingestion Trigger
     ingestion_password: str = "dbRefresh_"
 
+    # Ingestion Schedule
+    ingestion_interval_minutes: int = 15
+
     # Cookie security
     cookie_secure: Optional[bool] = None
 

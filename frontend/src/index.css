@@ -474,6 +474,39 @@ tbody tr:last-child td {
   margin-bottom: var(--space-6);
 }
 
+.section-subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-3);
+}
+
+.empty-state-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-bg-glass);
+  border: 1px dashed var(--color-border);
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--radius-lg);
+}
+
+.empty-state-banner p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+@media (max-width: 600px) {
+  .empty-state-banner {
+    flex-direction: column;
+    gap: var(--space-4);
+    text-align: center;
+  }
+}
+
+
 /* --- Game card --- */
 .game-card { display: flex; flex-direction: column; gap: var(--space-3); text-decoration: none; color: inherit; }
 .game-card__meta { display: flex; justify-content: space-between; align-items: center; }

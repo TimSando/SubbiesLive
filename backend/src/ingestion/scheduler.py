@@ -11,6 +11,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from sqlalchemy.orm import sessionmaker
 
+from src.core.config import get_settings
 from src.ingestion.engine import get_sync_engine
 from src.ingestion.service import run_ingestion
 from src.scripts.seed_mapping import seed_mapping
@@ -69,6 +70,9 @@ def start_ingestion_scheduler():
     init_thread = threading.Thread(target=_initial_run, daemon=True)
     init_thread.start()
 
+    settings = get_settings()
+    interval_minutes = settings.ingestion_interval_minutes
+
     # Set up scheduled jobs
     _scheduler = BackgroundScheduler(timezone=TIMEZONE)
 
@@ -90,15 +94,18 @@ def start_ingestion_scheduler():
         name="Saturday morning ingestion (Sat 1:00 AM)",
     )
 
-    # Game day sync every 15 min on Saturday, 9 AM - 6 PM
+    # Game day sync every N min on Saturday, 9 AM - 8 PM
     _scheduler.add_job(
         run_ingestion,
         CronTrigger(
-            day_of_week="sat", hour="9-20", minute="0,15,30,45", timezone=TIMEZONE
+            day_of_week="sat",
+            hour="9-20",
+            minute=f"*/{interval_minutes}",
+            timezone=TIMEZONE,
         ),
         args=[Session],
         id="gameday_ingestion",
-        name="Game day ingestion (Sat every 15 min, 9 AM - 6 PM)",
+        name=f"Game day ingestion (Sat every {interval_minutes} min, 9 AM - 8 PM)",
     )
 
     # NSWRugbyTV video URL ingestion (Sat hourly 9 AM - 7 PM)
@@ -120,7 +127,7 @@ def start_ingestion_scheduler():
     logger.info("Ingestion scheduler started:")
     logger.info("  • Sunday: 6:00 PM AEST")
     logger.info("  • Saturday: 1:00 AM AEST")
-    logger.info("  • Saturday: Every 15 min, 9:00 AM - 6:00 PM AEST")
+    logger.info(f"  • Saturday: Every {interval_minutes} min, 9:00 AM - 8:00 PM AEST")
     logger.info(
         "  • Saturday: NSWRugbyTV video ingestion hourly, 9:00 AM - 7:00 PM AEST"
     )

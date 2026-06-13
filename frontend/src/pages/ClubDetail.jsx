@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useApi } from '../hooks/useApi.js'
 import { api } from '../api/client.js'
@@ -7,6 +8,29 @@ export default function ClubDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { data: club, loading } = useApi(() => api.getClub(id), [id])
+
+  const [isFollowing, setIsFollowing] = useState(false)
+
+  useEffect(() => {
+    if (club) {
+      const clubs = JSON.parse(localStorage.getItem('subbies_following_clubs') || '[]')
+      setIsFollowing(clubs.some(c => c.id === club.id))
+    }
+  }, [club])
+
+  function toggleFollow() {
+    if (!club) return
+    const clubs = JSON.parse(localStorage.getItem('subbies_following_clubs') || '[]')
+    let updated
+    if (isFollowing) {
+      updated = clubs.filter(c => c.id !== club.id)
+    } else {
+      updated = [...clubs, { id: club.id, name: club.name, logo_url: club.logo_url }]
+    }
+    localStorage.setItem('subbies_following_clubs', JSON.stringify(updated))
+    setIsFollowing(!isFollowing)
+    window.dispatchEvent(new Event('followingUpdated'))
+  }
 
   if (loading) {
     return (
@@ -138,6 +162,20 @@ export default function ClubDetail() {
                   {club.name}
                 </h1>
                 <PageSubscribeButton topicType="club" topicId={club.id} topicName={club.name} />
+                <button
+                  onClick={toggleFollow}
+                  title={isFollowing ? 'Unfollow club' : 'Follow club'}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '1.3rem',
+                    padding: 'var(--space-1)',
+                    transition: 'transform 0.2s ease',
+                  }}
+                >
+                  {isFollowing ? '⭐' : '☆'}
+                </button>
               </div>
 
               {club.division_info && (

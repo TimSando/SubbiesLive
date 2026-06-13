@@ -1,6 +1,6 @@
 """Game data access layer."""
 
-from sqlalchemy import select, func, desc
+from sqlalchemy import select, func, desc, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 
@@ -92,6 +92,7 @@ async def get_games(
     competition_id: int | None = None,
     round_id: int | None = None,
     team_id: int | None = None,
+    club_id: int | None = None,
     status: str | None = None,
     player_id: int | None = None,
     limit: int = 50,
@@ -108,6 +109,8 @@ async def get_games(
         stmt = stmt.where(
             (Game.home_team_id == team_id) | (Game.away_team_id == team_id)
         )
+    if club_id is not None:
+        stmt = stmt.where(or_(HomeClub.id == club_id, AwayClub.id == club_id))
     if status:
         if "," in status:
             statuses = [s.strip() for s in status.split(",") if s.strip()]

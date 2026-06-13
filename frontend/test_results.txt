@@ -1,53 +1,3027 @@
 
  RUN  v2.1.9 /home/sandersont/personal/subbiesStats/frontend
 
- ✓ src/api/client.test.js (4 tests) 43ms
- ✓ src/hooks/useApi.test.js (2 tests) 128ms
- ✓ src/pages/Competitions.test.jsx (4 tests) 211ms
- ✓ src/pages/Clubs.test.jsx (4 tests) 230ms
-stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > displays error message on invalid credentials login attempt
-RefZone: Encrypting credentials in browser...
-RefZone: Submitting encrypted credentials to backend...
+ ✓ src/pages/__tests__/Home.test.jsx > Home Page Redesign > shows empty state when no clubs followed
+ × src/pages/__tests__/Home.test.jsx > Home Page Redesign > shows tab bar and tab content when clubs are followed 1068ms
+   → Found multiple elements with the text: Colleagues 1st
 
-stderr | src/pages/RefZone.test.jsx > RefZone page and auth integration > displays error message on invalid credentials login attempt
-RefZone: Login failed: Error: Login failed: 401
-    at Module.loginToRX (/home/sandersont/personal/subbiesStats/frontend/src/api/refzone.js:13:11)
-    at handleSubmit (/home/sandersont/personal/subbiesStats/frontend/src/pages/RefZoneLogin.jsx:31:25)
+Here are the matching elements:
 
-stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > successful login transitions to Dashboard and displays appointments
-RefZone: Encrypting credentials in browser...
-RefZone: Submitting encrypted credentials to backend...
-RefZone: Authentication successful!
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"game-pill__team-name"[39m
+[36m>[39m
+  [0mColleagues 1st[0m
+[36m</span>[39m
 
-stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > successful login transitions to Dashboard and displays appointments
-RefZone: Fetching appointments...
-RefZone: Scheduling proactive token refresh in 55.0 minutes
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"game-pill__team-name"[39m
+[36m>[39m
+  [0mColleagues 1st[0m
+[36m</span>[39m
 
-stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > saves credentials in localStorage and performs auto-login on mount if Remember Me is checked
-RefZone: Encrypting credentials in browser...
-RefZone: Submitting encrypted credentials to backend...
-RefZone: Authentication successful!
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"game-pill__team-name"[39m
+[36m>[39m
+  [0mColleagues 1st[0m
+[36m</span>[39m
 
- ✓ src/pages/Stats.test.jsx (8 tests) 609ms
-stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > saves credentials in localStorage and performs auto-login on mount if Remember Me is checked
-RefZone: Fetching appointments...
-RefZone: Scheduling proactive token refresh in 55.0 minutes
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
 
-stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > saves credentials in localStorage and performs auto-login on mount if Remember Me is checked
-RefZone: Clearing authentication context
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"page"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"container animate-in"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"home-hero"[39m
+        [36m>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"home-hero__title"[39m
+          [36m>[39m
+            [0mSydney Suburban[0m
+            [36m<br />[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"home-hero__accent"[39m
+            [36m>[39m
+              [0mRugby Union[0m
+            [36m</span>[39m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"home-hero__subtitle"[39m
+          [36m>[39m
+            [0mLive standings, fixtures, and player statistics across all subbies competitions.[0m
+          [36m</p>[39m
+        [36m</header>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"home-section"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"tab-bar"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"tab-bar__tab tab-bar__tab--active"[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: var(--space-2);"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mColleagues[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"tab-bar__tab "[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: var(--space-2);"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mMosman[0m
+              [36m</span>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mstyle[39m=[32m"display: flex; flex-direction: column; gap: var(--space-6);"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mLive Games[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/101"[39m
+                  [33mid[39m=[32m"game-101"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mColleagues 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m25[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m10[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mRecent Results[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/101"[39m
+                  [33mid[39m=[32m"game-101"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mColleagues 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m25[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m10[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mUpcoming Fixtures[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/101"[39m
+                  [33mid[39m=[32m"game-101"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mColleagues 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m25[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m10[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"animate-fade-in"[39m
+          [33mstyle[39m=[32m"margin-top: var(--space-8);"[39m
+        [36m>[39m
+          [36m<hr[39m
+            [33mclass[39m=[32m"home-section-divider"[39m
+            [33mstyle[39m=[32m"margin-bottom: var(--space-6);"[39m
+          [36m/>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"card refzone-prompt-card"[39m
+            [33mstyle[39m=[32m"padding: var(--space-6); position: relative;"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mstyle[39m=[32m"position: absolute; top: var(--space-4); right: var(--space-4); background: none; color: var(--color-text-muted); cursor: pointer; font-size: 1.2rem;"[39m
+              [33mtitle[39m=[32m"Dismiss prompt"[39m
+            [36m>[39m
+              [0m✕[0m
+            [36m</button>[39m
+            [36m<h3[39m
+              [33mstyle[39m=[32m"margin-bottom: var(--space-2);"[39m
+            [36m>[39m
+              [0mReferee Hub[0m
+            [36m</h3>[39m
+            [36m<p[39m
+              [33mstyle[39m=[32m"color: var(--color-text-secondary); margin-bottom: var(--space-4); font-size: var(--font-size-sm);"[39m
+            [36m>[39m
+              [0mSign in to RugbyXplorer to see your upcoming referee appointments and manage match preparation.[0m
+            [36m</p>[39m
+            [36m<a[39m
+              [33mclass[39m=[32m"btn btn--primary"[39m
+              [33mdata-discover[39m=[32m"true"[39m
+              [33mhref[39m=[32m"/refzone"[39m
+            [36m>[39m
+              [0mSign in to RefZone[0m
+            [36m</a>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ingestion-trigger-container"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ingestion-trigger-btn "[39m
+          [33mtitle[39m=[32m"Trigger Manual Ingestion"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m""[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"20"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"20"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
 
-stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > performs auto-login on startup if valid credentials exist in localStorage
-RefZone: Found stored credentials, attempting auto-login...
-RefZone: Auto-login successful!
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"page"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"container animate-in"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"home-hero"[39m
+        [36m>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"home-hero__title"[39m
+          [36m>[39m
+            [0mSydney Suburban[0m
+            [36m<br />[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"home-hero__accent"[39m
+            [36m>[39m
+              [0mRugby Union[0m
+            [36m</span>[39m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"home-hero__subtitle"[39m
+          [36m>[39m
+            [0mLive standings, fixtures, and player statistics across all subbies competitions.[0m
+          [36m</p>[39m
+        [36m</header>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"home-section"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"tab-bar"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"tab-bar__tab tab-bar__tab--active"[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: var(--space-2);"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mColleagues[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"tab-bar__tab "[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: var(--space-2);"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mMosman[0m
+              [36m</span>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mstyle[39m=[32m"display: flex; flex-direction: column; gap: var(--space-6);"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mLive Games[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/101"[39m
+                  [33mid[39m=[32m"game-101"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mColleagues 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m25[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m10[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mRecent Results[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/101"[39m
+                  [33mid[39m=[32m"game-101"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mColleagues 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m25[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m10[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mUpcoming Fixtures[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/101"[39m
+                  [33mid[39m=[32m"game-101"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mColleagues 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m25[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m10[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"animate-fade-in"[39m
+          [33mstyle[39m=[32m"margin-top: var(--space-8);"[39m
+        [36m>[39m
+          [36m<hr[39m
+            [33mclass[39m=[32m"home-section-divider"[39m
+            [33mstyle[39m=[32m"margin-bottom: var(--space-6);"[39m
+          [36m/>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"card refzone-prompt-card"[39m
+            [33mstyle[39m=[32m"padding: var(--space-6); position: relative;"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mstyle[39m=[32m"position: absolute; top: var(--space-4); right: var(--space-4); background: none; color: var(--color-text-muted); cursor: pointer; font-size: 1.2rem;"[39m
+              [33mtitle[39m=[32m"Dismiss prompt"[39m
+            [36m>[39m
+              [0m✕[0m
+            [36m</button>[39m
+            [36m<h3[39m
+              [33mstyle[39m=[32m"margin-bottom: var(--space-2);"[39m
+            [36m>[39m
+              [0mReferee Hub[0m
+            [36m</h3>[39m
+            [36m<p[39m
+              [33mstyle[39m=[32m"color: var(--color-text-secondary); margin-bottom: var(--space-4); font-size: var(--font-size-sm);"[39m
+            [36m>[39m
+              [0mSign in to RugbyXplorer to see your upcoming referee appointments and manage match preparation.[0m
+            [36m</p>[39m
+            [36m<a[39m
+              [33mclass[39m=[32m"btn btn--primary"[39m
+              [33mdata-discover[39m=[32m"true"[39m
+              [33mhref[39m=[32m"/refzone"[39m
+            [36m>[39m
+              [0mSign in to RefZone[0m
+            [36m</a>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ingestion-trigger-container"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ingestion-trigger-btn "[39m
+          [33mtitle[39m=[32m"Trigger Manual Ingestion"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m""[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"20"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"20"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ × src/pages/__tests__/Home.test.jsx > Home Page Redesign > switches tab content on click 1066ms
+   → Found multiple elements with the text: Waverley 1st
 
-stdout | src/pages/RefZone.test.jsx > RefZone page and auth integration > performs auto-login on startup if valid credentials exist in localStorage
-RefZone: Fetching appointments...
-RefZone: Scheduling proactive token refresh in 55.0 minutes
+Here are the matching elements:
 
- ✓ src/pages/RefZone.test.jsx (5 tests) 633ms
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"game-pill__team-name"[39m
+[36m>[39m
+  [0mWaverley 1st[0m
+[36m</span>[39m
 
- Test Files  6 passed (6)
-      Tests  27 passed (27)
-   Start at  12:42:25
-   Duration  2.08s (transform 422ms, setup 1.49s, collect 1.27s, tests 1.85s, environment 3.48s, prepare 582ms)
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"game-pill__team-name"[39m
+[36m>[39m
+  [0mWaverley 1st[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"game-pill__team-name"[39m
+[36m>[39m
+  [0mWaverley 1st[0m
+[36m</span>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"page"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"container animate-in"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"home-hero"[39m
+        [36m>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"home-hero__title"[39m
+          [36m>[39m
+            [0mSydney Suburban[0m
+            [36m<br />[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"home-hero__accent"[39m
+            [36m>[39m
+              [0mRugby Union[0m
+            [36m</span>[39m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"home-hero__subtitle"[39m
+          [36m>[39m
+            [0mLive standings, fixtures, and player statistics across all subbies competitions.[0m
+          [36m</p>[39m
+        [36m</header>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"home-section"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"tab-bar"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"tab-bar__tab "[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: var(--space-2);"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mColleagues[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"tab-bar__tab tab-bar__tab--active"[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: var(--space-2);"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mMosman[0m
+              [36m</span>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mstyle[39m=[32m"display: flex; flex-direction: column; gap: var(--space-6);"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mLive Games[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/102"[39m
+                  [33mid[39m=[32m"game-102"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m15[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mWaverley 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m5[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mRecent Results[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/102"[39m
+                  [33mid[39m=[32m"game-102"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m15[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mWaverley 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m5[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mUpcoming Fixtures[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/102"[39m
+                  [33mid[39m=[32m"game-102"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m15[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mWaverley 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m5[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"animate-fade-in"[39m
+          [33mstyle[39m=[32m"margin-top: var(--space-8);"[39m
+        [36m>[39m
+          [36m<hr[39m
+            [33mclass[39m=[32m"home-section-divider"[39m
+            [33mstyle[39m=[32m"margin-bottom: var(--space-6);"[39m
+          [36m/>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"card refzone-prompt-card"[39m
+            [33mstyle[39m=[32m"padding: var(--space-6); position: relative;"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mstyle[39m=[32m"position: absolute; top: var(--space-4); right: var(--space-4); background: none; color: var(--color-text-muted); cursor: pointer; font-size: 1.2rem;"[39m
+              [33mtitle[39m=[32m"Dismiss prompt"[39m
+            [36m>[39m
+              [0m✕[0m
+            [36m</button>[39m
+            [36m<h3[39m
+              [33mstyle[39m=[32m"margin-bottom: var(--space-2);"[39m
+            [36m>[39m
+              [0mReferee Hub[0m
+            [36m</h3>[39m
+            [36m<p[39m
+              [33mstyle[39m=[32m"color: var(--color-text-secondary); margin-bottom: var(--space-4); font-size: var(--font-size-sm);"[39m
+            [36m>[39m
+              [0mSign in to RugbyXplorer to see your upcoming referee appointments and manage match preparation.[0m
+            [36m</p>[39m
+            [36m<a[39m
+              [33mclass[39m=[32m"btn btn--primary"[39m
+              [33mdata-discover[39m=[32m"true"[39m
+              [33mhref[39m=[32m"/refzone"[39m
+            [36m>[39m
+              [0mSign in to RefZone[0m
+            [36m</a>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ingestion-trigger-container"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ingestion-trigger-btn "[39m
+          [33mtitle[39m=[32m"Trigger Manual Ingestion"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m""[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"20"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"20"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"page"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"container animate-in"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"home-hero"[39m
+        [36m>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"home-hero__title"[39m
+          [36m>[39m
+            [0mSydney Suburban[0m
+            [36m<br />[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"home-hero__accent"[39m
+            [36m>[39m
+              [0mRugby Union[0m
+            [36m</span>[39m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"home-hero__subtitle"[39m
+          [36m>[39m
+            [0mLive standings, fixtures, and player statistics across all subbies competitions.[0m
+          [36m</p>[39m
+        [36m</header>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"home-section"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"tab-bar"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"tab-bar__tab "[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: var(--space-2);"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mColleagues[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"tab-bar__tab tab-bar__tab--active"[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: var(--space-2);"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mMosman[0m
+              [36m</span>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mstyle[39m=[32m"display: flex; flex-direction: column; gap: var(--space-6);"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mLive Games[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/102"[39m
+                  [33mid[39m=[32m"game-102"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m15[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mWaverley 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m5[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mRecent Results[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/102"[39m
+                  [33mid[39m=[32m"game-102"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m15[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mWaverley 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m5[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mUpcoming Fixtures[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/102"[39m
+                  [33mid[39m=[32m"game-102"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m15[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mWaverley 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m5[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"animate-fade-in"[39m
+          [33mstyle[39m=[32m"margin-top: var(--space-8);"[39m
+        [36m>[39m
+          [36m<hr[39m
+            [33mclass[39m=[32m"home-section-divider"[39m
+            [33mstyle[39m=[32m"margin-bottom: var(--space-6);"[39m
+          [36m/>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"card refzone-prompt-card"[39m
+            [33mstyle[39m=[32m"padding: var(--space-6); position: relative;"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mstyle[39m=[32m"position: absolute; top: var(--space-4); right: var(--space-4); background: none; color: var(--color-text-muted); cursor: pointer; font-size: 1.2rem;"[39m
+              [33mtitle[39m=[32m"Dismiss prompt"[39m
+            [36m>[39m
+              [0m✕[0m
+            [36m</button>[39m
+            [36m<h3[39m
+              [33mstyle[39m=[32m"margin-bottom: var(--space-2);"[39m
+            [36m>[39m
+              [0mReferee Hub[0m
+            [36m</h3>[39m
+            [36m<p[39m
+              [33mstyle[39m=[32m"color: var(--color-text-secondary); margin-bottom: var(--space-4); font-size: var(--font-size-sm);"[39m
+            [36m>[39m
+              [0mSign in to RugbyXplorer to see your upcoming referee appointments and manage match preparation.[0m
+            [36m</p>[39m
+            [36m<a[39m
+              [33mclass[39m=[32m"btn btn--primary"[39m
+              [33mdata-discover[39m=[32m"true"[39m
+              [33mhref[39m=[32m"/refzone"[39m
+            [36m>[39m
+              [0mSign in to RefZone[0m
+            [36m</a>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ingestion-trigger-container"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ingestion-trigger-btn "[39m
+          [33mtitle[39m=[32m"Trigger Manual Ingestion"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m""[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"20"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"20"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ✓ src/pages/__tests__/Home.test.jsx > Home Page Redesign > migrates legacy subbies_fav_club_id
+ ✓ src/pages/__tests__/Home.test.jsx > Home Page Redesign > RefZone section shows login prompt for unauthenticated users
+ ✓ src/pages/__tests__/Home.test.jsx > Home Page Redesign > RefZone dismiss persists to localStorage
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/__tests__/Home.test.jsx > Home Page Redesign > shows tab bar and tab content when clubs are followed
+TestingLibraryElementError: Found multiple elements with the text: Colleagues 1st
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"game-pill__team-name"[39m
+[36m>[39m
+  [0mColleagues 1st[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"game-pill__team-name"[39m
+[36m>[39m
+  [0mColleagues 1st[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"game-pill__team-name"[39m
+[36m>[39m
+  [0mColleagues 1st[0m
+[36m</span>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"page"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"container animate-in"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"home-hero"[39m
+        [36m>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"home-hero__title"[39m
+          [36m>[39m
+            [0mSydney Suburban[0m
+            [36m<br />[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"home-hero__accent"[39m
+            [36m>[39m
+              [0mRugby Union[0m
+            [36m</span>[39m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"home-hero__subtitle"[39m
+          [36m>[39m
+            [0mLive standings, fixtures, and player statistics across all subbies competitions.[0m
+          [36m</p>[39m
+        [36m</header>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"home-section"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"tab-bar"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"tab-bar__tab tab-bar__tab--active"[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: var(--space-2);"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mColleagues[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"tab-bar__tab "[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: var(--space-2);"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mMosman[0m
+              [36m</span>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mstyle[39m=[32m"display: flex; flex-direction: column; gap: var(--space-6);"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mLive Games[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/101"[39m
+                  [33mid[39m=[32m"game-101"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mColleagues 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m25[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m10[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mRecent Results[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/101"[39m
+                  [33mid[39m=[32m"game-101"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mColleagues 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m25[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m10[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mUpcoming Fixtures[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/101"[39m
+                  [33mid[39m=[32m"game-101"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mColleagues 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m25[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m10[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"animate-fade-in"[39m
+          [33mstyle[39m=[32m"margin-top: var(--space-8);"[39m
+        [36m>[39m
+          [36m<hr[39m
+            [33mclass[39m=[32m"home-section-divider"[39m
+            [33mstyle[39m=[32m"margin-bottom: var(--space-6);"[39m
+          [36m/>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"card refzone-prompt-card"[39m
+            [33mstyle[39m=[32m"padding: var(--space-6); position: relative;"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mstyle[39m=[32m"position: absolute; top: var(--space-4); right: var(--space-4); background: none; color: var(--color-text-muted); cursor: pointer; font-size: 1.2rem;"[39m
+              [33mtitle[39m=[32m"Dismiss prompt"[39m
+            [36m>[39m
+              [0m✕[0m
+            [36m</button>[39m
+            [36m<h3[39m
+              [33mstyle[39m=[32m"margin-bottom: var(--space-2);"[39m
+            [36m>[39m
+              [0mReferee Hub[0m
+            [36m</h3>[39m
+            [36m<p[39m
+              [33mstyle[39m=[32m"color: var(--color-text-secondary); margin-bottom: var(--space-4); font-size: var(--font-size-sm);"[39m
+            [36m>[39m
+              [0mSign in to RugbyXplorer to see your upcoming referee appointments and manage match preparation.[0m
+            [36m</p>[39m
+            [36m<a[39m
+              [33mclass[39m=[32m"btn btn--primary"[39m
+              [33mdata-discover[39m=[32m"true"[39m
+              [33mhref[39m=[32m"/refzone"[39m
+            [36m>[39m
+              [0mSign in to RefZone[0m
+            [36m</a>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ingestion-trigger-container"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ingestion-trigger-btn "[39m
+          [33mtitle[39m=[32m"Trigger Manual Ingestion"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m""[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"20"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"20"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"page"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"container animate-in"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"home-hero"[39m
+        [36m>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"home-hero__title"[39m
+          [36m>[39m
+            [0mSydney Suburban[0m
+            [36m<br />[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"home-hero__accent"[39m
+            [36m>[39m
+              [0mRugby Union[0m
+            [36m</span>[39m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"home-hero__subtitle"[39m
+          [36m>[39m
+            [0mLive standings, fixtures, and player statistics across all subbies competitions.[0m
+          [36m</p>[39m
+        [36m</header>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"home-section"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"tab-bar"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"tab-bar__tab tab-bar__tab--active"[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: var(--space-2);"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mColleagues[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"tab-bar__tab "[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: var(--space-2);"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mMosman[0m
+              [36m</span>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mstyle[39m=[32m"display: flex; flex-direction: column; gap: var(--space-6);"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mLive Games[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/101"[39m
+                  [33mid[39m=[32m"game-101"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mColleagues 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m25[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m10[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mRecent Results[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/101"[39m
+                  [33mid[39m=[32m"game-101"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mColleagues 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m25[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m10[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mUpcoming Fixtures[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/101"[39m
+                  [33mid[39m=[32m"game-101"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mColleagues 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m25[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m10[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"animate-fade-in"[39m
+          [33mstyle[39m=[32m"margin-top: var(--space-8);"[39m
+        [36m>[39m
+          [36m<hr[39m
+            [33mclass[39m=[32m"home-section-divider"[39m
+            [33mstyle[39m=[32m"margin-bottom: var(--space-6);"[39m
+          [36m/>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"card refzone-prompt-card"[39m
+            [33mstyle[39m=[32m"padding: var(--space-6); position: relative;"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mstyle[39m=[32m"position: absolute; top: var(--space-4); right: var(--space-4); background: none; color: var(--color-text-muted); cursor: pointer; font-size: 1.2rem;"[39m
+              [33mtitle[39m=[32m"Dismiss prompt"[39m
+            [36m>[39m
+              [0m✕[0m
+            [36m</button>[39m
+            [36m<h3[39m
+              [33mstyle[39m=[32m"margin-bottom: var(--space-2);"[39m
+            [36m>[39m
+              [0mReferee Hub[0m
+            [36m</h3>[39m
+            [36m<p[39m
+              [33mstyle[39m=[32m"color: var(--color-text-secondary); margin-bottom: var(--space-4); font-size: var(--font-size-sm);"[39m
+            [36m>[39m
+              [0mSign in to RugbyXplorer to see your upcoming referee appointments and manage match preparation.[0m
+            [36m</p>[39m
+            [36m<a[39m
+              [33mclass[39m=[32m"btn btn--primary"[39m
+              [33mdata-discover[39m=[32m"true"[39m
+              [33mhref[39m=[32m"/refzone"[39m
+            [36m>[39m
+              [0mSign in to RefZone[0m
+            [36m</a>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ingestion-trigger-container"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ingestion-trigger-btn "[39m
+          [33mtitle[39m=[32m"Trigger Manual Ingestion"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m""[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"20"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"20"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/pages/__tests__/Home.test.jsx:84:25
+     82| 
+     83|     // Verify games for active tab (Colleagues by default)
+     84|     expect(await screen.findByText('Colleagues 1st')).toBeInTheDocumen…
+       |                         ^
+     85|   })
+     86| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/pages/__tests__/Home.test.jsx > Home Page Redesign > switches tab content on click
+TestingLibraryElementError: Found multiple elements with the text: Waverley 1st
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"game-pill__team-name"[39m
+[36m>[39m
+  [0mWaverley 1st[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"game-pill__team-name"[39m
+[36m>[39m
+  [0mWaverley 1st[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"game-pill__team-name"[39m
+[36m>[39m
+  [0mWaverley 1st[0m
+[36m</span>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"page"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"container animate-in"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"home-hero"[39m
+        [36m>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"home-hero__title"[39m
+          [36m>[39m
+            [0mSydney Suburban[0m
+            [36m<br />[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"home-hero__accent"[39m
+            [36m>[39m
+              [0mRugby Union[0m
+            [36m</span>[39m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"home-hero__subtitle"[39m
+          [36m>[39m
+            [0mLive standings, fixtures, and player statistics across all subbies competitions.[0m
+          [36m</p>[39m
+        [36m</header>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"home-section"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"tab-bar"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"tab-bar__tab "[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: var(--space-2);"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mColleagues[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"tab-bar__tab tab-bar__tab--active"[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: var(--space-2);"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mMosman[0m
+              [36m</span>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mstyle[39m=[32m"display: flex; flex-direction: column; gap: var(--space-6);"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mLive Games[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/102"[39m
+                  [33mid[39m=[32m"game-102"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m15[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mWaverley 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m5[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mRecent Results[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/102"[39m
+                  [33mid[39m=[32m"game-102"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m15[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mWaverley 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m5[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mUpcoming Fixtures[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/102"[39m
+                  [33mid[39m=[32m"game-102"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m15[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mWaverley 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m5[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"animate-fade-in"[39m
+          [33mstyle[39m=[32m"margin-top: var(--space-8);"[39m
+        [36m>[39m
+          [36m<hr[39m
+            [33mclass[39m=[32m"home-section-divider"[39m
+            [33mstyle[39m=[32m"margin-bottom: var(--space-6);"[39m
+          [36m/>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"card refzone-prompt-card"[39m
+            [33mstyle[39m=[32m"padding: var(--space-6); position: relative;"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mstyle[39m=[32m"position: absolute; top: var(--space-4); right: var(--space-4); background: none; color: var(--color-text-muted); cursor: pointer; font-size: 1.2rem;"[39m
+              [33mtitle[39m=[32m"Dismiss prompt"[39m
+            [36m>[39m
+              [0m✕[0m
+            [36m</button>[39m
+            [36m<h3[39m
+              [33mstyle[39m=[32m"margin-bottom: var(--space-2);"[39m
+            [36m>[39m
+              [0mReferee Hub[0m
+            [36m</h3>[39m
+            [36m<p[39m
+              [33mstyle[39m=[32m"color: var(--color-text-secondary); margin-bottom: var(--space-4); font-size: var(--font-size-sm);"[39m
+            [36m>[39m
+              [0mSign in to RugbyXplorer to see your upcoming referee appointments and manage match preparation.[0m
+            [36m</p>[39m
+            [36m<a[39m
+              [33mclass[39m=[32m"btn btn--primary"[39m
+              [33mdata-discover[39m=[32m"true"[39m
+              [33mhref[39m=[32m"/refzone"[39m
+            [36m>[39m
+              [0mSign in to RefZone[0m
+            [36m</a>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ingestion-trigger-container"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ingestion-trigger-btn "[39m
+          [33mtitle[39m=[32m"Trigger Manual Ingestion"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m""[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"20"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"20"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"page"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"container animate-in"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"home-hero"[39m
+        [36m>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"home-hero__title"[39m
+          [36m>[39m
+            [0mSydney Suburban[0m
+            [36m<br />[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"home-hero__accent"[39m
+            [36m>[39m
+              [0mRugby Union[0m
+            [36m</span>[39m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"home-hero__subtitle"[39m
+          [36m>[39m
+            [0mLive standings, fixtures, and player statistics across all subbies competitions.[0m
+          [36m</p>[39m
+        [36m</header>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"home-section"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"tab-bar"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"tab-bar__tab "[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: var(--space-2);"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mColleagues[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"tab-bar__tab tab-bar__tab--active"[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: var(--space-2);"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mMosman[0m
+              [36m</span>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mstyle[39m=[32m"display: flex; flex-direction: column; gap: var(--space-6);"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mLive Games[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/102"[39m
+                  [33mid[39m=[32m"game-102"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m15[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mWaverley 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m5[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mRecent Results[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/102"[39m
+                  [33mid[39m=[32m"game-102"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m15[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mWaverley 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m5[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"section-subtitle"[39m
+              [36m>[39m
+                [0mUpcoming Fixtures[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"game-strip"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"game-pill "[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/games/102"[39m
+                  [33mid[39m=[32m"game-102"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__meta"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__comp"[39m
+                    [36m>[39m
+                      [0mKentwell Cup[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__round"[39m
+                    [36m>[39m
+                      [0mRound 1[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__teams"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team game-pill__team--winner"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mMosman 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score game-pill__score--winner"[39m
+                      [36m>[39m
+                        [0m15[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"game-pill__team "[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__team-name"[39m
+                      [36m>[39m
+                        [0mWaverley 1st[0m
+                      [36m</span>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"game-pill__score "[39m
+                      [36m>[39m
+                        [0m5[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"game-pill__footer"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__date"[39m
+                    [36m>[39m
+                      [0mSat, 6 June[0m
+                      [0m [0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"game-pill__status"[39m
+                    [36m>[39m
+                      [0mcompleted[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"animate-fade-in"[39m
+          [33mstyle[39m=[32m"margin-top: var(--space-8);"[39m
+        [36m>[39m
+          [36m<hr[39m
+            [33mclass[39m=[32m"home-section-divider"[39m
+            [33mstyle[39m=[32m"margin-bottom: var(--space-6);"[39m
+          [36m/>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"card refzone-prompt-card"[39m
+            [33mstyle[39m=[32m"padding: var(--space-6); position: relative;"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mstyle[39m=[32m"position: absolute; top: var(--space-4); right: var(--space-4); background: none; color: var(--color-text-muted); cursor: pointer; font-size: 1.2rem;"[39m
+              [33mtitle[39m=[32m"Dismiss prompt"[39m
+            [36m>[39m
+              [0m✕[0m
+            [36m</button>[39m
+            [36m<h3[39m
+              [33mstyle[39m=[32m"margin-bottom: var(--space-2);"[39m
+            [36m>[39m
+              [0mReferee Hub[0m
+            [36m</h3>[39m
+            [36m<p[39m
+              [33mstyle[39m=[32m"color: var(--color-text-secondary); margin-bottom: var(--space-4); font-size: var(--font-size-sm);"[39m
+            [36m>[39m
+              [0mSign in to RugbyXplorer to see your upcoming referee appointments and manage match preparation.[0m
+            [36m</p>[39m
+            [36m<a[39m
+              [33mclass[39m=[32m"btn btn--primary"[39m
+              [33mdata-discover[39m=[32m"true"[39m
+              [33mhref[39m=[32m"/refzone"[39m
+            [36m>[39m
+              [0mSign in to RefZone[0m
+            [36m</a>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ingestion-trigger-container"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ingestion-trigger-btn "[39m
+          [33mtitle[39m=[32m"Trigger Manual Ingestion"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m""[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"20"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"20"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/pages/__tests__/Home.test.jsx:133:25
+    131|       expect(requestedClubId).toBe('2')
+    132|     })
+    133|     expect(await screen.findByText('Waverley 1st')).toBeInTheDocument()
+       |                         ^
+    134|   })
+    135| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 4 passed (6)
+   Start at  15:21:37
+   Duration  3.15s (transform 91ms, setup 128ms, collect 173ms, tests 2.33s, environment 276ms, prepare 57ms)
 
