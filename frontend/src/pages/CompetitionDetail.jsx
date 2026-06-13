@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useApi } from '../hooks/useApi.js'
 import { api } from '../api/client.js'
 import PageSubscribeButton from '../components/NotificationToggle/PageSubscribeButton.jsx'
+import GamePill from '../components/GamePill/GamePill.jsx'
 
 function formatDate(dateStr) {
   const d = new Date(dateStr)
@@ -172,6 +173,9 @@ export default function CompetitionDetail() {
   const { data: standings, loading: loadingStandings } = useApi(
     () => api.getStandings(id), [id]
   )
+  const { data: liveGames } = useApi(
+    () => api.getGames({ competition_id: id, status: 'in_progress', limit: 10 }), [id]
+  )
 
   if (loadingComp) {
     return (
@@ -228,6 +232,20 @@ export default function CompetitionDetail() {
           </p>
         </header>
 
+        {/* Live Games Section */}
+        {liveGames && liveGames.length > 0 && (
+          <div style={{ marginBottom: 'var(--space-6)' }}>
+            <div className="section-subtitle" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+              <span className="live-dot" style={{ margin: 0 }} /> Live Matches
+            </div>
+            <div className="game-strip">
+              {liveGames.map(game => (
+                <GamePill key={game.id} game={game} />
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Tab bar */}
         <div className="tab-bar">
           <button
@@ -265,15 +283,25 @@ export default function CompetitionDetail() {
           <section className="comp-section">
             {/* Round selector */}
             <div className="round-selector">
-              {allRounds.map(round => (
-                <button
-                  key={round.id}
-                  className={`round-selector__btn ${currentRound?.id === round.id ? 'round-selector__btn--active' : ''}`}
-                  onClick={() => setSelectedRound(round)}
-                >
-                  {round.name}
-                </button>
-              ))}
+              {allRounds.map(round => {
+                const isPast = round.latest_game_date && new Date(round.latest_game_date) < now
+                const isCompleted = round.completed_game_count === round.game_count
+                const isRoundFinished = isPast || isCompleted
+
+                return (
+                  <button
+                    key={round.id}
+                    className={`round-selector__btn ${
+                      currentRound?.id === round.id ? 'round-selector__btn--active' : ''
+                    } ${
+                      isRoundFinished && currentRound?.id !== round.id ? 'round-selector__btn--completed' : ''
+                    }`}
+                    onClick={() => setSelectedRound(round)}
+                  >
+                    {round.name}
+                  </button>
+                )
+              })}
             </div>
 
             {currentRound && (

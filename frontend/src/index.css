@@ -583,6 +583,15 @@ tbody tr:last-child td {
   border-color: var(--color-accent-primary);
   color: var(--color-text-accent);
 }
+.round-selector__btn--completed {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-muted);
+}
+.round-selector__btn--completed:hover {
+  border-color: var(--color-border-hover);
+  color: var(--color-text-primary);
+}
 
 /* --- Fixture row --- */
 .fixture-row {
@@ -1248,6 +1257,13 @@ tbody tr:last-child td {
   align-items: center;
 }
 
+.club-row__actions {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .club-row__stat {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
@@ -1272,7 +1288,8 @@ tbody tr:last-child td {
     gap: var(--space-4);
     padding: 16px 20px;
   }
-  .club-row__record {
+  .club-row__record,
+  .club-row__actions {
     align-self: flex-end;
   }
 }

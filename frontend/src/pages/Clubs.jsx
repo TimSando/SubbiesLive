@@ -2,9 +2,41 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useApi } from '../hooks/useApi.js'
 import { api } from '../api/client.js'
+import PageSubscribeButton from '../components/NotificationToggle/PageSubscribeButton.jsx'
 
 export default function Clubs() {
   const { data: clubs, loading, error } = useApi(() => api.getClubs(), [])
+
+  const [followingClubIds, setFollowingClubIds] = useState(() => {
+    const existing = JSON.parse(localStorage.getItem('subbies_following_clubs') || '[]')
+    return new Set(existing.map(c => c.id))
+  })
+
+  // React to follow status updates from other pages
+  useEffect(() => {
+    const handleFollowUpdate = () => {
+      const existing = JSON.parse(localStorage.getItem('subbies_following_clubs') || '[]')
+      setFollowingClubIds(new Set(existing.map(c => c.id)))
+    }
+    window.addEventListener('followingUpdated', handleFollowUpdate)
+    return () => window.removeEventListener('followingUpdated', handleFollowUpdate)
+  }, [])
+
+  const toggleFollow = (club, event) => {
+    event.preventDefault()
+    event.stopPropagation()
+    const existing = JSON.parse(localStorage.getItem('subbies_following_clubs') || '[]')
+    const isFollowing = followingClubIds.has(club.id)
+    let updated
+    if (isFollowing) {
+      updated = existing.filter(c => c.id !== club.id)
+    } else {
+      updated = [...existing, { id: club.id, name: club.name, logo_url: club.logo_url }]
+    }
+    localStorage.setItem('subbies_following_clubs', JSON.stringify(updated))
+    setFollowingClubIds(new Set(updated.map(c => c.id)))
+    window.dispatchEvent(new Event('followingUpdated'))
+  }
 
   // Filter states preserved in sessionStorage
   const [searchQuery, setSearchQuery] = useState(() => sessionStorage.getItem('clubs_searchQuery') || '')
@@ -256,12 +288,26 @@ export default function Clubs() {
                         </div>
                       </div>
 
-                      <div className="club-row__record">
-                        <span className="club-row__stat club-row__stat--win">{club.wins}W</span>
-                        <span className="club-row__stat club-row__stat--loss">{club.losses}L</span>
-                        {club.draws > 0 && (
-                          <span className="club-row__stat club-row__stat--draw">{club.draws}D</span>
-                        )}
+                      <div className="club-row__actions" onClick={(e) => e.stopPropagation()}>
+                        <PageSubscribeButton topicType="club" topicId={club.id} topicName={club.name} />
+                        <button
+                          onClick={(e) => toggleFollow(club, e)}
+                          title={followingClubIds.has(club.id) ? 'Unfollow club' : 'Follow club'}
+                          className={`page-subscribe-btn ${followingClubIds.has(club.id) ? 'page-subscribe-btn--active' : ''}`}
+                        >
+                          <svg
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                            fill={followingClubIds.has(club.id) ? 'currentColor' : 'none'}
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                          </svg>
+                        </button>
                       </div>
                     </Link>
                   ))}
