@@ -17,96 +17,97 @@ HEADERS = {
 CLUB_OVERRIDES = {
     "Colleagues": {
         "fb": "https://www.facebook.com/ColleaguesRugby",
-        "ig": "https://www.instagram.com/colleaguesrugby"
+        "ig": "https://www.instagram.com/colleaguesrugby",
     },
     "Randwick": {
         "fb": "https://www.facebook.com/RandwickRugby",
-        "ig": "https://www.instagram.com/randwickrugby"
+        "ig": "https://www.instagram.com/randwickrugby",
     },
     "Barker Old Boys": {
         "fb": "https://www.facebook.com/bobsgrizzlies",
-        "ig": "https://www.instagram.com/bobsgrizzlies"
+        "ig": "https://www.instagram.com/bobsgrizzlies",
     },
     "Sydney University": {
         "fb": "https://www.facebook.com/suprc",
-        "ig": "https://www.instagram.com/sydneyunirugby"
+        "ig": "https://www.instagram.com/sydneyunirugby",
     },
     "Northern Suburbs": {
         "fb": "https://www.facebook.com/northsrugby",
-        "ig": "https://www.instagram.com/northsrugby"
+        "ig": "https://www.instagram.com/northsrugby",
     },
     "Manly Savers": {
         "fb": "https://www.facebook.com/manlysavers",
-        "ig": "https://www.instagram.com/manlysavers"
+        "ig": "https://www.instagram.com/manlysavers",
     },
     "St Patrick's": {
         "fb": "https://www.facebook.com/sprc.com.au",
-        "ig": "https://www.instagram.com/stpatsrugby"
+        "ig": "https://www.instagram.com/stpatsrugby",
     },
     "Campbelltown": {
         "fb": "https://www.facebook.com/campbelltownharlequins",
-        "ig": "https://www.instagram.com/campbelltownharlequins"
+        "ig": "https://www.instagram.com/campbelltownharlequins",
     },
     "Penrith Emus": {
         "fb": "https://www.facebook.com/penrithemus",
-        "ig": "https://www.instagram.com/penrith_emus"
+        "ig": "https://www.instagram.com/penrith_emus",
     },
     "Alexandria Dukes": {
         "fb": "https://www.facebook.com/AlexandriaDukesRUFC",
-        "ig": "https://www.instagram.com/alexandriadukes"
+        "ig": "https://www.instagram.com/alexandriadukes",
     },
     "Brothers": {
         "fb": "https://www.facebook.com/brothersrugbysydney",
         "ig": "https://www.instagram.com/brothersrugbyclubsydney",
-        "tk": None
+        "tk": None,
     },
     "Forest": {
         "fb": "https://www.facebook.com/ForestRugby/",
         "ig": "https://www.instagram.com/forestrugby",
-        "tk": None
+        "tk": None,
     },
     "Kings": {
         "fb": "https://www.facebook.com/KingsOldBoysRugby",
         "ig": None,
-        "tk": None
+        "tk": None,
     },
     "Renegades": {
         "fb": "https://www.facebook.com/RouseHillRugby",
         "ig": "https://www.instagram.com/rousehillrenegadesrugby",
-        "tk": "https://www.tiktok.com/@rousehillrenegadesrugby"
+        "tk": "https://www.tiktok.com/@rousehillrenegadesrugby",
     },
     "Sydney Harbour": {
         "web": "https://oystersrugby.com",
         "fb": "https://www.facebook.com/oystersrugby",
         "ig": "https://www.instagram.com/oysters.rugby",
-        "tk": None
+        "tk": None,
     },
     "Souths": {
         "fb": "https://www.facebook.com/southerndistrictsrugby",
         "ig": "https://www.instagram.com/southerndistrictsrugby",
-        "tk": None
+        "tk": None,
     },
     "Wests": {
         "fb": "https://www.facebook.com/westharbourrugby",
         "ig": "https://www.instagram.com/westharbourrugby",
-        "tk": None
+        "tk": None,
     },
     "West Harbour": {
         "fb": "https://www.facebook.com/westharbourrugby",
         "ig": "https://www.instagram.com/westharbourrugby",
-        "tk": None
+        "tk": None,
     },
     "Wildfires": {
         "fb": "https://www.facebook.com/HunterWildfires",
         "ig": "https://www.instagram.com/hunterwildfires",
-        "tk": None
+        "tk": None,
     },
     "Canterbury": {
         "fb": "https://www.facebook.com/CanterburyRugbyClub",
         "ig": "https://www.instagram.com/canterburyrugbyclub",
-        "tk": None
-    }
+        "tk": None,
+    },
 }
+
 
 def clean_url(url: str) -> str:
     url = url.split("?")[0].strip()
@@ -114,15 +115,17 @@ def clean_url(url: str) -> str:
         url = url[:-1]
     return url
 
+
 def fetch_html(url: str) -> str:
     try:
         req = urllib.request.Request(url, headers=HEADERS)
         with urllib.request.urlopen(req, timeout=5) as response:
-            html = response.read().decode('utf-8', errors='ignore')
+            html = response.read().decode("utf-8", errors="ignore")
             return html
     except Exception as e:
         logger.debug(f"Failed to fetch website {url}: {e}")
         return ""
+
 
 def validate_url(url: str) -> bool:
     if not url:
@@ -144,13 +147,20 @@ def validate_url(url: str) -> bool:
         logger.debug(f"DNS or connection error for {url}: {e}")
         return False
 
+
 def slugify(name: str) -> str:
-    return re.sub(r'[^a-zA-Z0-9]', '', name).lower()
+    return re.sub(r"[^a-zA-Z0-9]", "", name).lower()
+
 
 def get_candidates(club_name: str):
     slug = slugify(club_name)
-    base_slug = slug.replace("rugbyclub", "").replace("rugby", "").replace("oldboys", "").replace("rfc", "")
-    
+    base_slug = (
+        slug.replace("rugbyclub", "")
+        .replace("rugby", "")
+        .replace("oldboys", "")
+        .replace("rfc", "")
+    )
+
     fb_candidates = [
         f"https://www.facebook.com/{slug}rugby",
         f"https://www.facebook.com/{slug}rugbyclub",
@@ -172,7 +182,7 @@ def get_candidates(club_name: str):
         f"https://www.tiktok.com/@{slug}",
         f"https://www.tiktok.com/@{base_slug}rugby",
     ]
-    
+
     for key, ovr in CLUB_OVERRIDES.items():
         if key.lower() in club_name.lower():
             if "fb" in ovr:
@@ -190,36 +200,44 @@ def get_candidates(club_name: str):
                     tk_candidates = []
                 else:
                     tk_candidates.insert(0, ovr["tk"])
-                
+
     return fb_candidates, ig_candidates, tk_candidates
+
 
 def extract_socials_from_html(html: str):
     fb = None
     ig = None
     tk = None
 
-    fb_match = re.search(r'href=["\'](https?://(?:www\.)?facebook\.com/[a-zA-Z0-9_\.\-]+)["\']', html)
+    fb_match = re.search(
+        r'href=["\'](https?://(?:www\.)?facebook\.com/[a-zA-Z0-9_\.\-]+)["\']', html
+    )
     if fb_match:
         fb = clean_url(fb_match.group(1))
 
-    ig_match = re.search(r'href=["\'](https?://(?:www\.)?instagram\.com/[a-zA-Z0-9_\.\-]+)["\']', html)
+    ig_match = re.search(
+        r'href=["\'](https?://(?:www\.)?instagram\.com/[a-zA-Z0-9_\.\-]+)["\']', html
+    )
     if ig_match:
         ig = clean_url(ig_match.group(1))
 
-    tk_match = re.search(r'href=["\'](https?://(?:www\.)?tiktok\.com/@[a-zA-Z0-9_\.\-]+)["\']', html)
+    tk_match = re.search(
+        r'href=["\'](https?://(?:www\.)?tiktok\.com/@[a-zA-Z0-9_\.\-]+)["\']', html
+    )
     if tk_match:
         tk = clean_url(tk_match.group(1))
 
     return fb, ig, tk
 
+
 def process_club(club: dict) -> dict:
     name = club.get("name")
-    
+
     # Apply website overrides if defined
     for key, ovr in CLUB_OVERRIDES.items():
         if key.lower() in name.lower() and "web" in ovr:
             club["website_url"] = ovr["web"]
-            
+
     website = club.get("website_url")
     logger.info(f"Processing social links for: {name}")
 
@@ -284,6 +302,7 @@ def process_club(club: dict) -> dict:
 
     return club
 
+
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(script_dir, "club_scraped_data.json")
@@ -309,7 +328,10 @@ def main():
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(enriched_clubs, f, indent=2, ensure_ascii=False)
 
-    logger.info(f"Successfully enriched and saved socials for {len(enriched_clubs)} clubs.")
+    logger.info(
+        f"Successfully enriched and saved socials for {len(enriched_clubs)} clubs."
+    )
+
 
 if __name__ == "__main__":
     main()

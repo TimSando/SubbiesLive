@@ -86,9 +86,11 @@ def ingest_game_events(
                 continue
 
             session.execute(
-                text("""INSERT INTO game_events (game_id, team_id, player_id, event_type, 
+                text(
+                    """INSERT INTO game_events (game_id, team_id, player_id, event_type, 
                         player_number, points, text, external_created_at, external_id) 
-                        VALUES (:gid, :tid, :pid, :et, :pn, :pts, :txt, :eca, :eid)"""),
+                        VALUES (:gid, :tid, :pid, :et, :pn, :pts, :txt, :eca, :eid)"""
+                ),
                 {
                     "gid": game_id,
                     "tid": db_team_id,
@@ -208,7 +210,8 @@ def ingest_player_history(
 
         # Upsert the player_history record
         session.execute(
-            text("""
+            text(
+                """
                 INSERT INTO player_history (
                     player_id, game_id, team_id, position_id, player_number, points,
                     tries, conversions, penalty_goals, drop_goals,
@@ -240,7 +243,8 @@ def ingest_player_history(
                     coach_points_2 = EXCLUDED.coach_points_2,
                     coach_points_3 = EXCLUDED.coach_points_3,
                     card_text     = EXCLUDED.card_text
-            """),
+            """
+            ),
             {
                 "pid": player_id,
                 "gid": game_id,

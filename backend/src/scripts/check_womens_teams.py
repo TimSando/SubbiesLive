@@ -1,10 +1,10 @@
 import os
 from sqlalchemy import create_engine, text
 
+
 def get_engine():
     db_url = os.environ.get(
-        "DATABASE_URL_SYNC",
-        os.environ.get("DATABASE_URL", "").replace("+asyncpg", "")
+        "DATABASE_URL_SYNC", os.environ.get("DATABASE_URL", "").replace("+asyncpg", "")
     )
     if not db_url or "+asyncpg" in db_url:
         db_url = (
@@ -14,6 +14,7 @@ def get_engine():
             f":5432/{os.environ.get('POSTGRES_DB', 'subbiesstats')}"
         )
     return create_engine(db_url)
+
 
 def main():
     engine = get_engine()
@@ -30,6 +31,7 @@ def main():
         print("Clubs in Joy Johnson competitions:")
         for row in res:
             print(f"- Club ID: {row[0]}, Name: {row[1]}, Competition: {row[2]}")
+
 
 if __name__ == "__main__":
     main()

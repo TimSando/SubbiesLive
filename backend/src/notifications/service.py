@@ -94,7 +94,8 @@ def notify_game_update(session, game_id: int, update_type: str, detail_message: 
         detail_message: Body text for the push notification
     """
     # 1. Fetch game details: competition_id, home_club_id, away_club_id, team names, parent comp, division
-    game_query = text("""
+    game_query = text(
+        """
         SELECT 
             g.id,
             r.competition_id,
@@ -111,7 +112,8 @@ def notify_game_update(session, game_id: int, update_type: str, detail_message: 
         JOIN teams ht ON g.home_team_id = ht.id
         JOIN teams at ON g.away_team_id = at.id
         WHERE g.id = :gid
-    """)
+    """
+    )
     res = session.execute(game_query, {"gid": game_id})
     row = res.fetchone()
     if not row:
@@ -132,7 +134,8 @@ def notify_game_update(session, game_id: int, update_type: str, detail_message: 
     ) = row
 
     # 2. Query all unique subscriptions matching the topic rules
-    sub_query = text("""
+    sub_query = text(
+        """
         SELECT DISTINCT s.endpoint, s.p256dh, s.auth
         FROM pwa_subscriptions s
         JOIN pwa_subscription_topics t ON s.id = t.subscription_id
@@ -145,7 +148,8 @@ def notify_game_update(session, game_id: int, update_type: str, detail_message: 
             (:utype = 'outcome' AND t.notify_outcome = TRUE)
             OR (:utype = 'event' AND t.notify_events = TRUE)
         )
-    """)
+    """
+    )
 
     params = {
         "game_id": game_id,
