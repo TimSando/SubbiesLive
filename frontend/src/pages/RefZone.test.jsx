@@ -65,6 +65,17 @@ describe('RefZone page and auth integration', () => {
   })
 
   it('successful login without MFA transitions to Dashboard and displays appointments', async () => {
+    const sydneyNowStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Australia/Sydney' })
+    const [sYear, sMonth, sDay] = sydneyNowStr.split('-').map(Number)
+    const sydneyDate = new Date(sYear, sMonth - 1, sDay)
+    const dayOfWeek = sydneyDate.getDay() // 0 = Sun, 1 = Mon, ..., 6 = Sat
+
+    let satDiff = 0
+    if (dayOfWeek !== 6 && dayOfWeek !== 0) {
+      satDiff = 6 - dayOfWeek
+    }
+    const testWeekendMoment = sydneyDate.getTime() + satDiff * 86400000 + 12 * 3600000 // Saturday 12:00 PM
+
     server.use(
       http.get('/api/refzone/status', () => {
         return HttpResponse.json({ authenticated: false, userId: null })
@@ -89,7 +100,7 @@ describe('RefZone page and auth integration', () => {
             status: 'confirmed',
             isActive: true,
             match: {
-              moment: Date.now() + 86400000, // tomorrow
+              moment: testWeekendMoment,
               homeTeam: { name: 'Colleagues' },
               awayTeam: { name: 'Mosman' },
               competition: { name: 'Kentwell Cup' },
@@ -123,8 +134,8 @@ describe('RefZone page and auth integration', () => {
     // It should render games in "This Weekend" tab by default
     await waitFor(() => {
       expect(screen.getByText(/Games This Weekend/i)).toBeInTheDocument()
-      expect(screen.getByText(/Colleagues/)).toBeInTheDocument()
-      expect(screen.getByText(/Mosman/)).toBeInTheDocument()
+      expect(screen.getByText((content, element) => content.includes('Colleagues'))).toBeInTheDocument()
+      expect(screen.getByText((content, element) => content.includes('Mosman'))).toBeInTheDocument()
       expect(screen.getByText(/Kentwell Cup/i)).toBeInTheDocument()
     })
   })

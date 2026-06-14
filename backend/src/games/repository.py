@@ -9,7 +9,6 @@ from src.competitions.models import Competition, Round
 from src.clubs.models import Club, Team
 from src.players.models import Player
 
-
 HomeTeam = aliased(Team, name="home_team")
 AwayTeam = aliased(Team, name="away_team")
 HomeClub = aliased(Club, name="home_club")

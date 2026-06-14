@@ -26,14 +26,12 @@ def main():
 
     # 2. Query completed UNSW games
     unsw_team_ids = (134, 148, 164, 170, 172, 252)
-    query = text(
-        """
+    query = text("""
         SELECT id, external_id, home_team_id, away_team_id 
         FROM games 
         WHERE status = 'completed' 
           AND (home_team_id IN :team_ids OR away_team_id IN :team_ids)
-    """
-    )
+    """)
     games = session.execute(query, {"team_ids": unsw_team_ids}).fetchall()
     print(f"Found {len(games)} completed games involving UNSW.")
 

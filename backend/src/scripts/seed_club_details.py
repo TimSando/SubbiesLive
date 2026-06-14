@@ -110,8 +110,7 @@ def seed_club_details(json_path: str):
 
             # Update the club record
             res = conn.execute(
-                text(
-                    """
+                text("""
                     UPDATE clubs 
                     SET about_text = :about,
                         division_info = :div,
@@ -125,8 +124,7 @@ def seed_club_details(json_path: str):
                         instagram_url = :instagram,
                         tiktok_url = :tiktok
                     WHERE name = :name OR short_name = :name
-                """
-                ),
+                """),
                 {
                     "name": name,
                     "about": club.get("about_text"),
@@ -148,8 +146,7 @@ def seed_club_details(json_path: str):
             else:
                 # If exact name/short_name not found, check with a partial match
                 partial_res = conn.execute(
-                    text(
-                        """
+                    text("""
                         UPDATE clubs 
                         SET about_text = :about,
                             division_info = :div,
@@ -163,8 +160,7 @@ def seed_club_details(json_path: str):
                             instagram_url = :instagram,
                             tiktok_url = :tiktok
                         WHERE name ILIKE :partial
-                    """
-                    ),
+                    """),
                     {
                         "partial": f"%{name}%",
                         "about": club.get("about_text"),

@@ -353,9 +353,11 @@ async def get_club_by_id(db: AsyncSession, club_id: int) -> dict | None:
             .where(
                 and_(
                     or_(home_team.club_id == club_id, away_team.club_id == club_id),
-                    Game.status == "completed"
-                    if status_filter == "completed"
-                    else Game.status != "completed",
+                    (
+                        Game.status == "completed"
+                        if status_filter == "completed"
+                        else Game.status != "completed"
+                    ),
                 )
             )
         )

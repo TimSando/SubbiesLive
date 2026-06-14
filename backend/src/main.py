@@ -17,7 +17,6 @@ from src.refzone.router import router as refzone_router
 from src.ingestion.router import router as ingestion_router
 from src.notifications.router import router as notifications_router
 
-
 settings = get_settings()
 logger = logging.getLogger("uvicorn")
 

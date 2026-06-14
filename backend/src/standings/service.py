@@ -18,7 +18,6 @@ from src.clubs.models import Club, Team
 from src.games import repository as games_repo
 from src.core.cache import ttl_cache
 
-
 # Points allocation
 WIN_POINTS = 4
 DRAW_POINTS = 2

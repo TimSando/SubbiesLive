@@ -16,8 +16,7 @@ async def list_games(
     round_id: int | None = Query(None, description="Filter by round"),
     team_id: int | None = Query(None, description="Filter by team"),
     club_id: int | None = Query(None, description="Filter by club"),
-    status: str
-    | None = Query(
+    status: str | None = Query(
         None,
         description="Filter by status (scheduled/in_progress/completed/not_completed)",
     ),
