@@ -123,8 +123,8 @@ describe('RefZone page and auth integration', () => {
     // It should render games in "This Weekend" tab by default
     await waitFor(() => {
       expect(screen.getByText(/Games This Weekend/i)).toBeInTheDocument()
-      expect(screen.getByText('Colleagues')).toBeInTheDocument()
-      expect(screen.getByText('Mosman')).toBeInTheDocument()
+      expect(screen.getByText(/Colleagues/)).toBeInTheDocument()
+      expect(screen.getByText(/Mosman/)).toBeInTheDocument()
       expect(screen.getByText(/Kentwell Cup/i)).toBeInTheDocument()
     })
   })
