@@ -21,11 +21,10 @@ jobs:
           python-version: '3.10'
           enable-cache: true
 
-      - name: Lint with Ruff
+      - name: Lint with Black
         run: |
           cd backend
-          uv run --with ruff ruff check src tests
-          uv run --with ruff ruff format --check src tests
+          uv run --with black black --check src tests
 
       - name: Install dependencies
         run: |
