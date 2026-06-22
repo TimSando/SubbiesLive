@@ -56,6 +56,7 @@ describe('CompetitionDetail Page', () => {
         points_for: 30,
         points_against: 10,
         points_diff: 20,
+        bonus_points: 1,
         competition_points: 5
       }
     ]

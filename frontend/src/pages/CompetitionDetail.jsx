@@ -27,6 +27,7 @@ function StandingsTable({ standings }) {
             <th>PF</th>
             <th>PA</th>
             <th>PD</th>
+            <th>BP</th>
             <th>Pts</th>
           </tr>
         </thead>
@@ -53,6 +54,7 @@ function StandingsTable({ standings }) {
               }}>
                 {row.points_diff > 0 ? '+' : ''}{row.points_diff}
               </td>
+              <td>{row.bonus_points}</td>
               <td style={{ fontWeight: 700, color: 'var(--color-text-primary)' }}>{row.competition_points}</td>
             </tr>
           ))}

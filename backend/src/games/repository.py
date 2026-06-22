@@ -187,6 +187,30 @@ async def get_game_by_id(db: AsyncSession, game_id: int) -> dict | None:
 
 async def get_games_by_competition(db: AsyncSession, competition_id: int) -> list[dict]:
     """Fetch all games for a competition (used by standings calculation)."""
+    home_tries_sub = (
+        select(func.count(GameEvent.id))
+        .where(
+            GameEvent.game_id == Game.id,
+            GameEvent.team_id == Game.home_team_id,
+            GameEvent.event_type == "try",
+        )
+        .correlate(Game)
+        .scalar_subquery()
+        .label("home_tries")
+    )
+
+    away_tries_sub = (
+        select(func.count(GameEvent.id))
+        .where(
+            GameEvent.game_id == Game.id,
+            GameEvent.team_id == Game.away_team_id,
+            GameEvent.event_type == "try",
+        )
+        .correlate(Game)
+        .scalar_subquery()
+        .label("away_tries")
+    )
+
     stmt = (
         select(
             Game.id,
@@ -195,6 +219,8 @@ async def get_games_by_competition(db: AsyncSession, competition_id: int) -> lis
             Game.home_score,
             Game.away_score,
             Game.status,
+            home_tries_sub,
+            away_tries_sub,
         )
         .join(Round, Round.id == Game.round_id)
         .where(Round.competition_id == competition_id)

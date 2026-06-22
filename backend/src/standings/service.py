@@ -65,6 +65,7 @@ async def get_standings(db: AsyncSession, competition_id: int) -> dict | None:
             "points_for": 0,
             "points_against": 0,
             "points_diff": 0,
+            "bonus_points": 0,
             "competition_points": 0,
         }
 
@@ -90,22 +91,44 @@ async def get_standings(db: AsyncSession, competition_id: int) -> dict | None:
         standings[away_id]["points_for"] += away_score
         standings[away_id]["points_against"] += home_score
 
-        # Determine result
+        # Determine try bonus points (4+ tries in a game)
+        home_tries = game.get("home_tries") or 0
+        away_tries = game.get("away_tries") or 0
+
+        home_bp = 0
+        away_bp = 0
+
+        if home_tries >= 4:
+            home_bp += 1
+        if away_tries >= 4:
+            away_bp += 1
+
+        # Determine result and losing bonus points (lose by <= 7 points)
         if home_score > away_score:
             standings[home_id]["won"] += 1
             standings[home_id]["competition_points"] += WIN_POINTS
             standings[away_id]["lost"] += 1
             standings[away_id]["competition_points"] += LOSS_POINTS
+            if home_score - away_score <= 7:
+                away_bp += 1
         elif away_score > home_score:
             standings[away_id]["won"] += 1
             standings[away_id]["competition_points"] += WIN_POINTS
             standings[home_id]["lost"] += 1
             standings[home_id]["competition_points"] += LOSS_POINTS
+            if away_score - home_score <= 7:
+                home_bp += 1
         else:
             standings[home_id]["drawn"] += 1
             standings[home_id]["competition_points"] += DRAW_POINTS
             standings[away_id]["drawn"] += 1
             standings[away_id]["competition_points"] += DRAW_POINTS
+
+        # Apply bonus points
+        standings[home_id]["bonus_points"] += home_bp
+        standings[home_id]["competition_points"] += home_bp
+        standings[away_id]["bonus_points"] += away_bp
+        standings[away_id]["competition_points"] += away_bp
 
     # Calculate points differential
     for team_id in standings:

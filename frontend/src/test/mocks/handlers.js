@@ -106,7 +106,7 @@ export const handlers = [
       competition_id: Number(params.id),
       competition_name: 'Kentwell Cup',
       standings: [
-        { position: 1, team_id: 5001, team_name: 'Colleagues 1st', club_name: 'Colleagues', club_id: 1, played: 1, won: 1, drawn: 0, lost: 0, byes: 0, points_for: 25, points_against: 10, points_diff: 15, competition_points: 4 }
+        { position: 1, team_id: 5001, team_name: 'Colleagues 1st', club_name: 'Colleagues', club_id: 1, played: 1, won: 1, drawn: 0, lost: 0, byes: 0, points_for: 25, points_against: 10, points_diff: 15, bonus_points: 0, competition_points: 4 }
       ]
     })
   }),

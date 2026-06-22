@@ -19,6 +19,7 @@ class StandingsRow(BaseModel):
     points_for: int = 0
     points_against: int = 0
     points_diff: int = 0
+    bonus_points: int = 0
     competition_points: int = 0
 
 
