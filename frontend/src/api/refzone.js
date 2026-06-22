@@ -1,6 +1,6 @@
 const API_BASE = '/api/refzone';
 
-export async function loginToRX(email, password) {
+export async function loginToRX(email, password, rememberMe = false) {
   const url = `${API_BASE}/login`;
   const res = await fetch(url, {
     method: 'POST',
@@ -8,7 +8,7 @@ export async function loginToRX(email, password) {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, remember_me: rememberMe }),
   });
   if (!res.ok) {
     throw new Error(`Login failed: ${res.status}`);

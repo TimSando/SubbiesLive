@@ -451,3 +451,27 @@
 .official-role {
   color: var(--color-text-muted);
 }
+
+/* --- Remember Me Checkbox --- */
+.form-checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  user-select: none;
+  margin-top: var(--space-1);
+  margin-bottom: var(--space-2);
+}
+
+.form-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--color-accent-primary);
+}
+
+.form-checkbox-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}

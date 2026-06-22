@@ -338,3 +338,54 @@ async def test_logout_invalidates_cache(client):
     r = await client.post("/api/refzone/logout")
     assert r.status_code == 200
     assert "111" not in _cached_profiles
+
+
+async def test_status_endpoint_silent_refresh_on_missing_access_token(client):
+    """If access token is missing but refresh token is present, /status performs a silent refresh."""
+    client.cookies.set("rx_refresh_token", "valid-refresh-tok")
+
+    mock_resp = MagicMock(status_code=200)
+    mock_resp.json.return_value = {
+        "jwtTokens": {
+            "accessToken": generate_mock_jwt(user_id="222"),
+            "refreshToken": "new-refresh-tok",
+        },
+        "userId": "222",
+    }
+
+    with patch("src.refzone.router.httpx.AsyncClient") as mock_cls:
+        mock_cls.return_value.__aenter__.return_value.post = AsyncMock(
+            return_value=mock_resp
+        )
+        r = await client.get("/api/refzone/status")
+
+    assert r.status_code == 200
+    assert r.json() == {"authenticated": True, "userId": "222"}
+    assert "rx_access_token" in r.cookies
+    assert r.cookies.get("rx_refresh_token") == "new-refresh-tok"
+
+
+async def test_status_endpoint_silent_refresh_on_expired_access_token(client):
+    """If access token is expired but refresh token is present, /status performs a silent refresh."""
+    expired_jwt = generate_mock_jwt(user_id="333", exp=int(time.time()) - 10)
+    client.cookies.set("rx_access_token", expired_jwt)
+    client.cookies.set("rx_refresh_token", "valid-refresh-tok")
+
+    mock_resp = MagicMock(status_code=200)
+    mock_resp.json.return_value = {
+        "jwtTokens": {
+            "accessToken": generate_mock_jwt(user_id="333"),
+            "refreshToken": "new-refresh-tok",
+        },
+        "userId": "333",
+    }
+
+    with patch("src.refzone.router.httpx.AsyncClient") as mock_cls:
+        mock_cls.return_value.__aenter__.return_value.post = AsyncMock(
+            return_value=mock_resp
+        )
+        r = await client.get("/api/refzone/status")
+
+    assert r.status_code == 200
+    assert r.json() == {"authenticated": True, "userId": "333"}
+    assert r.cookies.get("rx_refresh_token") == "new-refresh-tok"

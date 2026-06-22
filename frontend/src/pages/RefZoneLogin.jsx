@@ -7,6 +7,7 @@ export default function RefZoneLogin() {
   const { setAuthData } = useRefZone();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -27,7 +28,7 @@ export default function RefZoneLogin() {
 
     try {
       console.log('RefZone: Submitting credentials to backend...');
-      const loginData = await loginToRX(email, password);
+      const loginData = await loginToRX(email, password, rememberMe);
 
       if (loginData.status === 'mfa_required') {
         console.log('RefZone: MFA challenge required.');
@@ -192,6 +193,20 @@ export default function RefZoneLogin() {
                 disabled={loading}
                 required
               />
+            </div>
+
+            <div className="form-checkbox-group">
+              <input
+                id="remember-me-checkbox"
+                type="checkbox"
+                className="form-checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                disabled={loading}
+              />
+              <label className="form-checkbox-label" htmlFor="remember-me-checkbox">
+                Remember me for 30 days
+              </label>
             </div>
 
             <button

@@ -39,6 +39,7 @@ _cached_profiles: Dict[str, dict] = {}
 class LoginRequest(BaseModel):
     email: str
     password: str
+    remember_me: bool = False
 
 
 class Verify2FARequest(BaseModel):
@@ -78,7 +79,15 @@ def set_auth_cookies(response: Response, access_token: str, refresh_token: str):
         path="/api/refzone",
         max_age=3600,
     )
-    # Set rx_refresh_token (7 days max_age = 7 * 86400)
+
+    # Calculate dynamic max_age for refresh token based on its expiration
+    refresh_max_age = 7 * 24 * 3600
+    refresh_payload = decode_jwt_payload(refresh_token)
+    refresh_exp = refresh_payload.get("exp")
+    if refresh_exp:
+        refresh_max_age = max(0, int(refresh_exp - time.time()))
+
+    # Set rx_refresh_token
     response.set_cookie(
         key="rx_refresh_token",
         value=refresh_token,
@@ -86,7 +95,7 @@ def set_auth_cookies(response: Response, access_token: str, refresh_token: str):
         secure=secure,
         samesite=samesite,
         path="/api/refzone/refresh",
-        max_age=7 * 24 * 3600,
+        max_age=refresh_max_age,
     )
 
 
@@ -160,6 +169,9 @@ async def perform_login(body: LoginRequest) -> dict:
         "password": body.password,
         "samlRequest": {},
     }
+    if body.remember_me:
+        payload["rememberMe"] = True
+        payload["expirationInMinutes"] = 43200
 
     async with httpx.AsyncClient() as client:
         try:
@@ -272,8 +284,27 @@ async def verify_2fa(body: Verify2FARequest, response: Response):
 
 
 @router.get("/status")
-async def get_status(request: Request):
+async def get_status(request: Request, response: Response):
     token = request.cookies.get("rx_access_token")
+    if not token:
+        # Try silently refreshing the token using refresh token cookie if available!
+        refresh_token = request.cookies.get("rx_refresh_token")
+        if refresh_token:
+            logger.info(
+                "Access token missing in get_status. Attempting silent refresh..."
+            )
+            try:
+                rx_data = await perform_refresh(refresh_token)
+                if "jwtTokens" in rx_data and "accessToken" in rx_data["jwtTokens"]:
+                    jwt_tokens = rx_data["jwtTokens"]
+                    access_token = jwt_tokens.get("accessToken")
+                    new_refresh_token = jwt_tokens.get("refreshToken") or refresh_token
+                    set_auth_cookies(response, access_token, new_refresh_token)
+                    token = access_token
+                    logger.info("Silent refresh in get_status succeeded.")
+            except Exception as e:
+                logger.error(f"Silent refresh in get_status failed: {e}")
+
     if not token:
         return {"authenticated": False, "userId": None}
 
@@ -284,17 +315,34 @@ async def get_status(request: Request):
 
     exp = payload.get("exp")
     if exp and time.time() > exp:
-        return {"authenticated": False, "userId": None}
+        # Access token is expired. Let's try to refresh it!
+        refresh_token = request.cookies.get("rx_refresh_token")
+        if refresh_token:
+            logger.info(
+                "Access token expired in get_status. Attempting silent refresh..."
+            )
+            try:
+                rx_data = await perform_refresh(refresh_token)
+                if "jwtTokens" in rx_data and "accessToken" in rx_data["jwtTokens"]:
+                    jwt_tokens = rx_data["jwtTokens"]
+                    access_token = jwt_tokens.get("accessToken")
+                    new_refresh_token = jwt_tokens.get("refreshToken") or refresh_token
+                    set_auth_cookies(response, access_token, new_refresh_token)
+                    payload = decode_jwt_payload(access_token)
+                    user_id = payload.get("userId") or payload.get("sub")
+                    logger.info("Silent refresh in get_status succeeded.")
+                else:
+                    return {"authenticated": False, "userId": None}
+            except Exception as e:
+                logger.error(f"Silent refresh in get_status failed: {e}")
+                return {"authenticated": False, "userId": None}
+        else:
+            return {"authenticated": False, "userId": None}
 
     return {"authenticated": True, "userId": str(user_id)}
 
 
-@router.post("/refresh")
-async def rx_refresh(request: Request, response: Response):
-    refresh_token = request.cookies.get("rx_refresh_token")
-    if not refresh_token:
-        raise HTTPException(status_code=401, detail="Missing refresh token cookie")
-
+async def perform_refresh(refresh_token: str) -> dict:
     url = f"{RX_BASE_URL}/rau/api/v2/token/refresh"
     headers = get_rx_headers(refresh_token)
 
@@ -308,23 +356,29 @@ async def rx_refresh(request: Request, response: Response):
                 raise HTTPException(
                     status_code=r.status_code, detail="Token refresh failed"
                 )
-
-            rx_data = r.json()
-            if "jwtTokens" in rx_data and "accessToken" in rx_data["jwtTokens"]:
-                jwt_tokens = rx_data["jwtTokens"]
-                access_token = jwt_tokens.get("accessToken")
-                new_refresh_token = jwt_tokens.get("refreshToken") or refresh_token
-                set_auth_cookies(response, access_token, new_refresh_token)
-                return {"status": "ok"}
-
-            raise HTTPException(
-                status_code=500, detail="Tokens missing in refresh response"
-            )
+            return r.json()
         except httpx.RequestError as exc:
             logger.error(f"RX API error refreshing token: {exc}")
             raise HTTPException(
                 status_code=503, detail="RugbyXplorer service unavailable"
             )
+
+
+@router.post("/refresh")
+async def rx_refresh(request: Request, response: Response):
+    refresh_token = request.cookies.get("rx_refresh_token")
+    if not refresh_token:
+        raise HTTPException(status_code=401, detail="Missing refresh token cookie")
+
+    rx_data = await perform_refresh(refresh_token)
+    if "jwtTokens" in rx_data and "accessToken" in rx_data["jwtTokens"]:
+        jwt_tokens = rx_data["jwtTokens"]
+        access_token = jwt_tokens.get("accessToken")
+        new_refresh_token = jwt_tokens.get("refreshToken") or refresh_token
+        set_auth_cookies(response, access_token, new_refresh_token)
+        return {"status": "ok"}
+
+    raise HTTPException(status_code=500, detail="Tokens missing in refresh response")
 
 
 @router.post("/logout")
