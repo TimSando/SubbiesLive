@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
 import NotificationToggle from '../NotificationToggle/NotificationToggle.jsx'
 import WalkthroughModal from '../Walkthrough/WalkthroughModal.jsx'
+import ReloadPrompt from '../ReloadPrompt/ReloadPrompt.jsx'
 import './Layout.css'
 
 const navLinks = [
@@ -23,6 +24,7 @@ export default function Layout() {
   return (
     <div className="layout">
       <WalkthroughModal />
+      <ReloadPrompt />
       <nav className="nav" id="main-nav">
         <div className="container nav__inner">
           {/* Top Left: Burger Menu Button */}

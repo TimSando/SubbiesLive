@@ -65,3 +65,10 @@ self.addEventListener('notificationclick', (event) => {
     })
   )
 })
+
+// Listen for SKIP_WAITING message to activate the new service worker
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting()
+  }
+})
