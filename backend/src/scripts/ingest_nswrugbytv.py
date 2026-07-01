@@ -183,7 +183,8 @@ def ingest_nswrugbytv_videos(engine=None):
     # We load them to match in memory to keep DB operations clean
     with engine.connect() as conn:
         # Fetch games with team names and competition name
-        query = text("""
+        query = text(
+            """
             SELECT g.id, g.game_date, g.status, 
                    t_home.name AS home_team_name, t_away.name AS away_team_name,
                    c.name AS competition_name, c.id AS competition_id
@@ -193,7 +194,8 @@ def ingest_nswrugbytv_videos(engine=None):
             JOIN teams t_home ON g.home_team_id = t_home.id
             JOIN teams t_away ON g.away_team_id = t_away.id
             WHERE g.game_date >= NOW() - INTERVAL '180 days'
-        """)
+        """
+        )
         db_games = [dict(row) for row in conn.execute(query).mappings()]
 
     logger.info(
@@ -305,12 +307,14 @@ def ingest_nswrugbytv_videos(engine=None):
                     # Save video URL to database
                     with engine.begin() as transaction_conn:
                         transaction_conn.execute(
-                            text("""
+                            text(
+                                """
                                 UPDATE games 
                                 SET video_url = :video_url, 
                                     video_url_needs_review = :needs_review
                                 WHERE id = :game_id
-                            """),
+                            """
+                            ),
                             {
                                 "video_url": video_url,
                                 "needs_review": best_confidence_review,

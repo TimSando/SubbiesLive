@@ -37,14 +37,16 @@ def seed_mapping(csv_path: str):
             count = 0
             for row in reader:
                 conn.execute(
-                    text("""
+                    text(
+                        """
                         INSERT INTO competition_mapping (parent_competition, name, division, grade)
                         VALUES (:parent, :name, :div, :grade)
                         ON CONFLICT (name) DO UPDATE SET
                             parent_competition = EXCLUDED.parent_competition,
                             division = EXCLUDED.division,
                             grade = EXCLUDED.grade
-                    """),
+                    """
+                    ),
                     {
                         "parent": row.get("Parent Competition"),
                         "name": row.get("Competition"),
