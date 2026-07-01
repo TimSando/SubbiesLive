@@ -94,7 +94,7 @@ def set_auth_cookies(response: Response, access_token: str, refresh_token: str):
         httponly=True,
         secure=secure,
         samesite=samesite,
-        path="/api/refzone/refresh",
+        path="/api/refzone",
         max_age=refresh_max_age,
     )
 
@@ -391,7 +391,7 @@ async def rx_logout(request: Request, response: Response):
             _cached_profiles.pop(str(user_id), None)
 
     response.delete_cookie(key="rx_access_token", path="/api/refzone")
-    response.delete_cookie(key="rx_refresh_token", path="/api/refzone/refresh")
+    response.delete_cookie(key="rx_refresh_token", path="/api/refzone")
     return {"status": "logged_out"}
 
 
