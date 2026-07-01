@@ -71,7 +71,7 @@ export default function PageSubscribeButton({ topicType, topicId, topicName }) {
     const registration = await navigator.serviceWorker.ready
     const subscription = await registration.pushManager.getSubscription()
     if (!subscription || Notification.permission !== 'granted') {
-      alert('Push notifications are not active on this device. Please open the Menu and enable Push Alerts first!')
+      alert('Push notifications are not active on this device. Please open the Notifications tab and allow alerts first!')
       return
     }
 

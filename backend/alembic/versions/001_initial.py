@@ -32,7 +32,12 @@ def upgrade() -> None:
     op.create_table(
         "competitions",
         sa.Column("id", sa.Integer(), primary_key=True, autoincrement=True),
-        sa.Column("competition_mapping_id", sa.Integer(), sa.ForeignKey("competition_mapping.id"), nullable=True),
+        sa.Column(
+            "competition_mapping_id",
+            sa.Integer(),
+            sa.ForeignKey("competition_mapping.id"),
+            nullable=True,
+        ),
         sa.Column("name", sa.String(200), nullable=False),
         sa.Column("external_id", sa.Integer(), nullable=False, unique=True),
     )
@@ -42,7 +47,12 @@ def upgrade() -> None:
     op.create_table(
         "rounds",
         sa.Column("id", sa.Integer(), primary_key=True, autoincrement=True),
-        sa.Column("competition_id", sa.Integer(), sa.ForeignKey("competitions.id"), nullable=False),
+        sa.Column(
+            "competition_id",
+            sa.Integer(),
+            sa.ForeignKey("competitions.id"),
+            nullable=False,
+        ),
         sa.Column("name", sa.String(100), nullable=False),
         sa.Column("number", sa.Integer(), nullable=True),
         sa.Column("external_id", sa.Integer(), nullable=False, unique=True),
@@ -54,7 +64,12 @@ def upgrade() -> None:
     op.create_table(
         "clubs",
         sa.Column("id", sa.Integer(), primary_key=True, autoincrement=True),
-        sa.Column("competition_mapping_id", sa.Integer(), sa.ForeignKey("competition_mapping.id"), nullable=True),
+        sa.Column(
+            "competition_mapping_id",
+            sa.Integer(),
+            sa.ForeignKey("competition_mapping.id"),
+            nullable=True,
+        ),
         sa.Column("name", sa.String(150), nullable=False, unique=True),
         sa.Column("short_name", sa.String(50), nullable=True),
         sa.Column("logo_url", sa.String(500), nullable=True),
@@ -65,7 +80,12 @@ def upgrade() -> None:
         "teams",
         sa.Column("id", sa.Integer(), primary_key=True, autoincrement=True),
         sa.Column("club_id", sa.Integer(), sa.ForeignKey("clubs.id"), nullable=False),
-        sa.Column("competition_id", sa.Integer(), sa.ForeignKey("competitions.id"), nullable=False),
+        sa.Column(
+            "competition_id",
+            sa.Integer(),
+            sa.ForeignKey("competitions.id"),
+            nullable=False,
+        ),
         sa.Column("name", sa.String(200), nullable=False),
         sa.Column("external_id", sa.Integer(), nullable=False, unique=True),
     )
@@ -91,8 +111,12 @@ def upgrade() -> None:
         "games",
         sa.Column("id", sa.Integer(), primary_key=True, autoincrement=True),
         sa.Column("round_id", sa.Integer(), sa.ForeignKey("rounds.id"), nullable=False),
-        sa.Column("home_team_id", sa.Integer(), sa.ForeignKey("teams.id"), nullable=False),
-        sa.Column("away_team_id", sa.Integer(), sa.ForeignKey("teams.id"), nullable=False),
+        sa.Column(
+            "home_team_id", sa.Integer(), sa.ForeignKey("teams.id"), nullable=False
+        ),
+        sa.Column(
+            "away_team_id", sa.Integer(), sa.ForeignKey("teams.id"), nullable=False
+        ),
         sa.Column("game_date", sa.DateTime(), nullable=False),
         sa.Column("location", sa.String(300), nullable=True),
         sa.Column("home_score", sa.Integer(), nullable=True),
@@ -109,10 +133,17 @@ def upgrade() -> None:
     # --- Game Events ---
     op.create_table(
         "game_events",
-        sa.Column("id", sa.Uuid(), primary_key=True, server_default=sa.text("gen_random_uuid()")),
+        sa.Column(
+            "id",
+            sa.Uuid(),
+            primary_key=True,
+            server_default=sa.text("gen_random_uuid()"),
+        ),
         sa.Column("game_id", sa.Integer(), sa.ForeignKey("games.id"), nullable=False),
         sa.Column("team_id", sa.Integer(), sa.ForeignKey("teams.id"), nullable=False),
-        sa.Column("player_id", sa.Integer(), sa.ForeignKey("players.id"), nullable=True),
+        sa.Column(
+            "player_id", sa.Integer(), sa.ForeignKey("players.id"), nullable=True
+        ),
         sa.Column("event_type", sa.String(50), nullable=False),
         sa.Column("player_number", sa.Integer(), nullable=True),
         sa.Column("points", sa.Integer(), nullable=False, server_default="0"),
@@ -128,11 +159,17 @@ def upgrade() -> None:
     op.create_table(
         "player_team_history",
         sa.Column("id", sa.Integer(), primary_key=True, autoincrement=True),
-        sa.Column("player_id", sa.Integer(), sa.ForeignKey("players.id"), nullable=False),
+        sa.Column(
+            "player_id", sa.Integer(), sa.ForeignKey("players.id"), nullable=False
+        ),
         sa.Column("team_id", sa.Integer(), sa.ForeignKey("teams.id"), nullable=False),
     )
-    op.create_index("ix_player_team_history_player_id", "player_team_history", ["player_id"])
-    op.create_index("ix_player_team_history_team_id", "player_team_history", ["team_id"])
+    op.create_index(
+        "ix_player_team_history_player_id", "player_team_history", ["player_id"]
+    )
+    op.create_index(
+        "ix_player_team_history_team_id", "player_team_history", ["team_id"]
+    )
 
 
 def downgrade() -> None:

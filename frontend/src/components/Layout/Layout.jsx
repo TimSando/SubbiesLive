@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
-import NotificationToggle from '../NotificationToggle/NotificationToggle.jsx'
 import WalkthroughModal from '../Walkthrough/WalkthroughModal.jsx'
 import ReloadPrompt from '../ReloadPrompt/ReloadPrompt.jsx'
 import { api } from '../../api/client.js'
@@ -162,10 +161,7 @@ export default function Layout() {
 
 
         </div>
-        <div className="nav__drawer-footer">
-          <span className="nav__drawer-footer-label">Push Alerts</span>
-          <NotificationToggle />
-        </div>
+
       </aside>
 
       {/* Mobile Bottom Tab Bar */}
