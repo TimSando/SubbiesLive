@@ -7,11 +7,38 @@ export default function Competitions() {
   const { data: competitions, loading, error } = useApi(() => api.getCompetitions(), [])
 
   // Filter states preserved in sessionStorage
-  const [searchQuery, setSearchQuery] = useState(() => sessionStorage.getItem('competitions_clubQuery') || '')
+  const [searchQuery, setSearchQuery] = useState(() => sessionStorage.getItem('competitions_searchQuery') || '')
+  const [parentComp, setParentComp] = useState(() => sessionStorage.getItem('competitions_parentComp') || 'All')
+  const [division, setDivision] = useState(() => sessionStorage.getItem('competitions_division') || 'All')
+  const [onlyWomens, setOnlyWomens] = useState(() => sessionStorage.getItem('competitions_onlyWomens') === 'true')
 
   useEffect(() => {
-    sessionStorage.setItem('competitions_clubQuery', searchQuery)
+    sessionStorage.setItem('competitions_searchQuery', searchQuery)
   }, [searchQuery])
+
+  useEffect(() => {
+    sessionStorage.setItem('competitions_parentComp', parentComp)
+  }, [parentComp])
+
+  useEffect(() => {
+    sessionStorage.setItem('competitions_division', division)
+  }, [division])
+
+  useEffect(() => {
+    sessionStorage.setItem('competitions_onlyWomens', onlyWomens ? 'true' : 'false')
+  }, [onlyWomens])
+
+  // Dynamically extract divisions based on selected competition
+  const activeDivisions = Array.from(new Set(
+    (competitions || [])
+      .filter(c => parentComp === 'All' || c.parent_competition === parentComp)
+      .map(c => c.division)
+      .filter(Boolean)
+  )).sort((a, b) => {
+    const na = parseInt(a), nb = parseInt(b)
+    if (!isNaN(na) && !isNaN(nb)) return na - nb
+    return a.localeCompare(b)
+  })
 
   // Sorting helper for divisions
   const sortDivs = (divs) => Object.keys(divs).sort((a, b) => {
@@ -30,15 +57,26 @@ export default function Competitions() {
     return ga.localeCompare(gb)
   })
 
-  // Client-side filtering logic (matches club involvement or competition names)
+  // Client-side filtering logic
   const filteredComps = (competitions || []).filter(comp => {
-    if (!searchQuery) return true
-    const q = searchQuery.toLowerCase()
-    
-    const matchesClub = comp.club_names?.toLowerCase().includes(q)
-    const matchesCompName = comp.name?.toLowerCase().includes(q)
-    
-    return matchesClub || matchesCompName
+    // 1. Search query filter
+    const matchesSearch = !searchQuery ||
+      comp.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (comp.club_names && comp.club_names.toLowerCase().includes(searchQuery.toLowerCase()))
+
+    // 2. Parent Competition filter
+    const matchesParent = parentComp === 'All' || comp.parent_competition === parentComp
+
+    // 3. Division filter
+    const matchesDivision = division === 'All' || comp.division === division
+
+    // 4. Women's competition filter
+    const name = comp.name?.toLowerCase() || ''
+    const grade = comp.grade?.toLowerCase() || ''
+    const isWomens = name.includes('women') || name.includes('womens') || name.includes('lass') || grade.includes('women') || grade.includes('womens')
+    const matchesWomens = !onlyWomens || isWomens
+
+    return matchesSearch && matchesParent && matchesDivision && matchesWomens
   })
 
   // Build grouped structures
@@ -69,7 +107,7 @@ export default function Competitions() {
 
   return (
     <div className="page">
-      <div className="container animate-in" style={{ maxWidth: '1000px' }}>
+      <div className="container animate-in">
         <header style={{ marginBottom: 'var(--space-8)' }}>
           <h1 style={{ marginBottom: 'var(--space-2)' }}>Competitions</h1>
           <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-lg)' }}>
@@ -77,9 +115,9 @@ export default function Competitions() {
           </p>
         </header>
 
-        {/* Sleek Filter & Search Bar */}
+        {/* Dynamic Glassmorphic Filters Dashboard */}
         <div className="clubs-filter-bar" style={{ marginBottom: 'var(--space-8)' }}>
-          <div className="clubs-search-input" style={{ flex: 1 }}>
+          <div className="clubs-search-input">
             <span className="clubs-search-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.6 }}>
                 <circle cx="11" cy="11" r="8" />
@@ -111,13 +149,49 @@ export default function Competitions() {
               </button>
             )}
           </div>
+
+          <div className="clubs-filter-select-group">
+            <select
+              className="clubs-select-filter"
+              value={parentComp}
+              onChange={(e) => {
+                setParentComp(e.target.value)
+                setDivision('All') // reset division on parent comp switch
+              }}
+            >
+              <option value="All">All Competitions</option>
+              <option value="Shute Shield">Shute Shield</option>
+              <option value="Suburban Rugby Union">Suburban Rugby Union</option>
+            </select>
+
+            <select
+              className="clubs-select-filter"
+              value={division}
+              onChange={(e) => setDivision(e.target.value)}
+            >
+              <option value="All">All Divisions</option>
+              {activeDivisions.map(div => (
+                <option key={div} value={div}>Division {div}</option>
+              ))}
+            </select>
+
+            <label className="clubs-checkbox-filter">
+              <input
+                type="checkbox"
+                checked={onlyWomens}
+                onChange={(e) => setOnlyWomens(e.target.checked)}
+              />
+              <span className="checkbox-custom"></span>
+              <span className="checkbox-label">Women's Competition</span>
+            </label>
+          </div>
         </div>
 
         {loading && (
           <div className="comp-rows-container">
-            <div className="skeleton" style={{ height: '80px', borderRadius: 'var(--radius-xl)', marginBottom: 'var(--space-3)' }} />
-            <div className="skeleton" style={{ height: '80px', borderRadius: 'var(--radius-xl)', marginBottom: 'var(--space-3)' }} />
-            <div className="skeleton" style={{ height: '80px', borderRadius: 'var(--radius-xl)' }} />
+            <div className="skeleton" style={{ height: '56px', borderRadius: 'var(--radius-xl)', marginBottom: 'var(--space-3)' }} />
+            <div className="skeleton" style={{ height: '56px', borderRadius: 'var(--radius-xl)', marginBottom: 'var(--space-3)' }} />
+            <div className="skeleton" style={{ height: '56px', borderRadius: 'var(--radius-xl)' }} />
           </div>
         )}
 
@@ -176,14 +250,14 @@ export default function Competitions() {
                         {sortGrades(comps).map(comp => (
                           <div key={comp.id} className="comp-row">
                             <div className="comp-row__info">
-                              <div className="comp-row__logo-placeholder">🏆</div>
+                              <div className="comp-row__logo-placeholder">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.8 }}>
+                                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                                </svg>
+                              </div>
                               <div className="comp-row__meta">
                                 <div className="comp-row__name">{comp.name}</div>
-                                <div className="comp-row__details">
-                                  <span>👥 {comp.club_count} {comp.club_count === 1 ? 'club' : 'clubs'}</span>
-                                  <span style={{ opacity: 0.3 }}>·</span>
-                                  <span>📅 {comp.round_count} {comp.round_count === 1 ? 'round' : 'rounds'}</span>
-                                </div>
                               </div>
                             </div>
 

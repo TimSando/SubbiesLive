@@ -21,7 +21,7 @@ describe('Competitions page', () => {
   it('renders a list of competitions from MSW handlers', async () => {
     renderWithRouter(<Competitions />)
     await waitFor(() => expect(screen.getByText('Kentwell Cup')).toBeInTheDocument())
-    expect(screen.getByText('Shute Shield')).toBeInTheDocument()
+    expect(screen.getByText('Shute Shield', { selector: '.comp-row__name' })).toBeInTheDocument()
   })
 
   it('filters competitions when typing in search query input', async () => {
@@ -31,7 +31,7 @@ describe('Competitions page', () => {
     const searchInput = screen.getByPlaceholderText(/search by club name/i)
     await userEvent.type(searchInput, 'Shute')
 
-    expect(screen.getByText('Shute Shield')).toBeInTheDocument()
+    expect(screen.getByText('Shute Shield', { selector: '.comp-row__name' })).toBeInTheDocument()
     expect(screen.queryByText('Kentwell Cup')).not.toBeInTheDocument()
   })
 
