@@ -61,12 +61,7 @@ export default function Layout() {
   const location = useLocation()
   const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isSyncing, setIsSyncing] = useState(false)
-  const [showModal, setShowModal] = useState(false)
-  const [password, setPassword] = useState('')
-  const [syncError, setSyncError] = useState('')
-  const [syncSuccess, setSyncSuccess] = useState('')
-  const [isFadingOut, setIsFadingOut] = useState(false)
+
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
   const closeMenu = () => setIsMenuOpen(false)
@@ -87,64 +82,7 @@ export default function Layout() {
     }
   }, [navigate])
 
-  // Poll database status
-  useEffect(() => {
-    let active = true
-    let intervalId
 
-    async function checkStatus() {
-      try {
-        const res = await api.getIngestionStatus()
-        if (active) {
-          setIsSyncing(res.running)
-          if (!res.running && intervalId) {
-            clearInterval(intervalId)
-            intervalId = null
-          }
-        }
-      } catch (err) {
-        console.error('Error checking ingestion status:', err)
-      }
-    }
-
-    checkStatus()
-
-    if (isSyncing) {
-      intervalId = setInterval(checkStatus, 5000)
-    }
-
-    return () => {
-      active = false
-      if (intervalId) clearInterval(intervalId)
-    }
-  }, [isSyncing])
-
-  const handleSyncSubmit = async (e) => {
-    e.preventDefault()
-    setSyncError('')
-    setSyncSuccess('')
-    try {
-      const res = await api.triggerIngestion(password)
-      if (res.status === 'started' || res.status === 'running') {
-        setSyncSuccess(res.message)
-        setIsSyncing(true)
-        // Trigger fade out after 1 second of success display, close modal after fade-out finishes
-        setTimeout(() => {
-          setIsFadingOut(true)
-          setTimeout(() => {
-            setShowModal(false)
-            setIsFadingOut(false)
-            setPassword('')
-            setSyncSuccess('')
-          }, 300) // matches CSS animation duration
-        }, 1000)
-      } else {
-        setSyncError(res.message || 'Unknown response')
-      }
-    } catch (err) {
-      setSyncError('Unauthorized or invalid password')
-    }
-  }
 
   return (
     <div className="layout">
@@ -181,28 +119,7 @@ export default function Layout() {
                 {link.label}
               </Link>
             ))}
-            <button
-              onClick={() => {
-                if (!isSyncing) setShowModal(true)
-              }}
-              className="nav__desktop-link"
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-                fontSize: 'inherit',
-                fontWeight: 'inherit',
-                padding: 0,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}
-              disabled={isSyncing}
-            >
-              <span>Force Refresh</span>
-              {isSyncing && <span className="nav-desktop-sync-spinner">🔄</span>}
-            </button>
+
           </div>
         </div>
       </nav>
@@ -243,32 +160,7 @@ export default function Layout() {
             </Link>
           ))}
 
-          <button
-            onClick={() => {
-              closeMenu()
-              if (!isSyncing) setShowModal(true)
-            }}
-            className="nav__drawer-link"
-            style={{
-              background: 'none',
-              border: 'none',
-              textAlign: 'left',
-              width: '100%',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              fontFamily: 'inherit',
-              fontWeight: 'inherit',
-              color: 'var(--color-text-secondary)',
-              borderRadius: 'var(--radius-md)',
-              transition: 'all var(--transition-fast)'
-            }}
-            disabled={isSyncing}
-          >
-            <span>Force Refresh</span>
-            {isSyncing && <span className="nav__drawer-sync-spinner">🔄</span>}
-          </button>
+
         </div>
         <div className="nav__drawer-footer">
           <span className="nav__drawer-footer-label">Push Alerts</span>
@@ -305,47 +197,7 @@ export default function Layout() {
         </div>
       </footer>
 
-      {/* Ingestion Password Modal */}
-      {showModal && (
-        <div className={`ingestion-modal-overlay ${isFadingOut ? 'ingestion-modal-overlay--fade-out' : ''}`}>
-          <div className="ingestion-modal">
-            <h2 className="ingestion-modal__title">Database Sync</h2>
-            <p className="ingestion-modal__desc">
-              Trigger a full database refresh and scan. This will scrape the latest data from FuseSport.
-            </p>
-            <form onSubmit={handleSyncSubmit}>
-              <input
-                type="password"
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="ingestion-modal__input"
-                autoFocus
-                required
-              />
-              {syncError && <div className="ingestion-modal__error">⚠️ {syncError}</div>}
-              {syncSuccess && <div className="ingestion-modal__success">✅ {syncSuccess}</div>}
-              <div className="ingestion-modal__actions">
-                <button 
-                  type="button" 
-                  className="btn btn--ghost" 
-                  onClick={() => {
-                    setShowModal(false)
-                    setPassword('')
-                    setSyncError('')
-                    setSyncSuccess('')
-                  }}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="btn btn--primary">
-                  Start Sync
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+
     </div>
   )
 }

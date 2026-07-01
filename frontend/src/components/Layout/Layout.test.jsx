@@ -49,17 +49,12 @@ describe('Layout component navigation structures', () => {
     const notifLink = screen.getAllByRole('link', { name: /notifications/i }).find(
       el => el.closest('.nav__desktop-links')
     )
-    const forceRefreshBtn = screen.getAllByRole('button', { name: /force refresh/i }).find(
-      el => el.closest('.nav__desktop-links')
-    )
-
     expect(homeLink).toHaveAttribute('href', '/')
     expect(clubsLink).toHaveAttribute('href', '/clubs')
     expect(compsLink).toHaveAttribute('href', '/competitions')
     expect(statsLink).toHaveAttribute('href', '/stats')
     expect(refZoneLink).toHaveAttribute('href', '/refzone')
     expect(notifLink).toHaveAttribute('href', '/notifications')
-    expect(forceRefreshBtn).toBeInTheDocument()
   })
 
   it('renders primary links in the mobile bottom tab bar', () => {
@@ -101,13 +96,8 @@ describe('Layout component navigation structures', () => {
     const notifLink = screen.getAllByRole('link', { name: /notifications/i }).find(
       el => el.closest('.nav__drawer')
     )
-    const forceRefreshBtn = screen.getAllByRole('button', { name: /force refresh/i }).find(
-      el => el.closest('.nav__drawer')
-    )
-
     expect(refZoneLink).toHaveAttribute('href', '/refzone')
     expect(notifLink).toHaveAttribute('href', '/notifications')
-    expect(forceRefreshBtn).toBeInTheDocument()
   })
 
   it('toggles mobile drawer open and closed', async () => {
@@ -131,25 +121,5 @@ describe('Layout component navigation structures', () => {
     expect(backdrop).not.toHaveClass('nav__drawer-backdrop--open')
   })
 
-  it('opens force refresh modal when clicking the button', async () => {
-    renderLayout()
-    
-    // Initially modal is closed
-    expect(screen.queryByText('Database Sync')).not.toBeInTheDocument()
-    
-    // Find force refresh button on desktop header and click it
-    const forceRefreshBtn = screen.getAllByRole('button', { name: /force refresh/i }).find(
-      el => el.closest('.nav__desktop-links')
-    )
-    await userEvent.click(forceRefreshBtn)
-    
-    // Verify modal is open
-    expect(screen.getByText('Database Sync')).toBeInTheDocument()
-    expect(screen.getByPlaceholderText('Enter password')).toBeInTheDocument()
-    
-    // Close the modal
-    const cancelBtn = screen.getByRole('button', { name: /cancel/i })
-    await userEvent.click(cancelBtn)
-    expect(screen.queryByText('Database Sync')).not.toBeInTheDocument()
-  })
+
 })

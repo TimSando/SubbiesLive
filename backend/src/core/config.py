@@ -22,9 +22,6 @@ class Settings(BaseSettings):
     app_name: str = "SubbiesStats API"
     app_version: str = "0.1.0"
 
-    # Ingestion Trigger
-    ingestion_password: str = "dbRefresh_"
-
     # Ingestion Schedule
     ingestion_interval_minutes: int = 15
 
@@ -32,9 +29,7 @@ class Settings(BaseSettings):
     cookie_secure: Optional[bool] = None
 
     # PWA Web Push
-    vapid_public_key: str = (
-        "BI3OQJIP5CTGATc4ZKjIqce2uNgOIrjlHRrSmZRx4u5HY3ZJU_-QSt8Yq90ub3geXpVoDbO8dQDDaQeFyHXjkuE"
-    )
+    vapid_public_key: str = "BI3OQJIP5CTGATc4ZKjIqce2uNgOIrjlHRrSmZRx4u5HY3ZJU_-QSt8Yq90ub3geXpVoDbO8dQDDaQeFyHXjkuE"
     vapid_private_key: str = "wiruot1guHaDvKd231NgPetRYI5x-jRuTKt-VFxLhKI"
     vapid_mailto: str = "mailto:admin@subbiesstats.calypsolab.xyz"
 

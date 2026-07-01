@@ -220,9 +220,7 @@ export const handlers = [
     ])
   }),
 
-  // Ingestion
-  http.get('/api/ingestion/status', () => HttpResponse.json({ running: false })),
-  http.post('/api/ingestion/trigger', () => HttpResponse.json({ status: 'started', message: 'Started' })),
+
 
   // Notifications VAPID
   http.get('/api/notifications/vapid-public-key', () => HttpResponse.json("test-vapid-key")),

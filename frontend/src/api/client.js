@@ -75,12 +75,7 @@ export const api = {
   getTeamFormStats: (teamId) => request(`/stats/team/${teamId}/form`),
 
 
-  // Ingestion
-  getIngestionStatus: () => request('/ingestion/status'),
-  triggerIngestion: (password) => request('/ingestion/trigger', {
-    method: 'POST',
-    body: JSON.stringify({ password })
-  }),
+
 
   // Notifications
   getVapidPublicKey: () => request('/notifications/vapid-public-key'),

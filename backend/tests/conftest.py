@@ -20,7 +20,6 @@ parts = raw_url.split("://", 1)
 os.environ["DATABASE_URL"] = f"postgresql+asyncpg://{parts[1]}"
 os.environ["DATABASE_URL_SYNC"] = f"postgresql://{parts[1]}"
 os.environ["ENVIRONMENT"] = "test"
-os.environ["INGESTION_PASSWORD"] = "testpass"
 
 # Import models to register with Base.metadata, then import DB & app configuration
 import src.core.models  # noqa: F401
