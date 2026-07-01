@@ -84,24 +84,39 @@ def dispatch_push_notifications(title: str, body: str, url: str = "/"):
         thread.start()
 
 
-def notify_game_update(session, game_id: int, update_type: str, detail_message: str):
+def notify_game_update(
+    session,
+    game_id: int,
+    update_type: str,
+    detail_message: str,
+    event_club_name: str = "",
+):
     """Notify users who subscribed to a game, its clubs, or its competition.
 
     Args:
         session: Synchronous DB session
         game_id: Internal game ID
-        update_type: 'outcome' or 'event'
-        detail_message: Body text for the push notification
+        update_type: Type of update (e.g. 'Try', 'Yellow Card', 'Full Time')
+        detail_message: Specific details (e.g. try scorer, card text)
+        event_club_name: Club responsible for the event
     """
-    # 1. Fetch game details: competition_id, home_club_id, away_club_id, team names, parent comp, division
-    game_query = text("""
+    # 1. Fetch game details including club names and scores
+    game_query = text(
+        """
         SELECT 
             g.id,
+            g.home_score,
+            g.away_score,
             r.competition_id,
+            c.name AS competition_name,
             ht.club_id AS home_club_id,
             at.club_id AS away_club_id,
             ht.name AS home_team_name,
             at.name AS away_team_name,
+            hc.name AS home_club_name,
+            hc.short_name AS home_club_short_name,
+            ac.name AS away_club_name,
+            ac.short_name AS away_club_short_name,
             m.parent_competition,
             m.division
         FROM games g
@@ -110,8 +125,11 @@ def notify_game_update(session, game_id: int, update_type: str, detail_message: 
         LEFT JOIN competition_mapping m ON c.competition_mapping_id = m.id
         JOIN teams ht ON g.home_team_id = ht.id
         JOIN teams at ON g.away_team_id = at.id
+        LEFT JOIN clubs hc ON ht.club_id = hc.id
+        LEFT JOIN clubs ac ON at.club_id = ac.id
         WHERE g.id = :gid
-    """)
+    """
+    )
     res = session.execute(game_query, {"gid": game_id})
     row = res.fetchone()
     if not row:
@@ -120,19 +138,15 @@ def notify_game_update(session, game_id: int, update_type: str, detail_message: 
         )
         return
 
-    (
-        _,
-        competition_id,
-        home_club_id,
-        away_club_id,
-        home_team_name,
-        away_team_name,
-        parent_competition,
-        division,
-    ) = row
+    home_score = row.home_score if row.home_score is not None else 0
+    away_score = row.away_score if row.away_score is not None else 0
+    home_name = row.home_club_short_name or row.home_club_name or row.home_team_name
+    away_name = row.away_club_short_name or row.away_club_name or row.away_team_name
+    competition_name = row.competition_name
 
     # 2. Query all unique subscriptions matching the topic rules
-    sub_query = text("""
+    sub_query = text(
+        """
         SELECT DISTINCT s.endpoint, s.p256dh, s.auth
         FROM pwa_subscriptions s
         JOIN pwa_subscription_topics t ON s.id = t.subscription_id
@@ -145,14 +159,17 @@ def notify_game_update(session, game_id: int, update_type: str, detail_message: 
             (:utype = 'outcome' AND t.notify_outcome = TRUE)
             OR (:utype = 'event' AND t.notify_events = TRUE)
         )
-    """)
+    """
+    )
+
+    db_utype = "outcome" if update_type.lower() in ("outcome", "full time") else "event"
 
     params = {
         "game_id": game_id,
-        "home_club_id": home_club_id,
-        "away_club_id": away_club_id,
-        "comp_id": competition_id,
-        "utype": update_type,
+        "home_club_id": row.home_club_id,
+        "away_club_id": row.away_club_id,
+        "comp_id": row.competition_id,
+        "utype": db_utype,
     }
 
     sub_res = session.execute(sub_query, params)
@@ -168,13 +185,22 @@ def notify_game_update(session, game_id: int, update_type: str, detail_message: 
         f"Dispatching game update notifications to {len(subscriptions)} devices..."
     )
 
-    title = f"🏉 Update: {home_team_name} vs {away_team_name}"
-    if update_type == "outcome":
-        title = f"🏉 Full Time: {home_team_name} vs {away_team_name}"
+    # 3. Build the Smartwatch-Optimized Title
+    title = f"{home_name} {home_score} - {away_score} {away_name}"
+
+    # 4. Build the Contextual Body
+    if event_club_name and detail_message:
+        body = f"{competition_name} • {event_club_name} {update_type} {detail_message}"
+    elif event_club_name:
+        body = f"{competition_name} • {event_club_name} {update_type}"
+    elif detail_message:
+        body = f"{competition_name} • {update_type} {detail_message}"
+    else:
+        body = f"{competition_name} • {update_type}"
 
     payload = {
         "title": title,
-        "body": detail_message,
+        "body": body,
         "url": f"/games/{game_id}",
         "tag": f"game-{game_id}",  # To collapse notifications for the same game
     }

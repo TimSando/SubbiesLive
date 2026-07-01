@@ -54,12 +54,7 @@ export default function Home() {
     () => localStorage.getItem('refzone_prompt_dismissed') === 'true'
   )
 
-  const [isSyncing, setIsSyncing] = useState(false)
-  const [showModal, setShowModal] = useState(false)
-  const [password, setPassword] = useState('')
-  const [syncError, setSyncError] = useState('')
-  const [syncSuccess, setSyncSuccess] = useState('')
-  const [isFadingOut, setIsFadingOut] = useState(false)
+
 
   // React to follow status updates from ClubDetail page
   useEffect(() => {
@@ -78,64 +73,7 @@ export default function Home() {
     return () => window.removeEventListener('followingUpdated', handleFollowUpdate)
   }, [activeTab])
 
-  // Poll database status
-  useEffect(() => {
-    let active = true
-    let intervalId
 
-    async function checkStatus() {
-      try {
-        const res = await api.getIngestionStatus()
-        if (active) {
-          setIsSyncing(res.running)
-          if (!res.running && intervalId) {
-            clearInterval(intervalId)
-            intervalId = null
-          }
-        }
-      } catch (err) {
-        console.error('Error checking ingestion status:', err)
-      }
-    }
-
-    checkStatus()
-
-    if (isSyncing) {
-      intervalId = setInterval(checkStatus, 5000)
-    }
-
-    return () => {
-      active = false
-      if (intervalId) clearInterval(intervalId)
-    }
-  }, [isSyncing])
-
-  const handleSyncSubmit = async (e) => {
-    e.preventDefault()
-    setSyncError('')
-    setSyncSuccess('')
-    try {
-      const res = await api.triggerIngestion(password)
-      if (res.status === 'started' || res.status === 'running') {
-        setSyncSuccess(res.message)
-        setIsSyncing(true)
-        // Trigger fade out after 1 second of success display, close modal after fade-out finishes
-        setTimeout(() => {
-          setIsFadingOut(true)
-          setTimeout(() => {
-            setShowModal(false)
-            setIsFadingOut(false)
-            setPassword('')
-            setSyncSuccess('')
-          }, 300) // matches CSS animation duration
-        }, 1000)
-      } else {
-        setSyncError(res.message || 'Unknown response')
-      }
-    } catch (err) {
-      setSyncError('Unauthorized or invalid password')
-    }
-  }
 
   // Data Fetching for Active Tab
   const { data: activeTabLiveGames, loading: loadingLive } = useApi(
@@ -345,75 +283,7 @@ export default function Home() {
         </section>
       </div>
 
-      {/* Floating Database Ingestion Trigger Button */}
-      <div className="ingestion-trigger-container">
-        <button 
-          onClick={() => {
-            if (!isSyncing) {
-              setShowModal(true)
-            }
-          }}
-          className={`ingestion-trigger-btn ${isSyncing ? 'ingestion-trigger-btn--syncing' : ''}`}
-          title={isSyncing ? "Database syncing is in progress..." : "Trigger Manual Ingestion"}
-          disabled={isSyncing}
-        >
-          <svg 
-            viewBox="0 0 24 24" 
-            width="20" 
-            height="20" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round"
-            className={isSyncing ? 'spin' : ''}
-          >
-            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
-          </svg>
-        </button>
-      </div>
 
-      {/* Ingestion Password Modal */}
-      {showModal && (
-        <div className={`ingestion-modal-overlay ${isFadingOut ? 'ingestion-modal-overlay--fade-out' : ''}`}>
-          <div className="ingestion-modal">
-            <h2 className="ingestion-modal__title">Database Sync</h2>
-            <p className="ingestion-modal__desc">
-              Trigger a full database refresh and scan. This will scrape the latest data from FuseSport.
-            </p>
-            <form onSubmit={handleSyncSubmit}>
-              <input
-                type="password"
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="ingestion-modal__input"
-                autoFocus
-                required
-              />
-              {syncError && <div className="ingestion-modal__error">⚠️ {syncError}</div>}
-              {syncSuccess && <div className="ingestion-modal__success">✅ {syncSuccess}</div>}
-              <div className="ingestion-modal__actions">
-                <button 
-                  type="button" 
-                  className="btn btn--ghost" 
-                  onClick={() => {
-                    setShowModal(false)
-                    setPassword('')
-                    setSyncError('')
-                    setSyncSuccess('')
-                  }}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="btn btn--primary">
-                  Start Sync
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

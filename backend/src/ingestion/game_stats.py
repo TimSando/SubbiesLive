@@ -109,22 +109,27 @@ def ingest_game_events(
             try:
                 from src.notifications.service import notify_game_update
 
-                msg = event_data.get("text")
-                if not msg:
-                    msg = f"Game Event: {event_data['event_type'].replace('_', ' ').title()}"
+                home_team = game_info.get("home_team", {})
+                away_team = game_info.get("away_team", {})
+                event_team = (
+                    home_team
+                    if sheet_team_ext_id == home_team.get("external_id")
+                    else away_team
+                )
+                event_club_name = event_team.get("club_name") or event_team.get(
+                    "name", ""
+                )
 
-                # Fetch current scores to append to the message body
-                score_row = session.execute(
-                    text("SELECT home_score, away_score FROM games WHERE id = :gid"),
-                    {"gid": game_id},
-                ).fetchone()
-                if score_row:
-                    hs, as_ = score_row
-                    hs_val = hs if hs is not None else 0
-                    as_val = as_ if as_ is not None else 0
-                    msg += f" (Score: {hs_val} - {as_val})"
+                event_type_str = event_data["event_type"].replace("_", " ").title()
+                detail_msg = event_data.get("text") or ""
 
-                notify_game_update(session, game_id, "event", msg)
+                notify_game_update(
+                    session=session,
+                    game_id=game_id,
+                    update_type=event_type_str,
+                    detail_message=detail_msg,
+                    event_club_name=event_club_name,
+                )
             except Exception as e:
                 logger.error(f"Failed to dispatch notification for game event: {e}")
 
@@ -210,7 +215,8 @@ def ingest_player_history(
 
         # Upsert the player_history record
         session.execute(
-            text("""
+            text(
+                """
                 INSERT INTO player_history (
                     player_id, game_id, team_id, position_id, player_number, points,
                     tries, conversions, penalty_goals, drop_goals,
@@ -242,7 +248,8 @@ def ingest_player_history(
                     coach_points_2 = EXCLUDED.coach_points_2,
                     coach_points_3 = EXCLUDED.coach_points_3,
                     card_text     = EXCLUDED.card_text
-            """),
+            """
+            ),
             {
                 "pid": player_id,
                 "gid": game_id,

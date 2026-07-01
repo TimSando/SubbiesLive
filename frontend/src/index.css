@@ -332,6 +332,12 @@ tbody tr:last-child td {
   min-height: 100vh;
 }
 
+@media (max-width: 768px) {
+  .page {
+    padding-bottom: calc(var(--space-16) + 64px + env(safe-area-inset-bottom));
+  }
+}
+
 .grid {
   display: grid;
   gap: var(--space-6);

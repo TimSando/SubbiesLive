@@ -50,11 +50,11 @@ self.addEventListener('notificationclick', (event) => {
       type: 'window',
       includeUncontrolled: true
     }).then((windowClients) => {
-      // Focus existing window or navigate it if open
+      // Send NAVIGATE message to existing window client and focus it
       for (let i = 0; i < windowClients.length; i++) {
         const client = windowClients[i]
         if (client.url.startsWith(self.location.origin) && 'focus' in client) {
-          client.navigate(urlToOpen)
+          client.postMessage({ type: 'NAVIGATE', url: urlToOpen })
           return client.focus()
         }
       }

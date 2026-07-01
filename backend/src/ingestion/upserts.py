@@ -93,8 +93,10 @@ def upsert_round(session, competition_id: int, external_id: int, name: str) -> i
 
     number = extract_round_number(name)
     result = session.execute(
-        text("""INSERT INTO rounds (competition_id, name, number, external_id) 
-                VALUES (:cid, :name, :number, :eid) RETURNING id"""),
+        text(
+            """INSERT INTO rounds (competition_id, name, number, external_id) 
+                VALUES (:cid, :name, :number, :eid) RETURNING id"""
+        ),
         {"cid": competition_id, "name": name, "number": number, "eid": external_id},
     )
     session.commit()
@@ -123,8 +125,10 @@ def upsert_team(
         )
         return None
     result = session.execute(
-        text("""INSERT INTO teams (club_id, competition_id, name, external_id) 
-                VALUES (:club_id, :comp_id, :name, :eid) RETURNING id"""),
+        text(
+            """INSERT INTO teams (club_id, competition_id, name, external_id) 
+                VALUES (:club_id, :comp_id, :name, :eid) RETURNING id"""
+        ),
         {
             "club_id": club_id,
             "comp_id": competition_id,
@@ -192,23 +196,20 @@ def upsert_game(
                     game_data["status"] == "in_progress"
                     and stored_status == "scheduled"
                 ):
-                    msg = f"Match started! Score: {hs_str} - {as_str}"
-                    notify_game_update(session, stored_id, "event", msg)
+                    notify_game_update(session, stored_id, "Kick Off", "")
 
                 # 2. Match completed (full time)
                 elif (
                     game_data["status"] == "completed" and stored_status != "completed"
                 ):
-                    msg = f"Full Time! Final Score: {hs_str} - {as_str}"
-                    notify_game_update(session, stored_id, "outcome", msg)
+                    notify_game_update(session, stored_id, "Full Time", "")
 
                 # 3. Simple live score update during play
                 elif game_data["status"] == "in_progress" and (
                     game_data["home_score"] != stored_hs
                     or game_data["away_score"] != stored_as
                 ):
-                    msg = f"Score update: {hs_str} - {as_str}"
-                    notify_game_update(session, stored_id, "event", msg)
+                    notify_game_update(session, stored_id, "Score Update", "")
 
             except Exception as e:
                 logger.error(f"Failed to dispatch game update notifications: {e}")
@@ -216,10 +217,12 @@ def upsert_game(
         return stored_id
 
     result = session.execute(
-        text("""INSERT INTO games (round_id, home_team_id, away_team_id, game_date, 
+        text(
+            """INSERT INTO games (round_id, home_team_id, away_team_id, game_date, 
                 location, home_score, away_score, status, external_id) 
                 VALUES (:rid, :htid, :atid, :gd, :loc, :hs, :as_, :status, :eid) 
-                RETURNING id"""),
+                RETURNING id"""
+        ),
         {
             "rid": round_id,
             "htid": home_team_id,
@@ -258,8 +261,10 @@ def upsert_player(session, player_data: dict) -> int | None:
             pass
 
     result = session.execute(
-        text("""INSERT INTO players (name, dob, image_url, thumbnail_url, external_id) 
-                VALUES (:name, :dob, :img, :thumb, :eid) RETURNING id"""),
+        text(
+            """INSERT INTO players (name, dob, image_url, thumbnail_url, external_id) 
+                VALUES (:name, :dob, :img, :thumb, :eid) RETURNING id"""
+        ),
         {
             "name": player_data["name"],
             "dob": dob,
