@@ -1167,7 +1167,7 @@ tbody tr:last-child td {
   color: inherit;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.04);
-  padding: 18px 24px; /* Generous padding: 18px vertically, 24px horizontally */
+  padding: 10px 16px; /* Reduced padding for compact layout */
   border-radius: var(--radius-xl);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -1182,29 +1182,29 @@ tbody tr:last-child td {
 .club-row__info {
   display: flex;
   align-items: center;
-  gap: 18px; /* Fixed space token fallback */
+  gap: 12px; /* Reduced gap */
   min-width: 0;
 }
 
 .club-row__logo {
-  width: 48px;
-  height: 48px;
+  width: 36px; /* Reduced logo size */
+  height: 36px;
   object-fit: contain;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: var(--space-1.5);
+  padding: var(--space-1);
   flex-shrink: 0;
 }
 .club-row__logo-placeholder {
-  width: 48px;
-  height: 48px;
+  width: 36px; /* Reduced logo size */
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-md);
   background: rgba(255, 255, 255, 0.03);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   border: 1px solid rgba(255, 255, 255, 0.05);
   flex-shrink: 0;
 }
@@ -1225,29 +1225,7 @@ tbody tr:last-child td {
   text-overflow: ellipsis;
 }
 
-.club-row__ground {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
-.club-row__ground-link {
-  color: var(--color-text-accent);
-  text-decoration: none;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-}
-.club-row__ground-link:hover {
-  text-decoration: underline;
-  color: var(--color-win);
-}
 
 .club-row__record {
   display: flex;
@@ -1289,13 +1267,12 @@ tbody tr:last-child td {
     align-items: stretch;
   }
   .club-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-4);
-    padding: 16px 20px;
+    flex-direction: row; /* Keep horizontal layout on mobile for compactness */
+    align-items: center;
+    gap: var(--space-3);
+    padding: 8px 12px;
   }
-  .club-row__record,
-  .club-row__actions {
+  .club-row__record {
     align-self: flex-end;
   }
 }

@@ -267,24 +267,7 @@ export default function Clubs() {
                         )}
                         <div className="club-row__meta">
                           <span className="club-row__name">{club.name}</span>
-                          {club.home_ground_name && (
-                            <span className="club-row__ground">
-                              📍{' '}
-                              {club.home_ground_map_url ? (
-                                <a
-                                  href={club.home_ground_map_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="club-row__ground-link"
-                                  onClick={(e) => e.stopPropagation()} // prevents triggering parent Link navigation
-                                >
-                                  {club.home_ground_name}
-                                </a>
-                              ) : (
-                                club.home_ground_name
-                              )}
-                            </span>
-                          )}
+                          {/* Home ground removed from list view for compact layout */}
                         </div>
                       </div>
 
