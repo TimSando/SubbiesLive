@@ -1345,19 +1345,24 @@ tbody tr:last-child td {
 
 @media (max-width: 768px) {
   .comp-row {
-    flex-direction: row; /* Keep horizontal layout on mobile for compactness */
-    align-items: center;
+    flex-direction: column; /* Stack info and actions vertically */
+    align-items: stretch;
     gap: var(--space-3);
-    padding: 8px 12px;
+    padding: 12px 16px;
+  }
+  .comp-row__info {
+    width: 100%;
   }
   .comp-row__actions {
-    width: auto;
-    justify-content: flex-end;
-    gap: 6px; /* Tighter button gap */
+    width: 100%;
+    justify-content: flex-start;
+    gap: 8px;
   }
   .comp-row__actions .btn {
-    padding: 6px 10px; /* Shorter padding on mobile */
-    font-size: var(--font-size-xs); /* Smaller font size on mobile */
+    padding: 8px 12px;
+    font-size: var(--font-size-sm);
+    flex: 1;
+    text-align: center;
   }
 }
 
