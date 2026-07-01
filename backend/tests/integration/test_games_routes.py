@@ -267,6 +267,8 @@ async def test_list_games_club_id_with_status_filter(client, db_session):
         status="completed",
         external_id=10008,
     )
+    from datetime import datetime, timedelta
+
     # Scheduled game
     await make_game(
         db_session,
@@ -274,6 +276,7 @@ async def test_list_games_club_id_with_status_filter(client, db_session):
         home_team_id=team_a.id,
         away_team_id=team_b.id,
         status="scheduled",
+        game_date=datetime.now() + timedelta(days=1),
         external_id=10009,
     )
 

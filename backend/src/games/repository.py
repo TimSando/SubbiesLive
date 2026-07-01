@@ -1,5 +1,6 @@
 """Game data access layer."""
 
+from datetime import datetime
 from sqlalchemy import select, func, desc, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
@@ -130,7 +131,13 @@ async def get_games(
             PlayerHistory.player_id == player_id
         )
 
-    stmt = stmt.order_by(desc(Game.game_date)).limit(limit).offset(offset)
+    if status == "scheduled":
+        stmt = stmt.where(Game.game_date >= datetime.now())
+        stmt = stmt.order_by(Game.game_date.asc())
+    else:
+        stmt = stmt.order_by(desc(Game.game_date))
+
+    stmt = stmt.limit(limit).offset(offset)
 
     result = await db.execute(stmt)
     return [_row_to_game_dict(row) for row in result.all()]

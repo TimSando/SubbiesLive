@@ -155,7 +155,7 @@ For HTTPS, place a reverse proxy (e.g., Nginx or Caddy) in front of port `8081`.
 - Fix competition home page to match the layout of the clubs page. Remove the # clubs, # of rounds details for each competition, update the ordering of the grades in each division
 
 - Enable API access to DB for queries/extracting data for analytics
-- Fix the remember me timing for the rugbyXplorer login
+- ~Fix the remember me timing for the rugbyXplorer login~
 - Update "shute shield" to "premiership"
 - Update the menu header to be more easily navigatable and clear
 - Update the page icon
