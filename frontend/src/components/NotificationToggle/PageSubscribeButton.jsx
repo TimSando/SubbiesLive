@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { api } from '../../api/client.js'
 import './PageSubscribeButton.css'
 
@@ -11,7 +12,17 @@ export default function PageSubscribeButton({ topicType, topicId, topicName }) {
   const [notifyOutcome, setNotifyOutcome] = useState(true)
   const [notifyEvents, setNotifyEvents] = useState(false)
   
+  const buttonRef = useRef(null)
   const popupRef = useRef(null)
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     const supported =
@@ -30,7 +41,9 @@ export default function PageSubscribeButton({ topicType, topicId, topicName }) {
   // Close popup when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
-      if (popupRef.current && !popupRef.current.contains(event.target)) {
+      const clickedButton = buttonRef.current && buttonRef.current.contains(event.target)
+      const clickedPopup = popupRef.current && popupRef.current.contains(event.target)
+      if (!clickedButton && !clickedPopup) {
         setShowPopup(false)
       }
     }
@@ -132,9 +145,55 @@ export default function PageSubscribeButton({ topicType, topicId, topicName }) {
 
   if (!isSupported) return null
 
+  const popupContent = (
+    <div className="page-subscribe-popup" ref={popupRef}>
+      <div className="page-subscribe-popup__title">
+        Alerts: {topicName}
+      </div>
+      
+      <label className="page-subscribe-popup__option">
+        <input 
+          type="checkbox" 
+          checked={notifyOutcome}
+          onChange={(e) => setNotifyOutcome(e.target.checked)}
+          className="page-subscribe-popup__checkbox"
+        />
+        Game Outcome (Final Score)
+      </label>
+
+      <label className="page-subscribe-popup__option">
+        <input 
+          type="checkbox" 
+          checked={notifyEvents}
+          onChange={(e) => setNotifyEvents(e.target.checked)}
+          className="page-subscribe-popup__checkbox"
+        />
+        Live Events (Tries, Cards, Kicks)
+      </label>
+
+      <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+        {isSubscribed && (
+          <button 
+            onClick={handleUnsubscribe}
+            className="btn btn--danger btn--sm page-subscribe-popup__btn"
+          >
+            Remove
+          </button>
+        )}
+        <button 
+          onClick={handleSaveSubscription}
+          className="btn btn--primary btn--sm page-subscribe-popup__btn"
+        >
+          {isSubscribed ? 'Update' : 'Subscribe'}
+        </button>
+      </div>
+    </div>
+  )
+
   return (
-    <div className="page-subscribe-container" ref={popupRef}>
+    <div className="page-subscribe-container">
       <button
+        ref={buttonRef}
         onClick={handleToggleClick}
         className={`page-subscribe-btn ${isSubscribed ? 'page-subscribe-btn--active' : ''}`}
         title={isSubscribed ? 'Manage match alerts' : 'Subscribe to match alerts'}
@@ -147,48 +206,7 @@ export default function PageSubscribeButton({ topicType, topicId, topicName }) {
       </button>
 
       {showPopup && (
-        <div className="page-subscribe-popup">
-          <div className="page-subscribe-popup__title">
-            Alerts: {topicName}
-          </div>
-          
-          <label className="page-subscribe-popup__option">
-            <input 
-              type="checkbox" 
-              checked={notifyOutcome}
-              onChange={(e) => setNotifyOutcome(e.target.checked)}
-              className="page-subscribe-popup__checkbox"
-            />
-            Game Outcome (Final Score)
-          </label>
-
-          <label className="page-subscribe-popup__option">
-            <input 
-              type="checkbox" 
-              checked={notifyEvents}
-              onChange={(e) => setNotifyEvents(e.target.checked)}
-              className="page-subscribe-popup__checkbox"
-            />
-            Live Events (Tries, Cards, Kicks)
-          </label>
-
-          <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-            {isSubscribed && (
-              <button 
-                onClick={handleUnsubscribe}
-                className="btn btn--danger btn--sm page-subscribe-popup__btn"
-              >
-                Remove
-              </button>
-            )}
-            <button 
-              onClick={handleSaveSubscription}
-              className="btn btn--primary btn--sm page-subscribe-popup__btn"
-            >
-              {isSubscribed ? 'Update' : 'Subscribe'}
-            </button>
-          </div>
-        </div>
+        isMobile ? createPortal(popupContent, document.body) : popupContent
       )}
     </div>
   )

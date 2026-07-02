@@ -145,35 +145,55 @@ def upsert_game(
 ) -> int:
     result = session.execute(
         text(
-            "SELECT id, home_score, away_score, status FROM games WHERE external_id = :eid"
+            "SELECT id, home_score, away_score, status, game_date, location, round_id FROM games WHERE external_id = :eid"
         ),
         {"eid": game_data["external_id"]},
     )
     row = result.fetchone()
 
     if row:
-        stored_id, stored_hs, stored_as, stored_status = row
-        # Check if anything changed: status, home_score, or away_score
+        (
+            stored_id,
+            stored_hs,
+            stored_as,
+            stored_status,
+            stored_gd,
+            stored_loc,
+            stored_rid,
+        ) = row
+        # Check if anything changed: status, home_score, away_score, game_date, location, or round_id
         if (
             game_data["status"] != stored_status
             or game_data["home_score"] != stored_hs
             or game_data["away_score"] != stored_as
+            or game_data["game_date"] != stored_gd
+            or game_data["location"] != stored_loc
+            or round_id != stored_rid
         ):
             session.execute(
                 text(
-                    """UPDATE games SET home_score = :hs, away_score = :as_, status = :status 
+                    """UPDATE games SET home_score = :hs, away_score = :as_, status = :status, 
+                        game_date = :gd, location = :loc, round_id = :rid 
                         WHERE id = :id"""
                 ),
                 {
                     "hs": game_data["home_score"],
                     "as_": game_data["away_score"],
                     "status": game_data["status"],
+                    "gd": game_data["game_date"],
+                    "loc": game_data["location"],
+                    "rid": round_id,
                     "id": stored_id,
                 },
             )
             session.commit()
             logger.info(
-                f"Updated game {game_data['external_id']} (status: {stored_status} -> {game_data['status']}, score: {stored_hs}-{stored_as} -> {game_data['home_score']}-{game_data['away_score']})"
+                f"Updated game {game_data['external_id']} ("
+                f"status: {stored_status} -> {game_data['status']}, "
+                f"score: {stored_hs}-{stored_as} -> {game_data['home_score']}-{game_data['away_score']}, "
+                f"date: {stored_gd} -> {game_data['game_date']}, "
+                f"location: {stored_loc} -> {game_data['location']}, "
+                f"round_id: {stored_rid} -> {round_id})"
             )
 
             # Dispatch target-filtered push notifications on update
