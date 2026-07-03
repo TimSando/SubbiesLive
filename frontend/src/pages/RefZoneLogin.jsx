@@ -74,7 +74,7 @@ export default function RefZoneLogin() {
 
     try {
       console.log('RefZone: Submitting 2FA code...');
-      const verifyData = await verify2FA(mfaCode, mfaToken);
+      const verifyData = await verify2FA(mfaCode, mfaToken, rememberMe);
 
       if (!verifyData || !verifyData.userId) {
         throw new Error('Invalid response from 2FA verification.');

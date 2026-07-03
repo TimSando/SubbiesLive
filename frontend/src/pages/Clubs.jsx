@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useApi } from '../hooks/useApi.js'
 import { api } from '../api/client.js'
 import PageSubscribeButton from '../components/NotificationToggle/PageSubscribeButton.jsx'
+import { formatDivisionName } from '../utils/format.js'
 
 export default function Clubs() {
   const { data: clubs, loading, error } = useApi(() => api.getClubs(), [])
@@ -90,7 +91,7 @@ export default function Clubs() {
   const grouped = {}
   for (const club of filteredClubs) {
     const parent = club.competition_mapping?.parent_competition || 'Other'
-    const div = club.competition_mapping?.division ? `Division ${club.competition_mapping.division}` : 'General / Other'
+    const div = club.competition_mapping?.division ? formatDivisionName(club.competition_mapping.division) : 'General / Other'
 
     if (!grouped[parent]) {
       grouped[parent] = {}
@@ -187,7 +188,7 @@ export default function Clubs() {
             >
               <option value="All">All Divisions</option>
               {activeDivisions.map(div => (
-                <option key={div} value={div}>Division {div}</option>
+                <option key={div} value={div}>{formatDivisionName(div)}</option>
               ))}
             </select>
 

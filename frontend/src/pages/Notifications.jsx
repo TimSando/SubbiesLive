@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, Fragment } from 'react'
 import { api } from '../api/client.js'
 import './Notifications.css'
+import { formatDivisionName } from '../utils/format.js'
 
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
@@ -374,7 +375,7 @@ export default function Notifications() {
                         {Object.entries(data.divisions).sort().map(([div, clubsList]) => (
                           <Fragment key={`${parent}-${div}`}>
                             <option disabled>
-                              &nbsp;&nbsp;Division {div}
+                              &nbsp;&nbsp;{formatDivisionName(div)}
                             </option>
                             {clubsList.map(club => (
                               <option key={club.id} value={club.id}>
@@ -419,7 +420,7 @@ export default function Notifications() {
                         {Object.entries(data.divisions).sort().map(([div, comps]) => (
                           <Fragment key={`${parent}-${div}`}>
                             <option disabled>
-                              &nbsp;&nbsp;Division {div}
+                              &nbsp;&nbsp;{formatDivisionName(div)}
                             </option>
                             {comps.map(c => (
                               <option key={c.id} value={c.id}>

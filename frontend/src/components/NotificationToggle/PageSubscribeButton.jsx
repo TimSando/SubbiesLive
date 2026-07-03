@@ -146,48 +146,51 @@ export default function PageSubscribeButton({ topicType, topicId, topicName }) {
   if (!isSupported) return null
 
   const popupContent = (
-    <div className="page-subscribe-popup" ref={popupRef}>
-      <div className="page-subscribe-popup__title">
-        Alerts: {topicName}
-      </div>
-      
-      <label className="page-subscribe-popup__option">
-        <input 
-          type="checkbox" 
-          checked={notifyOutcome}
-          onChange={(e) => setNotifyOutcome(e.target.checked)}
-          className="page-subscribe-popup__checkbox"
-        />
-        Game Outcome (Final Score)
-      </label>
+    <>
+      <div className="page-subscribe-backdrop" onClick={() => setShowPopup(false)} />
+      <div className="page-subscribe-popup" ref={popupRef}>
+        <div className="page-subscribe-popup__title">
+          Alerts: {topicName}
+        </div>
+        
+        <label className="page-subscribe-popup__option">
+          <input 
+            type="checkbox" 
+            checked={notifyOutcome}
+            onChange={(e) => setNotifyOutcome(e.target.checked)}
+            className="page-subscribe-popup__checkbox"
+          />
+          Game Outcome (Final Score)
+        </label>
 
-      <label className="page-subscribe-popup__option">
-        <input 
-          type="checkbox" 
-          checked={notifyEvents}
-          onChange={(e) => setNotifyEvents(e.target.checked)}
-          className="page-subscribe-popup__checkbox"
-        />
-        Live Events (Tries, Cards, Kicks)
-      </label>
+        <label className="page-subscribe-popup__option">
+          <input 
+            type="checkbox" 
+            checked={notifyEvents}
+            onChange={(e) => setNotifyEvents(e.target.checked)}
+            className="page-subscribe-popup__checkbox"
+          />
+          Live Events (Tries, Cards, Kicks)
+        </label>
 
-      <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-        {isSubscribed && (
+        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+          {isSubscribed && (
+            <button 
+              onClick={handleUnsubscribe}
+              className="btn btn--danger btn--sm page-subscribe-popup__btn"
+            >
+              Remove
+            </button>
+          )}
           <button 
-            onClick={handleUnsubscribe}
-            className="btn btn--danger btn--sm page-subscribe-popup__btn"
+            onClick={handleSaveSubscription}
+            className="btn btn--primary btn--sm page-subscribe-popup__btn"
           >
-            Remove
+            {isSubscribed ? 'Update' : 'Subscribe'}
           </button>
-        )}
-        <button 
-          onClick={handleSaveSubscription}
-          className="btn btn--primary btn--sm page-subscribe-popup__btn"
-        >
-          {isSubscribed ? 'Update' : 'Subscribe'}
-        </button>
+        </div>
       </div>
-    </div>
+    </>
   )
 
   return (

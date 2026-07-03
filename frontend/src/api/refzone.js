@@ -16,7 +16,7 @@ export async function loginToRX(email, password, rememberMe = false) {
   return res.json();
 }
 
-export async function verify2FA(mfaCode, mfaToken) {
+export async function verify2FA(mfaCode, mfaToken, rememberMe = false) {
   const url = `${API_BASE}/verify-2fa`;
   const res = await fetch(url, {
     method: 'POST',
@@ -24,7 +24,7 @@ export async function verify2FA(mfaCode, mfaToken) {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
-    body: JSON.stringify({ code: mfaCode, token: mfaToken }),
+    body: JSON.stringify({ code: mfaCode, token: mfaToken, remember_me: rememberMe }),
   });
   if (!res.ok) {
     throw new Error(`2FA failed: ${res.status}`);

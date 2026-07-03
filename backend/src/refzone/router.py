@@ -45,6 +45,7 @@ class LoginRequest(BaseModel):
 class Verify2FARequest(BaseModel):
     code: str
     token: str
+    remember_me: bool = False
 
 
 def decode_jwt_payload(token: str) -> dict:
@@ -244,9 +245,14 @@ async def verify_2fa(body: Verify2FARequest, response: Response):
         "Authorization": f"Basic {basic_val}",
     }
 
+    payload = {}
+    if body.remember_me:
+        payload["rememberMe"] = True
+        payload["expirationInMinutes"] = 43200
+
     async with httpx.AsyncClient() as client:
         try:
-            r = await client.post(url, headers=headers, json={}, timeout=10.0)
+            r = await client.post(url, headers=headers, json=payload, timeout=10.0)
             if r.status_code != 200:
                 logger.error(
                     f"RX MFA verify failed: status={r.status_code}, response={r.text}"

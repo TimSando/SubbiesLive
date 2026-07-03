@@ -4,6 +4,7 @@ import { useApi } from '../hooks/useApi'
 import StatsTable from '../components/Stats/StatsTable'
 import ToggleSwitch from '../components/Stats/ToggleSwitch'
 import { Link } from 'react-router-dom'
+import { formatDivisionName } from '../utils/format.js'
 
 export default function Stats() {
   const [hasLiveGames, setHasLiveGames] = useState(false)
@@ -281,7 +282,7 @@ export default function Stats() {
                   {Object.entries(data.divisions).sort().map(([div, comps]) => (
                     <Fragment key={`${parent}-${div}`}>
                       <option value={`division:${div}`}>
-                        &nbsp;&nbsp;Division {div} (All)
+                        &nbsp;&nbsp;{formatDivisionName(div)} (All)
                       </option>
                       {comps.map(c => (
                         <option key={c.id} value={`comp:${c.id}`}>

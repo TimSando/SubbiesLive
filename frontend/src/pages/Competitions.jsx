@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useApi } from '../hooks/useApi.js'
 import { api } from '../api/client.js'
 import PageSubscribeButton from '../components/NotificationToggle/PageSubscribeButton.jsx'
+import { formatDivisionName } from '../utils/format.js'
 
 export default function Competitions() {
   const { data: competitions, loading, error } = useApi(() => api.getCompetitions(), [])
@@ -11,7 +12,6 @@ export default function Competitions() {
   const [searchQuery, setSearchQuery] = useState(() => sessionStorage.getItem('competitions_searchQuery') || '')
   const [parentComp, setParentComp] = useState(() => sessionStorage.getItem('competitions_parentComp') || 'All')
   const [division, setDivision] = useState(() => sessionStorage.getItem('competitions_division') || 'All')
-  const [onlyWomens, setOnlyWomens] = useState(() => sessionStorage.getItem('competitions_onlyWomens') === 'true')
 
   useEffect(() => {
     sessionStorage.setItem('competitions_searchQuery', searchQuery)
@@ -24,10 +24,6 @@ export default function Competitions() {
   useEffect(() => {
     sessionStorage.setItem('competitions_division', division)
   }, [division])
-
-  useEffect(() => {
-    sessionStorage.setItem('competitions_onlyWomens', onlyWomens ? 'true' : 'false')
-  }, [onlyWomens])
 
   // Dynamically extract divisions based on selected competition
   const activeDivisions = Array.from(new Set(
@@ -71,13 +67,7 @@ export default function Competitions() {
     // 3. Division filter
     const matchesDivision = division === 'All' || comp.division === division
 
-    // 4. Women's competition filter
-    const name = comp.name?.toLowerCase() || ''
-    const grade = comp.grade?.toLowerCase() || ''
-    const isWomens = name.includes('women') || name.includes('womens') || name.includes('lass') || grade.includes('women') || grade.includes('womens')
-    const matchesWomens = !onlyWomens || isWomens
-
-    return matchesSearch && matchesParent && matchesDivision && matchesWomens
+    return matchesSearch && matchesParent && matchesDivision
   })
 
   // Build grouped structures
@@ -172,19 +162,9 @@ export default function Competitions() {
             >
               <option value="All">All Divisions</option>
               {activeDivisions.map(div => (
-                <option key={div} value={div}>Division {div}</option>
+                <option key={div} value={div}>{formatDivisionName(div)}</option>
               ))}
             </select>
-
-            <label className="clubs-checkbox-filter">
-              <input
-                type="checkbox"
-                checked={onlyWomens}
-                onChange={(e) => setOnlyWomens(e.target.checked)}
-              />
-              <span className="checkbox-custom"></span>
-              <span className="checkbox-label">Women's Competition</span>
-            </label>
           </div>
         </div>
 
@@ -230,7 +210,7 @@ export default function Competitions() {
                 {/* Division sub-groupings */}
                 {sortDivs(grouped[parent]).map(divStr => {
                   const comps = grouped[parent][divStr]
-                  const cleanDiv = divStr === 'General' ? 'General' : `Division ${divStr}`
+                  const cleanDiv = divStr === 'General' ? 'General' : formatDivisionName(divStr)
 
                   return (
                     <div key={divStr} className="division-block" style={{ marginBottom: 'var(--space-8)' }}>
