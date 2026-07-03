@@ -5,13 +5,16 @@ from pydantic import BaseModel
 class RoundBrief(BaseModel):
     """Brief round info for competition listings."""
 
-    id: int
+    id: str
+    round_id: int
     name: str
     number: int | None = None
     external_id: int
     game_count: int = 0
     completed_game_count: int = 0
     latest_game_date: datetime | None = None
+    is_rescheduled_empty: bool = False
+    date_filter: str | None = None
 
     class Config:
         from_attributes = True

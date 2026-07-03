@@ -66,7 +66,12 @@ function StandingsTable({ standings }) {
 
 function GamesForRound({ competitionId, round }) {
   const { data: games, loading } = useApi(
-    () => api.getGames({ competition_id: competitionId, round_id: round.id, limit: 20 }),
+    () => api.getGames({
+      competition_id: competitionId,
+      round_id: round.round_id,
+      game_date: round.date_filter || undefined,
+      limit: 20
+    }),
     [round.id]
   )
 
@@ -204,7 +209,7 @@ export default function CompetitionDetail() {
   }
 
   const now = new Date()
-  const allRounds = competition.rounds?.filter(r => r.game_count > 0) || []
+  const allRounds = competition.rounds?.filter(r => r.game_count > 0 || r.is_rescheduled_empty) || []
   const completedRounds = allRounds.filter(r => r.completed_game_count > 0)
 
   // Among those, find the one whose latest_game_date is closest to (but not after) today
@@ -287,17 +292,22 @@ export default function CompetitionDetail() {
             <div className="round-selector">
               {allRounds.map(round => {
                 const isPast = round.latest_game_date && new Date(round.latest_game_date) < now
-                const isCompleted = round.completed_game_count === round.game_count
+                const isCompleted = round.completed_game_count === round.game_count && round.game_count > 0
                 const isRoundFinished = isPast || isCompleted
+
+                let btnClass = 'round-selector__btn'
+                if (currentRound?.id === round.id) {
+                  btnClass += ' round-selector__btn--active'
+                } else if (round.is_rescheduled_empty) {
+                  btnClass += ' round-selector__btn--empty'
+                } else if (isRoundFinished) {
+                  btnClass += ' round-selector__btn--completed'
+                }
 
                 return (
                   <button
                     key={round.id}
-                    className={`round-selector__btn ${
-                      currentRound?.id === round.id ? 'round-selector__btn--active' : ''
-                    } ${
-                      isRoundFinished && currentRound?.id !== round.id ? 'round-selector__btn--completed' : ''
-                    }`}
+                    className={btnClass}
                     onClick={() => setSelectedRound(round)}
                   >
                     {round.name}
@@ -309,7 +319,17 @@ export default function CompetitionDetail() {
             {currentRound && (
               <div style={{ marginTop: 'var(--space-6)' }}>
                 <h3 style={{ marginBottom: 'var(--space-4)' }}>{currentRound.name}</h3>
-                <GamesForRound competitionId={id} round={currentRound} />
+                {currentRound.is_rescheduled_empty ? (
+                  <div className="card" style={{ padding: 'var(--space-8)', textAlign: 'center', background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.03)', borderRadius: 'var(--radius-lg)' }}>
+                    <div style={{ fontSize: '2rem', marginBottom: 'var(--space-2)' }}>🌧️</div>
+                    <h4 style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)' }}>Rescheduled</h4>
+                    <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)', margin: 0 }}>
+                      All games in this round were rescheduled to a wet weather weekend.
+                    </p>
+                  </div>
+                ) : (
+                  <GamesForRound competitionId={id} round={currentRound} />
+                )}
               </div>
             )}
           </section>

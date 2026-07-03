@@ -1,5 +1,6 @@
-import { useState, useEffect, useMemo, Fragment } from 'react'
+import { useState, useEffect, useMemo, Fragment, useRef } from 'react'
 import { api } from '../api/client.js'
+import { Link } from 'react-router-dom'
 import './Notifications.css'
 import { formatDivisionName } from '../utils/format.js'
 
@@ -30,6 +31,28 @@ export default function Notifications() {
   const [selectedClubId, setSelectedClubId] = useState('')
   const [selectedCompId, setSelectedCompId] = useState('')
   const [actionLoading, setActionLoading] = useState(false)
+  const [clubSearch, setClubSearch] = useState('')
+  const [compSearch, setCompSearch] = useState('')
+
+  const [clubDropdownOpen, setClubDropdownOpen] = useState(false)
+  const [compDropdownOpen, setCompDropdownOpen] = useState(false)
+
+  const clubSearchRef = useRef(null)
+  const compSearchRef = useRef(null)
+
+  // Click outside to close dropdowns
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (clubSearchRef.current && !clubSearchRef.current.contains(event.target)) {
+        setClubDropdownOpen(false)
+      }
+      if (compSearchRef.current && !compSearchRef.current.contains(event.target)) {
+        setCompDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   // Filter and group clubs visually by parent competition and division
   const filteredClubs = useMemo(() => {
@@ -37,21 +60,23 @@ export default function Notifications() {
   }, [clubs, mySubscriptions])
 
   const groupedClubs = useMemo(() => {
-    return filteredClubs.reduce((acc, club) => {
-      const mapping = club.competition_mapping
-      const parent = mapping?.parent_competition || 'Other'
-      if (!acc[parent]) acc[parent] = { clubs: [], divisions: {} }
-      
-      const division = mapping?.division
-      if (division) {
-        if (!acc[parent].divisions[division]) acc[parent].divisions[division] = []
-        acc[parent].divisions[division].push(club)
-      } else {
-        acc[parent].clubs.push(club)
-      }
-      return acc
-    }, {})
-  }, [filteredClubs])
+    return filteredClubs
+      .filter(club => club.name.toLowerCase().includes(clubSearch.toLowerCase()))
+      .reduce((acc, club) => {
+        const mapping = club.competition_mapping
+        const parent = mapping?.parent_competition || 'Other'
+        if (!acc[parent]) acc[parent] = { clubs: [], divisions: {} }
+        
+        const division = mapping?.division
+        if (division) {
+          if (!acc[parent].divisions[division]) acc[parent].divisions[division] = []
+          acc[parent].divisions[division].push(club)
+        } else {
+          acc[parent].clubs.push(club)
+        }
+        return acc
+      }, {})
+  }, [filteredClubs, clubSearch])
 
   // Filter and group competitions visually by parent competition and division
   const filteredComps = useMemo(() => {
@@ -59,19 +84,21 @@ export default function Notifications() {
   }, [competitions, mySubscriptions])
 
   const groupedComps = useMemo(() => {
-    return filteredComps.reduce((acc, c) => {
-      const parent = c.parent_competition || 'Other'
-      if (!acc[parent]) acc[parent] = { competitions: [], divisions: {} }
-      
-      if (c.division) {
-        if (!acc[parent].divisions[c.division]) acc[parent].divisions[c.division] = []
-        acc[parent].divisions[c.division].push(c)
-      } else {
-        acc[parent].competitions.push(c)
-      }
-      return acc
-    }, {})
-  }, [filteredComps])
+    return filteredComps
+      .filter(comp => comp.name.toLowerCase().includes(compSearch.toLowerCase()))
+      .reduce((acc, c) => {
+        const parent = c.parent_competition || 'Other'
+        if (!acc[parent]) acc[parent] = { competitions: [], divisions: {} }
+        
+        if (c.division) {
+          if (!acc[parent].divisions[c.division]) acc[parent].divisions[c.division] = []
+          acc[parent].divisions[c.division].push(c)
+        } else {
+          acc[parent].competitions.push(c)
+        }
+        return acc
+      }, {})
+  }, [filteredComps, compSearch])
 
   const subClubs = useMemo(() => mySubscriptions.filter(sub => sub.topic_type === 'club'), [mySubscriptions])
   const subComps = useMemo(() => mySubscriptions.filter(sub => sub.topic_type === 'competition'), [mySubscriptions])
@@ -190,8 +217,16 @@ export default function Notifications() {
       await loadMySubscriptions(subscription.endpoint)
       
       // Reset inputs
-      if (type === 'club') setSelectedClubId('')
-      if (type === 'competition') setSelectedCompId('')
+      if (type === 'club') {
+        setSelectedClubId('')
+        setClubSearch('')
+        setClubDropdownOpen(false)
+      }
+      if (type === 'competition') {
+        setSelectedCompId('')
+        setCompSearch('')
+        setCompDropdownOpen(false)
+      }
     } catch (err) {
       console.error('Error subscribing to topic:', err)
       alert('Failed to add subscription.')
@@ -351,99 +386,154 @@ export default function Notifications() {
             <section className="notifications-add-section">
               <h2 className="notifications-add-section__title">Add Alerts</h2>
               <div className="notifications-add-grid">
-                {/* Clubs Dropdown */}
-                <div className="notifications-add-form">
-                  <label className="notifications-add-label" htmlFor="club-sub-select">Follow a Club</label>
-                  <select 
-                    id="club-sub-select"
-                    value={selectedClubId} 
-                    onChange={(e) => {
-                      setSelectedClubId(e.target.value)
-                      handleSubscribeTopic('club', e.target.value)
-                    }}
-                    disabled={actionLoading}
-                    className="notifications-select"
-                  >
-                    <option value="">-- Choose Club --</option>
-                    {Object.entries(groupedClubs).map(([parent, data]) => (
-                      <Fragment key={parent}>
-                        <option disabled style={{ fontWeight: 'bold', background: 'rgba(255,255,255,0.05)' }}>
-                          {parent}
-                        </option>
-                        
-                        {/* Divisions */}
-                        {Object.entries(data.divisions).sort().map(([div, clubsList]) => (
-                          <Fragment key={`${parent}-${div}`}>
-                            <option disabled>
-                              &nbsp;&nbsp;{formatDivisionName(div)}
-                            </option>
-                            {clubsList.map(club => (
-                              <option key={club.id} value={club.id}>
-                                &nbsp;&nbsp;&nbsp;&nbsp;{club.name}
-                              </option>
+                {/* Clubs Combobox */}
+                <div className="notifications-add-form" ref={clubSearchRef}>
+                  <label className="notifications-add-label" htmlFor="club-search-input">Follow a Club</label>
+                  <div className="search-select-input-wrapper">
+                    <input
+                      id="club-search-input"
+                      type="text"
+                      placeholder="Choose a Club..."
+                      value={clubSearch}
+                      onChange={(e) => {
+                        setClubSearch(e.target.value)
+                        setClubDropdownOpen(true)
+                      }}
+                      onFocus={() => setClubDropdownOpen(true)}
+                      className="notifications-search-input"
+                      disabled={actionLoading}
+                      autoComplete="off"
+                    />
+                    <span className="search-select-arrow" onClick={() => setClubDropdownOpen(!clubDropdownOpen)}>▼</span>
+                  </div>
+                  {clubDropdownOpen && (
+                    <div className="search-select-dropdown">
+                      {Object.keys(groupedClubs).length === 0 ? (
+                        <div className="search-select-option search-select-option--disabled">No matching clubs found</div>
+                      ) : (
+                        Object.entries(groupedClubs).map(([parent, data]) => (
+                          <Fragment key={parent}>
+                            <div className="search-select-group-header">{parent}</div>
+                            
+                            {/* Divisions */}
+                            {Object.entries(data.divisions).sort().map(([div, clubsList]) => (
+                              <Fragment key={`${parent}-${div}`}>
+                                <div className="search-select-subgroup-header">{formatDivisionName(div)}</div>
+                                {clubsList.map(club => (
+                                  <div
+                                    key={club.id}
+                                    className="search-select-option"
+                                    onClick={() => handleSubscribeTopic('club', club.id)}
+                                  >
+                                    {club.name}
+                                  </div>
+                                ))}
+                              </Fragment>
+                            ))}
+
+                            {/* Clubs without division */}
+                            {data.clubs.map(club => (
+                              <div
+                                key={club.id}
+                                className="search-select-option"
+                                onClick={() => handleSubscribeTopic('club', club.id)}
+                              >
+                                {club.name}
+                              </div>
                             ))}
                           </Fragment>
-                        ))}
-
-                        {/* Clubs without division */}
-                        {data.clubs.map(club => (
-                          <option key={club.id} value={club.id}>
-                            &nbsp;&nbsp;{club.name}
-                          </option>
-                        ))}
-                      </Fragment>
-                    ))}
-                  </select>
+                        ))
+                      )}
+                    </div>
+                  )}
                 </div>
 
-                {/* Competitions Dropdown */}
-                <div className="notifications-add-form">
-                  <label className="notifications-add-label" htmlFor="comp-sub-select">Follow a Division</label>
-                  <select 
-                    id="comp-sub-select"
-                    value={selectedCompId} 
-                    onChange={(e) => {
-                      setSelectedCompId(e.target.value)
-                      handleSubscribeTopic('competition', e.target.value)
-                    }}
-                    disabled={actionLoading}
-                    className="notifications-select"
-                  >
-                    <option value="">-- Choose Division --</option>
-                    {Object.entries(groupedComps).map(([parent, data]) => (
-                      <Fragment key={parent}>
-                        <option disabled style={{ fontWeight: 'bold', background: 'rgba(255,255,255,0.05)' }}>
-                          {parent}
-                        </option>
-                        
-                        {/* Divisions */}
-                        {Object.entries(data.divisions).sort().map(([div, comps]) => (
-                          <Fragment key={`${parent}-${div}`}>
-                            <option disabled>
-                              &nbsp;&nbsp;{formatDivisionName(div)}
-                            </option>
-                            {comps.map(c => (
-                              <option key={c.id} value={c.id}>
-                                &nbsp;&nbsp;&nbsp;&nbsp;{c.name}
-                              </option>
+                {/* Competitions Combobox */}
+                <div className="notifications-add-form" ref={compSearchRef}>
+                  <label className="notifications-add-label" htmlFor="comp-search-input">Follow a Division</label>
+                  <div className="search-select-input-wrapper">
+                    <input
+                      id="comp-search-input"
+                      type="text"
+                      placeholder="Choose a Division..."
+                      value={compSearch}
+                      onChange={(e) => {
+                        setCompSearch(e.target.value)
+                        setCompDropdownOpen(true)
+                      }}
+                      onFocus={() => setCompDropdownOpen(true)}
+                      className="notifications-search-input"
+                      disabled={actionLoading}
+                      autoComplete="off"
+                    />
+                    <span className="search-select-arrow" onClick={() => setCompDropdownOpen(!compDropdownOpen)}>▼</span>
+                  </div>
+                  {compDropdownOpen && (
+                    <div className="search-select-dropdown">
+                      {Object.keys(groupedComps).length === 0 ? (
+                        <div className="search-select-option search-select-option--disabled">No matching divisions found</div>
+                      ) : (
+                        Object.entries(groupedComps).map(([parent, data]) => (
+                          <Fragment key={parent}>
+                            <div className="search-select-group-header">{parent}</div>
+                            
+                            {/* Divisions */}
+                            {Object.entries(data.divisions).sort().map(([div, comps]) => (
+                              <Fragment key={`${parent}-${div}`}>
+                                <div className="search-select-subgroup-header">{formatDivisionName(div)}</div>
+                                {comps.map(c => (
+                                  <div
+                                    key={c.id}
+                                    className="search-select-option"
+                                    onClick={() => handleSubscribeTopic('competition', c.id)}
+                                  >
+                                    {c.name}
+                                  </div>
+                                ))}
+                              </Fragment>
+                            ))}
+
+                            {/* Competitions without division */}
+                            {data.competitions.map(c => (
+                              <div
+                                key={c.id}
+                                className="search-select-option"
+                                onClick={() => handleSubscribeTopic('competition', c.id)}
+                              >
+                                {c.name}
+                              </div>
                             ))}
                           </Fragment>
-                        ))}
-
-                        {/* Competitions without division */}
-                        {data.competitions.map(c => (
-                          <option key={c.id} value={c.id}>
-                            &nbsp;&nbsp;{c.name}
-                          </option>
-                        ))}
-                      </Fragment>
-                    ))}
-                  </select>
+                        ))
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
-              <p className="notifications-tip" style={{ marginTop: 'var(--space-4)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)', opacity: 0.8 }}>
-                💡 <strong>Tip:</strong> You can also follow specific matches by selecting the notification bell icon (🔔) on the Game details page.
-              </p>
+          
+          <div style={{ 
+            marginTop: 'var(--space-4)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 'var(--space-4)'
+          }}>
+            <p className="notifications-tip" style={{ 
+              fontSize: 'var(--font-size-sm)', 
+              color: 'var(--color-text-secondary)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 'var(--space-2)', 
+              opacity: 0.8,
+              margin: 0
+            }}>
+              💡 <strong>Tip:</strong> You can also follow specific matches by selecting the notification bell icon (🔔) on the Game details page.
+            </p>
+            <Link to="/competitions" className="btn btn--ghost" style={{ border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '8px', padding: '8px 16px', fontWeight: 600 }}>
+              View Competitions
+            </Link>
+          </div>
             </section>
 
             {/* 2. Active Subscriptions List */}

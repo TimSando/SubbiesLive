@@ -97,6 +97,7 @@ async def get_games(
     player_id: int | None = None,
     limit: int = 50,
     offset: int = 0,
+    game_date: str | None = None,
 ) -> list[dict]:
     """Fetch games with optional filters."""
     stmt = _build_game_base_query()
@@ -130,6 +131,8 @@ async def get_games(
         stmt = stmt.join(PlayerHistory, PlayerHistory.game_id == Game.id).where(
             PlayerHistory.player_id == player_id
         )
+    if game_date:
+        stmt = stmt.where(func.to_char(Game.game_date, "YYYY-MM-DD") == game_date)
 
     if status == "scheduled":
         stmt = stmt.where(Game.game_date >= datetime.now())

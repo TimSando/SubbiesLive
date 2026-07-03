@@ -14,6 +14,7 @@ async def list_games(
     player_id: int | None = None,
     limit: int = 50,
     offset: int = 0,
+    game_date: str | None = None,
 ) -> list[dict]:
     """Get games with optional filters."""
     return await repository.get_games(
@@ -26,6 +27,7 @@ async def list_games(
         player_id=player_id,
         limit=limit,
         offset=offset,
+        game_date=game_date,
     )
 
 

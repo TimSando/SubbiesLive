@@ -598,6 +598,29 @@ tbody tr:last-child td {
   border-color: var(--color-border-hover);
   color: var(--color-text-primary);
 }
+.round-selector__btn--empty {
+  color: var(--color-text-muted);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed var(--color-border);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.6;
+}
+.round-selector__btn--empty::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -10%;
+  width: 120%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
+  transform: rotate(-15deg);
+}
+.round-selector__btn--empty:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--color-text-secondary);
+}
 
 /* --- Fixture row --- */
 .fixture-row {
