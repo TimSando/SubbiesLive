@@ -4,7 +4,7 @@ import './WalkthroughModal.css';
 const WALKTHROUGH_STEPS = [
   {
     title: 'Your Personalised Dashboard',
-    desc: 'Welcome to SubbiesStats! The home page gives you a snapshot of live, upcoming and recent games',
+    desc: 'Welcome to Subbies Live! The home page gives you a snapshot of live, upcoming and recent games',
     image: '/assets/walkthrough/step1-dashboard.png'
   },
   {

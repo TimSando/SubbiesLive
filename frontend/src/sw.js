@@ -9,7 +9,7 @@ self.addEventListener('push', (event) => {
 
   try {
     const data = event.data.json()
-    const title = data.title || 'SubbiesStats Update'
+    const title = data.title || 'Subbies Live Update'
     const options = {
       body: data.body || '',
       icon: '/pwa-192x192.png',
@@ -34,7 +34,7 @@ self.addEventListener('push', (event) => {
       }
     }
     event.waitUntil(
-      self.registration.showNotification('SubbiesStats Update', options)
+      self.registration.showNotification('Subbies Live Update', options)
     )
   }
 })

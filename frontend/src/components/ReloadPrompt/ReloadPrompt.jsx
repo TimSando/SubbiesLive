@@ -24,7 +24,7 @@ export default function ReloadPrompt() {
         <span className="pwa-toast__icon">✨</span>
         <div>
           <h4 className="pwa-toast__title">Update Available</h4>
-          <p className="pwa-toast__description">A new version of SubbiesStats is ready.</p>
+          <p className="pwa-toast__description">A new version of Subbies Live is ready.</p>
         </div>
       </div>
       <div className="pwa-toast__actions">

@@ -1,4 +1,4 @@
-"""SubbiesStats API — FastAPI application entrypoint."""
+"""Subbies Live API — FastAPI application entrypoint."""
 
 import logging
 from contextlib import asynccontextmanager

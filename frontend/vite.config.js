@@ -17,8 +17,8 @@ export default defineConfig({
       },
       includeAssets: ['favicon.ico', 'pwa-192x192.png', 'pwa-512x512.png'],
       manifest: {
-        name: 'SubbiesStats',
-        short_name: 'SubbiesStats',
+        name: 'Subbies Live',
+        short_name: 'Subbies Live',
         description: 'Sydney Suburban Rugby Union live scores, standings, and stats',
         theme_color: '#0a0f1a',
         background_color: '#0a0f1a',

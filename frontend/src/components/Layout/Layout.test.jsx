@@ -21,7 +21,7 @@ describe('Layout component navigation structures', () => {
 
   it('renders brand logo and title linking to home', () => {
     renderLayout()
-    const brandLink = screen.getByRole('link', { name: /🏉 SubbiesStats/i })
+    const brandLink = screen.getByRole('link', { name: /Subbies Live/i })
     expect(brandLink).toBeInTheDocument()
     expect(brandLink).toHaveAttribute('href', '/')
   })

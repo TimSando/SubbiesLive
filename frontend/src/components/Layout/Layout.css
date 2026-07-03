@@ -33,8 +33,11 @@
   color: var(--color-text-primary);
 }
 
-.nav__brand-icon {
-  font-size: var(--font-size-2xl);
+.nav__brand-logo {
+  height: 32px;
+  width: 32px;
+  object-fit: contain;
+  border-radius: var(--radius-md);
 }
 
 /* --- Burger Button --- */

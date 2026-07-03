@@ -103,8 +103,8 @@ export default function Layout() {
 
           {/* Brand Logo and Title */}
           <Link to="/" className="nav__brand" onClick={closeMenu}>
-            <span className="nav__brand-icon">🏉</span>
-            <span className="nav__brand-text">SubbiesStats</span>
+            <img src="/pwa-192x192.png" alt="Subbies Live Logo" className="nav__brand-logo" />
+            <span className="nav__brand-text">Subbies Live</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -185,7 +185,7 @@ export default function Layout() {
       <footer className="footer" id="main-footer">
         <div className="container footer__inner">
           <p className="footer__text">
-            SubbiesStats — Sydney Suburban Rugby Union Statistics
+            Subbies Live — Sydney Suburban Rugby Union Statistics
           </p>
           <p className="footer__text footer__text--muted">
             Data sourced from FuseSport. Not affiliated with any rugby union body.
