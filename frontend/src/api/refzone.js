@@ -83,10 +83,9 @@ export async function fetchWithRefresh(url, options = {}, authContext = null) {
       // Retry original request
       res = await fetch(url, fetchOptions);
     } catch (err) {
-      console.error('RefZone: Silent token refresh failed, logging out:', err);
-      if (authContext && typeof authContext.clearAuth === 'function') {
-        authContext.clearAuth();
-      }
+      console.error('RefZone: Silent token refresh failed:', err);
+      // Do NOT clear auth here — a failed refresh doesn't mean the session is dead.
+      // The 30-day cookies are still valid; just re-throw so the caller can show an error.
       throw err;
     }
   }

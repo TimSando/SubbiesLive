@@ -91,16 +91,64 @@ export default function Home() {
 
   // RefZone context and next appointment
   const auth = useRefZone()
-  const [nextAppointment, setNextAppointment] = useState(null)
+  const [weekendAppointments, setWeekendAppointments] = useState([])
 
   useEffect(() => {
     if (auth.userId) {
       fetchAppointments(auth)
         .then(appointments => {
-          const upcoming = (appointments || [])
-            .filter(app => app.match?.moment > Date.now())
-            .sort((a, b) => (a.match?.moment || 0) - (b.match?.moment || 0))
-          setNextAppointment(upcoming[0] || null)
+          const now = Date.now()
+          
+          // Get current date string in Sydney timezone (YYYY-MM-DD)
+          const sydneyNowStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Australia/Sydney' })
+          const [sYear, sMonth, sDay] = sydneyNowStr.split('-').map(Number)
+          
+          // Create Date object representing Sydney's local midnight
+          const sydneyDate = new Date(sYear, sMonth - 1, sDay)
+          const dayOfWeek = sydneyDate.getDay() // 0 = Sun, 1 = Mon, ..., 6 = Sat
+          
+          let satDiff = 0;
+          let sunDiff = 0;
+          
+          if (dayOfWeek === 6) { // Saturday
+            satDiff = 0;
+            sunDiff = 1;
+          } else if (dayOfWeek === 0) { // Sunday
+            satDiff = -1;
+            sunDiff = 0;
+          } else { // Mon-Fri
+            satDiff = 6 - dayOfWeek;
+            sunDiff = 7 - dayOfWeek;
+          }
+          
+          const satDate = new Date(sydneyDate)
+          satDate.setDate(sydneyDate.getDate() + satDiff)
+          const satStr = satDate.toLocaleDateString('en-CA')
+          
+          const sunDate = new Date(sydneyDate)
+          sunDate.setDate(sydneyDate.getDate() + sunDiff)
+          const sunStr = sunDate.toLocaleDateString('en-CA')
+
+          const getSydneyDateString = (ts) => {
+            return new Date(ts).toLocaleDateString('en-CA', { timeZone: 'Australia/Sydney' })
+          }
+
+          const thisWeekend = []
+
+          ;(appointments || []).forEach((app) => {
+            if (!app.match) return
+            const appDateStr = getSydneyDateString(app.match.moment)
+            const isCancelled = app.isActive === false
+
+            if (!isCancelled && (appDateStr === satStr || appDateStr === sunStr)) {
+              thisWeekend.push(app)
+            }
+          })
+
+          // Sort thisWeekend ascending by moment
+          thisWeekend.sort((a, b) => (a.match?.moment || 0) - (b.match?.moment || 0))
+
+          setWeekendAppointments(thisWeekend)
         })
         .catch(err => console.error('Error fetching appointments for home dashboard:', err))
     }
@@ -124,18 +172,22 @@ export default function Home() {
         {auth.userId ? (
           <section className="home-section animate-fade-in">
             <div className="game-strip-header">
-              <h2>Your Next Referee Appointment</h2>
+              <h2>Your Referee Appointments This Weekend</h2>
               <Link to="/refzone" className="btn btn--ghost">View RefZone →</Link>
             </div>
-            <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-              {nextAppointment ? (
-                <AppointmentCard appointment={nextAppointment} />
-              ) : (
+            {weekendAppointments.length > 0 ? (
+              <div className="grid grid--2">
+                {weekendAppointments.map((app) => (
+                  <AppointmentCard key={app._id} appointment={app} />
+                ))}
+              </div>
+            ) : (
+              <div style={{ maxWidth: '600px', margin: '0 auto' }}>
                 <p style={{ color: 'var(--color-text-muted)', textAlign: 'center', padding: 'var(--space-6)' }}>
-                  No upcoming referee appointments found.
+                  No referee appointments scheduled for this upcoming weekend.
                 </p>
-              )}
-            </div>
+              </div>
+            )}
             <hr className="home-section-divider" style={{ marginTop: 'var(--space-8)', marginBottom: '0' }} />
           </section>
         ) : (

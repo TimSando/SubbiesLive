@@ -65,6 +65,11 @@ export default function Layout() {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
   const closeMenu = () => setIsMenuOpen(false)
 
+  // Scroll to top on page navigation
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location.pathname])
+
   // Handle PWA notification click message navigation
   useEffect(() => {
     if ('serviceWorker' in navigator) {
