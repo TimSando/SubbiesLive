@@ -190,13 +190,15 @@ async def test_refresh_sets_new_cookies(client):
     """POST /refresh reads refresh cookie, calls RX refresh, and updates cookies."""
     client.cookies.set("rx_refresh_token", "old-refresh-tok")
 
-    mock_resp = MagicMock(status_code=200)
-    mock_resp.json.return_value = {
+    payload = {
         "jwtTokens": {"accessToken": "new-access", "refreshToken": "new-refresh"}
     }
+    mock_resp = MagicMock(status_code=200)
+    mock_resp.text = json.dumps(payload)
+    mock_resp.json.return_value = payload
 
     with patch("src.refzone.router.httpx.AsyncClient") as mock_cls:
-        mock_cls.return_value.__aenter__.return_value.post = AsyncMock(
+        mock_cls.return_value.__aenter__.return_value.get = AsyncMock(
             return_value=mock_resp
         )
         r = await client.post("/api/refzone/refresh")
@@ -344,17 +346,19 @@ async def test_status_endpoint_silent_refresh_on_missing_access_token(client):
     """If access token is missing but refresh token is present, /status performs a silent refresh."""
     client.cookies.set("rx_refresh_token", "valid-refresh-tok")
 
-    mock_resp = MagicMock(status_code=200)
-    mock_resp.json.return_value = {
+    payload = {
         "jwtTokens": {
             "accessToken": generate_mock_jwt(user_id="222"),
             "refreshToken": "new-refresh-tok",
         },
         "userId": "222",
     }
+    mock_resp = MagicMock(status_code=200)
+    mock_resp.text = json.dumps(payload)
+    mock_resp.json.return_value = payload
 
     with patch("src.refzone.router.httpx.AsyncClient") as mock_cls:
-        mock_cls.return_value.__aenter__.return_value.post = AsyncMock(
+        mock_cls.return_value.__aenter__.return_value.get = AsyncMock(
             return_value=mock_resp
         )
         r = await client.get("/api/refzone/status")
@@ -371,17 +375,19 @@ async def test_status_endpoint_silent_refresh_on_expired_access_token(client):
     client.cookies.set("rx_access_token", expired_jwt)
     client.cookies.set("rx_refresh_token", "valid-refresh-tok")
 
-    mock_resp = MagicMock(status_code=200)
-    mock_resp.json.return_value = {
+    payload = {
         "jwtTokens": {
             "accessToken": generate_mock_jwt(user_id="333"),
             "refreshToken": "new-refresh-tok",
         },
         "userId": "333",
     }
+    mock_resp = MagicMock(status_code=200)
+    mock_resp.text = json.dumps(payload)
+    mock_resp.json.return_value = payload
 
     with patch("src.refzone.router.httpx.AsyncClient") as mock_cls:
-        mock_cls.return_value.__aenter__.return_value.post = AsyncMock(
+        mock_cls.return_value.__aenter__.return_value.get = AsyncMock(
             return_value=mock_resp
         )
         r = await client.get("/api/refzone/status")
