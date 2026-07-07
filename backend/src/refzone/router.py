@@ -506,17 +506,26 @@ async def get_appointments(userId: str, db: DbSession, request: Request):
             confirmed_data = confirmed_res.json()
             pending_data = pending_res.json()
 
-            # Combine appointments
+            # Combine appointments and deduplicate by _id
+            seen_ids = set()
             appointments = []
             if isinstance(confirmed_data, list):
                 for app in confirmed_data:
+                    app_id = app.get("_id")
+                    if app_id:
+                        seen_ids.add(app_id)
                     appointments.append(app)
 
             if isinstance(pending_data, list):
                 for app in pending_data:
+                    app_id = app.get("_id")
+                    if app_id and app_id in seen_ids:
+                        continue
                     # Make sure status is set/normalized
                     if "status" not in app:
                         app["status"] = "pending"
+                    if app_id:
+                        seen_ids.add(app_id)
                     appointments.append(app)
 
             # Perform game linking matching
