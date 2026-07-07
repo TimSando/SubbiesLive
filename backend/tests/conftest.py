@@ -20,6 +20,10 @@ parts = raw_url.split("://", 1)
 os.environ["DATABASE_URL"] = f"postgresql+asyncpg://{parts[1]}"
 os.environ["DATABASE_URL_SYNC"] = f"postgresql://{parts[1]}"
 os.environ["ENVIRONMENT"] = "test"
+os.environ.setdefault("VAPID_PUBLIC_KEY", "test_public_key_value")
+os.environ.setdefault("VAPID_PRIVATE_KEY", "test_private_key_value")
+os.environ.setdefault("VAPID_MAILTO", "mailto:test@example.com")
+
 
 # Import models to register with Base.metadata, then import DB & app configuration
 import src.core.models  # noqa: F401

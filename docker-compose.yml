@@ -33,6 +33,9 @@ services:
       ENVIRONMENT: ${ENVIRONMENT}
       FUSESPORT_DEVICE_ID: ${FUSESPORT_DEVICE_ID}
       TZ: Australia/Sydney
+      VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY}
+      VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY}
+      VAPID_MAILTO: ${VAPID_MAILTO}
     depends_on:
       db:
         condition: service_healthy
