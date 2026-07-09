@@ -122,19 +122,68 @@ export default function Notifications() {
   const checkDeviceSubscription = async () => {
     try {
       const registration = await navigator.serviceWorker.ready
-      const subscription = await registration.pushManager.getSubscription()
+      let subscription = await registration.pushManager.getSubscription()
+
+      const { publicKey } = await api.getVapidPublicKey()
+      const serverKeyUint8 = urlBase64ToUint8Array(publicKey)
+
       if (subscription) {
+        // Verify VAPID Key to handle key mismatch (e.g. server keys changed)
+        const subKey = subscription.options.applicationServerKey
+        let keyMismatch = false
+        if (subKey) {
+          const subKeyUint8 = new Uint8Array(subKey)
+          if (
+            subKeyUint8.length !== serverKeyUint8.length ||
+            !subKeyUint8.every((val, i) => val === serverKeyUint8[i])
+          ) {
+            keyMismatch = true
+          }
+        } else {
+          keyMismatch = true
+        }
+
+        if (keyMismatch) {
+          console.warn(
+            "VAPID key mismatch detected. Re-subscribing with the new server key..."
+          )
+          try {
+            await subscription.unsubscribe()
+            subscription = await registration.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: serverKeyUint8,
+            })
+          } catch (subscribeErr) {
+            console.error(
+              "Failed to automatically re-subscribe after VAPID key mismatch:",
+              subscribeErr
+            )
+            subscription = null
+          }
+        }
+      }
+
+      if (subscription) {
+        // Always register/refresh the subscription with the backend
+        try {
+          await api.subscribeNotifications(subscription.toJSON())
+        } catch (apiErr) {
+          console.error("Failed to sync PWA subscription with server:", apiErr)
+        }
         setIsSubscribed(true)
-        // Load user's subscriptions and meta-lists
         await Promise.all([
           loadMySubscriptions(subscription.endpoint),
-          loadClubsAndCompetitions()
+          loadClubsAndCompetitions(),
         ])
       } else {
         setIsSubscribed(false)
+        await loadClubsAndCompetitions()
       }
     } catch (err) {
-      console.error('Error loading push details:', err)
+      console.error("Error loading push details:", err)
+      try {
+        await loadClubsAndCompetitions()
+      } catch (e) {}
     } finally {
       setLoading(false)
     }

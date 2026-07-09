@@ -31,10 +31,19 @@ def _send_webpush_sync(session_factory, subscription, payload):
             f"Successfully sent push notification to {subscription['endpoint'][:30]}..."
         )
     except WebPushException as ex:
-        # 404 or 410 indicates the subscription has expired or is invalid
-        if ex.response is not None and ex.response.status_code in [404, 410]:
+        # 404 or 410 indicates the subscription has expired or is invalid.
+        # 400 Bad Request with VapidPkHashMismatch indicates VAPID public key mismatch (e.g., keys changed).
+        is_expired = ex.response is not None and ex.response.status_code in [404, 410]
+        is_mismatch = (
+            ex.response is not None
+            and ex.response.status_code == 400
+            and "VapidPkHashMismatch" in (ex.response.text or "")
+        )
+
+        if is_expired or is_mismatch:
+            reason = "expired/invalid" if is_expired else "mismatched VAPID keys"
             logger.info(
-                f"Removing expired/invalid subscription: {subscription['endpoint'][:30]}..."
+                f"Removing {reason} subscription: {subscription['endpoint'][:30]}..."
             )
             # We open a separate database connection to delete the subscription
             from src.ingestion.engine import get_sync_engine
