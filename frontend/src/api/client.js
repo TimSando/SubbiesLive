@@ -36,7 +36,7 @@ export const api = {
   health: () => request('/health'),
 
   // Competitions
-  getCompetitions: () => request('/competitions'),
+  getCompetitions: (params = {}) => request(`/competitions${buildQuery(params)}`),
   getCompetition: (id) => request(`/competitions/${id}`),
 
   // Clubs

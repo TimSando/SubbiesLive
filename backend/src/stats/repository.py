@@ -16,6 +16,7 @@ async def get_player_stats(
     competition_id: Optional[int] = None,
     parent_competition: Optional[str] = None,
     division: Optional[str] = None,
+    year: Optional[int] = None,
 ) -> List[PlayerStatRow]:
     query = """
         SELECT 
@@ -53,6 +54,9 @@ async def get_player_stats(
     if division:
         query += " AND m.division = :div"
         params["div"] = division
+    if year is not None:
+        query += " AND comp.year = :year"
+        params["year"] = year
 
     query += """
         GROUP BY p.id, p.name, c.id, c.name, p.thumbnail_url
@@ -91,6 +95,7 @@ async def get_club_stats(
     competition_id: Optional[int] = None,
     parent_competition: Optional[str] = None,
     division: Optional[str] = None,
+    year: Optional[int] = None,
 ) -> List[ClubStatRow]:
     query = """
         SELECT 
@@ -125,6 +130,9 @@ async def get_club_stats(
     if division:
         query += " AND m.division = :div"
         params["div"] = division
+    if year is not None:
+        query += " AND comp.year = :year"
+        params["year"] = year
 
     query += """
         GROUP BY c.id, c.name, c.logo_url
@@ -162,8 +170,11 @@ async def get_season_overview(
     competition_id: Optional[int] = None,
     parent_competition: Optional[str] = None,
     division: Optional[str] = None,
+    year: Optional[int] = None,
 ) -> SeasonOverview:
     params = {}
+    if year is not None:
+        params["year"] = year
 
     # 1. General counts from player_history
     query_base = """
@@ -190,6 +201,8 @@ async def get_season_overview(
     if division:
         query_base += " AND m.division = :div"
         params["div"] = division
+    if year is not None:
+        query_base += " AND comp.year = :year"
 
     res_base = await db.execute(text(query_base), params)
     row_base = res_base.fetchone()
@@ -209,13 +222,15 @@ async def get_season_overview(
         query_games += " AND m.parent_competition = :parent"
     if division:
         query_games += " AND m.division = :div"
+    if year is not None:
+        query_games += " AND comp.year = :year"
 
     res_games = await db.execute(text(query_games), params)
     games_played = res_games.scalar()
 
     # 3. Top scorer (reuses the refactored player stats function)
     player_stats = await get_player_stats(
-        db, competition_id, parent_competition, division
+        db, competition_id, parent_competition, division, year
     )
     top_scorer = player_stats[0] if player_stats else None
 
@@ -236,6 +251,8 @@ async def get_season_overview(
         query_try += " AND m.parent_competition = :parent"
     if division:
         query_try += " AND m.division = :div"
+    if year is not None:
+        query_try += " AND comp.year = :year"
     query_try += " GROUP BY p.id, p.name ORDER BY tries DESC LIMIT 1"
 
     res_try = await db.execute(text(query_try), params)
@@ -255,6 +272,8 @@ async def get_season_overview(
         query_clubs += " AND m.parent_competition = :parent"
     if division:
         query_clubs += " AND m.division = :div"
+    if year is not None:
+        query_clubs += " AND comp.year = :year"
     res_clubs = await db.execute(text(query_clubs), params)
     club_count = res_clubs.scalar() or 0
 
@@ -274,6 +293,8 @@ async def get_season_overview(
         query_players += " AND m.parent_competition = :parent"
     if division:
         query_players += " AND m.division = :div"
+    if year is not None:
+        query_players += " AND comp.year = :year"
     res_players = await db.execute(text(query_players), params)
     player_count = res_players.scalar() or 0
 
@@ -298,6 +319,7 @@ async def get_club_depth_stats(
     competition_id: Optional[int] = None,
     parent_competition: Optional[str] = None,
     division: Optional[str] = None,
+    year: Optional[int] = None,
 ) -> List[ClubDepthRow]:
     query = """
         WITH player_appearances AS (
@@ -325,6 +347,9 @@ async def get_club_depth_stats(
     if division:
         query += " AND m.division = :div"
         params["div"] = division
+    if year is not None:
+        query += " AND comp.year = :year"
+        params["year"] = year
 
     query += """
             GROUP BY ph.player_id, t.club_id

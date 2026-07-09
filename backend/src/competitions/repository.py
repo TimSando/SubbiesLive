@@ -9,13 +9,15 @@ from src.clubs.models import Team, Club
 from src.games.models import Game
 
 
-async def get_all_competitions(db: AsyncSession) -> list[dict]:
+async def get_all_competitions(db: AsyncSession, year: int | None = None) -> list[dict]:
     """Filter all competitions with team and round counts."""
     stmt = (
         select(
             Competition.id,
             Competition.name,
             Competition.external_id,
+            Competition.year,
+            Competition.season_id,
             Competition.competition_mapping_id,
             CompetitionMapping.parent_competition,
             CompetitionMapping.division,
@@ -32,17 +34,23 @@ async def get_all_competitions(db: AsyncSession) -> list[dict]:
             CompetitionMapping,
             Competition.competition_mapping_id == CompetitionMapping.id,
         )
-        .group_by(
-            Competition.id,
-            Competition.name,
-            Competition.external_id,
-            Competition.competition_mapping_id,
-            CompetitionMapping.parent_competition,
-            CompetitionMapping.division,
-            CompetitionMapping.grade,
-        )
-        .order_by(Competition.name)
     )
+
+    if year is not None:
+        stmt = stmt.where(Competition.year == year)
+
+    stmt = stmt.group_by(
+        Competition.id,
+        Competition.name,
+        Competition.external_id,
+        Competition.year,
+        Competition.season_id,
+        Competition.competition_mapping_id,
+        CompetitionMapping.parent_competition,
+        CompetitionMapping.division,
+        CompetitionMapping.grade,
+    ).order_by(Competition.name)
+
     result = await db.execute(stmt)
     return [row._asdict() for row in result.all()]
 
@@ -242,6 +250,8 @@ async def get_competition_by_id(db: AsyncSession, competition_id: int) -> dict |
         "id": comp.id,
         "name": comp.name,
         "external_id": comp.external_id,
+        "year": comp.year,
+        "season_id": comp.season_id,
         "rounds": display_rounds,
         "team_count": team_count,
     }

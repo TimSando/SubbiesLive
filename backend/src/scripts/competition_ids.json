@@ -1,0 +1,872 @@
+{
+  "2026": {
+    "Division One": {
+      "division_comp_id": 1795389,
+      "season_id": 1392,
+      "competitions": [
+        {
+          "competition_name": "Kentwell Cup",
+          "competition_id": 1795390
+        },
+        {
+          "competition_name": "Burke Cup",
+          "competition_id": 1795416
+        },
+        {
+          "competition_name": "Barbour Cup (Colts)",
+          "competition_id": 1795417
+        },
+        {
+          "competition_name": "Whiddon Cup",
+          "competition_id": 1795418
+        },
+        {
+          "competition_name": "Judd Cup",
+          "competition_id": 1795419
+        },
+        {
+          "competition_name": "Sutherland Cup",
+          "competition_id": 1828379
+        }
+      ]
+    },
+    "Division Three": {
+      "division_comp_id": 1795402,
+      "season_id": 1392,
+      "competitions": [
+        {
+          "competition_name": "Clark Cup",
+          "competition_id": 1853808
+        },
+        {
+          "competition_name": "Farrant Cup",
+          "competition_id": 1855647
+        },
+        {
+          "competition_name": "Nicholson Cup (Colts)",
+          "competition_id": 1855648
+        }
+      ]
+    },
+    "Division Five": {
+      "division_comp_id": 1853819,
+      "season_id": 1392,
+      "competitions": [
+        {
+          "competition_name": "McLean Cup",
+          "competition_id": 1853823
+        },
+        {
+          "competition_name": "Grose Cup",
+          "competition_id": 1855650
+        }
+      ]
+    },
+    "Halligan Cup": {
+      "division_comp_id": 1795407,
+      "season_id": 1392,
+      "competitions": [
+        {
+          "competition_name": "Halligan Cup",
+          "competition_id": 1855659
+        }
+      ]
+    },
+    "Division Two": {
+      "division_comp_id": 1795401,
+      "season_id": 1392,
+      "competitions": [
+        {
+          "competition_name": "Barraclough Cup",
+          "competition_id": 1848399
+        },
+        {
+          "competition_name": "Stockdale Cup",
+          "competition_id": 1848402
+        },
+        {
+          "competition_name": "Robertson Cup (Colts)",
+          "competition_id": 1848403
+        },
+        {
+          "competition_name": "Blunt Cup",
+          "competition_id": 1848404
+        },
+        {
+          "competition_name": "Richardson Cup",
+          "competition_id": 1848405
+        }
+      ]
+    },
+    "Division Four": {
+      "division_comp_id": 1795403,
+      "season_id": 1392,
+      "competitions": [
+        {
+          "competition_name": "Jeffrey Cup",
+          "competition_id": 1853812
+        },
+        {
+          "competition_name": "Radford Cup (Colts)",
+          "competition_id": 1855649
+        }
+      ]
+    },
+    "Women's X's": {
+      "division_comp_id": 1795406,
+      "season_id": 1392,
+      "competitions": [
+        {
+          "competition_name": "Joy Johnson Cup (Blue)",
+          "competition_id": 1861989
+        },
+        {
+          "competition_name": "Joy Johnson Cup (Green)",
+          "competition_id": 1858345
+        },
+        {
+          "competition_name": "Joy Johnson Cup (Yellow)",
+          "competition_id": 1861990
+        }
+      ]
+    }
+  },
+  "2025": {
+    "Division One": {
+      "division_comp_id": 1672542,
+      "season_id": 1301,
+      "competitions": [
+        {
+          "competition_name": "Kentwell Cup",
+          "competition_id": 1672543
+        },
+        {
+          "competition_name": "Burke Cup",
+          "competition_id": 1673406
+        },
+        {
+          "competition_name": "Barbour Cup (Colts)",
+          "competition_id": 1673407
+        },
+        {
+          "competition_name": "Whiddon Cup",
+          "competition_id": 1673408
+        },
+        {
+          "competition_name": "Judd Cup",
+          "competition_id": 1673409
+        },
+        {
+          "competition_name": "Sutherland Cup",
+          "competition_id": 1673410
+        }
+      ]
+    },
+    "Division Three": {
+      "division_comp_id": 1716779,
+      "season_id": 1301,
+      "competitions": [
+        {
+          "competition_name": "Clark Cup",
+          "competition_id": 1716780
+        },
+        {
+          "competition_name": "Farrant Cup",
+          "competition_id": 1721660
+        },
+        {
+          "competition_name": "Nicholson Cup (Colts)",
+          "competition_id": 1721661
+        }
+      ]
+    },
+    "Division Five": {
+      "division_comp_id": 1716787,
+      "season_id": 1301,
+      "competitions": [
+        {
+          "competition_name": "McLean Cup",
+          "competition_id": 1716790
+        },
+        {
+          "competition_name": "Grose Cup",
+          "competition_id": 1721730
+        }
+      ]
+    },
+    "Women's Xs": {
+      "division_comp_id": 1716850,
+      "season_id": 1301,
+      "competitions": [
+        {
+          "competition_name": "Joy Johnson Cup (Blue)",
+          "competition_id": 1716851
+        },
+        {
+          "competition_name": "Joy Johnson Cup (Yellow)",
+          "competition_id": 1721776
+        }
+      ]
+    },
+    "Division Two": {
+      "division_comp_id": 1716756,
+      "season_id": 1301,
+      "competitions": [
+        {
+          "competition_name": "Barraclough Cup",
+          "competition_id": 1716757
+        },
+        {
+          "competition_name": "Stockdale Cup",
+          "competition_id": 1716839
+        },
+        {
+          "competition_name": "Robertson Cup (Colts)",
+          "competition_id": 1716840
+        },
+        {
+          "competition_name": "Blunt Cup",
+          "competition_id": 1716841
+        },
+        {
+          "competition_name": "Richardson Cup",
+          "competition_id": 1716842
+        }
+      ]
+    },
+    "Division Four": {
+      "division_comp_id": 1716786,
+      "season_id": 1301,
+      "competitions": [
+        {
+          "competition_name": "Jeffrey Cup",
+          "competition_id": 1716789
+        },
+        {
+          "competition_name": "Radford Cup (Colts)",
+          "competition_id": 1721662
+        }
+      ]
+    },
+    "Division Six": {
+      "division_comp_id": 1674523,
+      "season_id": 1301,
+      "competitions": [
+        {
+          "competition_name": "Meldrum Cup",
+          "competition_id": 1674524
+        }
+      ]
+    },
+    "Halligan Cup": {
+      "division_comp_id": 1725533,
+      "season_id": 1301,
+      "competitions": [
+        {
+          "competition_name": "Halligan Cup",
+          "competition_id": 1725534
+        }
+      ]
+    }
+  },
+  "2024": {
+    "Division One": {
+      "division_comp_id": 1524665,
+      "season_id": 1178,
+      "competitions": [
+        {
+          "competition_name": "Kentwell Cup",
+          "competition_id": 1524666
+        },
+        {
+          "competition_name": "Burke Cup",
+          "competition_id": 1556485
+        },
+        {
+          "competition_name": "Barbour Cup (Colts)",
+          "competition_id": 1556486
+        },
+        {
+          "competition_name": "Whiddon Cup",
+          "competition_id": 1556487
+        },
+        {
+          "competition_name": "Judd Cup",
+          "competition_id": 1556488
+        },
+        {
+          "competition_name": "Sutherland Cup",
+          "competition_id": 1556489
+        }
+      ]
+    },
+    "Division Three": {
+      "division_comp_id": 1556494,
+      "season_id": 1178,
+      "competitions": [
+        {
+          "competition_name": "Clark Cup",
+          "competition_id": 1556499
+        },
+        {
+          "competition_name": "Farrant Cup",
+          "competition_id": 1587318
+        },
+        {
+          "competition_name": "Nicholson Cup (Colts)",
+          "competition_id": 1589996
+        }
+      ]
+    },
+    "Division Five": {
+      "division_comp_id": 1556496,
+      "season_id": 1178,
+      "competitions": [
+        {
+          "competition_name": "Jeffrey Cup",
+          "competition_id": 1556504
+        }
+      ]
+    },
+    "Halligan Cup": {
+      "division_comp_id": 1556498,
+      "season_id": 1178,
+      "competitions": [
+        {
+          "competition_name": "Halligan Cup",
+          "competition_id": 1556506
+        }
+      ]
+    },
+    "Division Two": {
+      "division_comp_id": 1524672,
+      "season_id": 1178,
+      "competitions": [
+        {
+          "competition_name": "Barraclough Cup",
+          "competition_id": 1524673
+        },
+        {
+          "competition_name": "Stockdale Cup",
+          "competition_id": 1556490
+        },
+        {
+          "competition_name": "Robertson Cup (Colts)",
+          "competition_id": 1556491
+        },
+        {
+          "competition_name": "Blunt Cup",
+          "competition_id": 1556492
+        },
+        {
+          "competition_name": "Richardson Cup",
+          "competition_id": 1556493
+        }
+      ]
+    },
+    "Division Four": {
+      "division_comp_id": 1556495,
+      "season_id": 1178,
+      "competitions": [
+        {
+          "competition_name": "McLean Cup",
+          "competition_id": 1556502
+        },
+        {
+          "competition_name": "Grose Cup",
+          "competition_id": 1592547
+        }
+      ]
+    },
+    "Women's Xs": {
+      "division_comp_id": 1556497,
+      "season_id": 1178,
+      "competitions": [
+        {
+          "competition_name": "Joy Johnson Cup",
+          "competition_id": 1592755
+        }
+      ]
+    }
+  },
+  "2023": {
+    "Division One": {
+      "division_comp_id": 1445695,
+      "season_id": 1106,
+      "competitions": [
+        {
+          "competition_name": "Kentwell Cup",
+          "competition_id": 1445694
+        },
+        {
+          "competition_name": "Burke Cup",
+          "competition_id": 1446011
+        },
+        {
+          "competition_name": "Barbour Cup (Colts)",
+          "competition_id": 1446012
+        },
+        {
+          "competition_name": "Whiddon Cup",
+          "competition_id": 1446013
+        },
+        {
+          "competition_name": "Judd Cup",
+          "competition_id": 1446014
+        },
+        {
+          "competition_name": "Sutherland Cup",
+          "competition_id": 1489194
+        }
+      ]
+    },
+    "Division Three": {
+      "division_comp_id": 1453024,
+      "season_id": 1106,
+      "competitions": [
+        {
+          "competition_name": "Clark Cup",
+          "competition_id": 1453025
+        },
+        {
+          "competition_name": "Farrant Cup",
+          "competition_id": 1462907
+        },
+        {
+          "competition_name": "Nicholson Cup (Colts)",
+          "competition_id": 1462908
+        }
+      ]
+    },
+    "Division Five": {
+      "division_comp_id": 1464467,
+      "season_id": 1106,
+      "competitions": [
+        {
+          "competition_name": "Jeffrey Cup",
+          "competition_id": 1464468
+        }
+      ]
+    },
+    "Division Two": {
+      "division_comp_id": 1445696,
+      "season_id": 1106,
+      "competitions": [
+        {
+          "competition_name": "Barraclough Cup",
+          "competition_id": 1445697
+        },
+        {
+          "competition_name": "Stockdale Cup",
+          "competition_id": 1453019
+        },
+        {
+          "competition_name": "Robertson Cup (colts)",
+          "competition_id": 1453020
+        },
+        {
+          "competition_name": "Blunt Cup",
+          "competition_id": 1453021
+        },
+        {
+          "competition_name": "Richardson Cup",
+          "competition_id": 1489122
+        }
+      ]
+    },
+    "Division Four": {
+      "division_comp_id": 1463262,
+      "season_id": 1106,
+      "competitions": [
+        {
+          "competition_name": "McLean Cup",
+          "competition_id": 1463263
+        },
+        {
+          "competition_name": "Grose Cup",
+          "competition_id": 1468130
+        }
+      ]
+    },
+    "Other Competitions": {
+      "division_comp_id": 1468128,
+      "season_id": 1106,
+      "competitions": [
+        {
+          "competition_name": "Halligan Cup",
+          "competition_id": 1468129
+        },
+        {
+          "competition_name": "Joy Johnson Cup",
+          "competition_id": 1471287
+        },
+        {
+          "competition_name": "Radford Cup (Colts)",
+          "competition_id": 1474060
+        }
+      ]
+    }
+  },
+  "2022": {
+    "Division One": {
+      "division_comp_id": 1342202,
+      "season_id": 989,
+      "competitions": [
+        {
+          "competition_name": "Kentwell Cup",
+          "competition_id": 1342203
+        },
+        {
+          "competition_name": "Burke Cup",
+          "competition_id": 1342240
+        },
+        {
+          "competition_name": "Barbour Cup (Colts)",
+          "competition_id": 1342241
+        },
+        {
+          "competition_name": "Whiddon Cup",
+          "competition_id": 1342242
+        },
+        {
+          "competition_name": "Judd Cup",
+          "competition_id": 1342243
+        },
+        {
+          "competition_name": "Sutherland Cup",
+          "competition_id": 1342244
+        }
+      ]
+    },
+    "Division Five": {
+      "division_comp_id": 1342212,
+      "season_id": 989,
+      "competitions": [
+        {
+          "competition_name": "Jeffrey Cup",
+          "competition_id": 1342215
+        }
+      ]
+    },
+    "Other Competitions": {
+      "division_comp_id": 1342214,
+      "season_id": 989,
+      "competitions": [
+        {
+          "competition_name": "Radford Cup (Colts) Jul-Sep",
+          "competition_id": 1346980
+        },
+        {
+          "competition_name": "Radford Cup (Colts) Apr-Jun",
+          "competition_id": 1342218
+        },
+        {
+          "competition_name": "Halligan Cup",
+          "competition_id": 1342219
+        }
+      ]
+    },
+    "Division Two": {
+      "division_comp_id": 1342204,
+      "season_id": 989,
+      "competitions": [
+        {
+          "competition_name": "Barraclough Cup",
+          "competition_id": 1342205
+        },
+        {
+          "competition_name": "Stockdale Cup",
+          "competition_id": 1342245
+        },
+        {
+          "competition_name": "Robertson Cup (Colts)",
+          "competition_id": 1342246
+        },
+        {
+          "competition_name": "Blunt Cup",
+          "competition_id": 1342247
+        },
+        {
+          "competition_name": "Richardson Cup",
+          "competition_id": 1342248
+        }
+      ]
+    },
+    "Division Four": {
+      "division_comp_id": 1342211,
+      "season_id": 989,
+      "competitions": [
+        {
+          "competition_name": "McLean Cup",
+          "competition_id": 1342217
+        },
+        {
+          "competition_name": "Grose Cup",
+          "competition_id": 1343216
+        }
+      ]
+    }
+  },
+  "2021": {
+    "Division One": {
+      "division_comp_id": 1218852,
+      "season_id": 843,
+      "competitions": [
+        {
+          "competition_name": "Kentwell Cup",
+          "competition_id": 1218858
+        },
+        {
+          "competition_name": "Burke Cup",
+          "competition_id": 1218859
+        },
+        {
+          "competition_name": "Barbour Cup (Colts)",
+          "competition_id": 1218861
+        },
+        {
+          "competition_name": "Whiddon Cup",
+          "competition_id": 1218862
+        },
+        {
+          "competition_name": "Judd Cup",
+          "competition_id": 1218863
+        },
+        {
+          "competition_name": "Sutherland Cup",
+          "competition_id": 1218864
+        }
+      ]
+    },
+    "Division Three": {
+      "division_comp_id": 1218854,
+      "season_id": 843,
+      "competitions": [
+        {
+          "competition_name": "Clark Cup",
+          "competition_id": 1218878
+        },
+        {
+          "competition_name": "Farrant Cup",
+          "competition_id": 1219276
+        },
+        {
+          "competition_name": "Nicholson Cup (Colts)",
+          "competition_id": 1219277
+        },
+        {
+          "competition_name": "Campbell Cup",
+          "competition_id": 1219278
+        }
+      ]
+    },
+    "Jeffrey Cup": {
+      "division_comp_id": 1226109,
+      "season_id": 843,
+      "competitions": [
+        {
+          "competition_name": "Jeffrey Cup",
+          "competition_id": 1226112
+        }
+      ]
+    },
+    "Other Competitions": {
+      "division_comp_id": 1218855,
+      "season_id": 843,
+      "competitions": [
+        {
+          "competition_name": "Radford Cup (Colts)",
+          "competition_id": 1226114
+        },
+        {
+          "competition_name": "Halligan Cup",
+          "competition_id": 1226115
+        }
+      ]
+    },
+    "Division Two": {
+      "division_comp_id": 1218853,
+      "season_id": 843,
+      "competitions": [
+        {
+          "competition_name": "Barraclough Cup",
+          "competition_id": 1218865
+        },
+        {
+          "competition_name": "Stockdale Cup",
+          "competition_id": 1218993
+        },
+        {
+          "competition_name": "Robertson Cup (Colts)",
+          "competition_id": 1218994
+        },
+        {
+          "competition_name": "Blunt Cup",
+          "competition_id": 1218995
+        },
+        {
+          "competition_name": "Richardson Cup",
+          "competition_id": 1218996
+        }
+      ]
+    },
+    "Division Four": {
+      "division_comp_id": 1226108,
+      "season_id": 843,
+      "competitions": [
+        {
+          "competition_name": "McLean Cup",
+          "competition_id": 1226111
+        },
+        {
+          "competition_name": "Grose Cup",
+          "competition_id": 1226121
+        }
+      ]
+    },
+    "Meldrum Cup": {
+      "division_comp_id": 1226110,
+      "season_id": 843,
+      "competitions": [
+        {
+          "competition_name": "Meldrum Cup",
+          "competition_id": 1226113
+        }
+      ]
+    }
+  },
+  "2020": {
+    "Division One": {
+      "division_comp_id": 587965,
+      "season_id": 765,
+      "competitions": [
+        {
+          "competition_name": "Kentwell Cup",
+          "competition_id": 587966
+        },
+        {
+          "competition_name": "Burke Cup",
+          "competition_id": 601835
+        },
+        {
+          "competition_name": "Barbour Cup (Colts)",
+          "competition_id": 601836
+        },
+        {
+          "competition_name": "Whiddon Cup",
+          "competition_id": 601837
+        },
+        {
+          "competition_name": "Judd Cup",
+          "competition_id": 601838
+        },
+        {
+          "competition_name": "Sutherland Cup",
+          "competition_id": 601839
+        }
+      ]
+    },
+    "Division Three": {
+      "division_comp_id": 587978,
+      "season_id": 765,
+      "competitions": [
+        {
+          "competition_name": "Clark Cup",
+          "competition_id": 601702
+        },
+        {
+          "competition_name": "Farrant Cup",
+          "competition_id": 601703
+        },
+        {
+          "competition_name": "Nicholson Cup (Colts)",
+          "competition_id": 601704
+        },
+        {
+          "competition_name": "Campbell Cup",
+          "competition_id": 601705
+        }
+      ]
+    },
+    "Jeffrey Cup": {
+      "division_comp_id": 593790,
+      "season_id": 765,
+      "competitions": [
+        {
+          "competition_name": "Jeffrey Cup",
+          "competition_id": 601707
+        }
+      ]
+    },
+    "Radford Cup (Colts)": {
+      "division_comp_id": 601709,
+      "season_id": 765,
+      "competitions": [
+        {
+          "competition_name": "Radford Cup (Colts)",
+          "competition_id": 601710
+        }
+      ]
+    },
+    "Division Two": {
+      "division_comp_id": 587972,
+      "season_id": 765,
+      "competitions": [
+        {
+          "competition_name": "Barraclough Cup",
+          "competition_id": 587973
+        },
+        {
+          "competition_name": "Stockdale Cup",
+          "competition_id": 601698
+        },
+        {
+          "competition_name": "Robertson Cup (Colts)",
+          "competition_id": 601699
+        },
+        {
+          "competition_name": "Blunt Cup",
+          "competition_id": 601700
+        },
+        {
+          "competition_name": "Richardson Cup",
+          "competition_id": 601701
+        }
+      ]
+    },
+    "Division Four": {
+      "division_comp_id": 593789,
+      "season_id": 765,
+      "competitions": [
+        {
+          "competition_name": "McLean Cup",
+          "competition_id": 593946
+        },
+        {
+          "competition_name": "Grose Cup",
+          "competition_id": 601706
+        }
+      ]
+    },
+    "Meldrum Cup": {
+      "division_comp_id": 593791,
+      "season_id": 765,
+      "competitions": [
+        {
+          "competition_name": "Meldrum Cup",
+          "competition_id": 601708
+        }
+      ]
+    },
+    "Halligan Cup": {
+      "division_comp_id": 602038,
+      "season_id": 765,
+      "competitions": [
+        {
+          "competition_name": "Halligan Cup",
+          "competition_id": 602039
+        }
+      ]
+    }
+  }
+}

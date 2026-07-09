@@ -6,12 +6,17 @@ import PageSubscribeButton from '../components/NotificationToggle/PageSubscribeB
 import { formatDivisionName } from '../utils/format.js'
 
 export default function Competitions() {
-  const { data: competitions, loading, error } = useApi(() => api.getCompetitions(), [])
+  const [selectedYear, setSelectedYear] = useState(() => sessionStorage.getItem('competitions_selectedYear') || '2026')
+  const { data: competitions, loading, error } = useApi(() => api.getCompetitions({ year: selectedYear }), [selectedYear])
 
   // Filter states preserved in sessionStorage
   const [searchQuery, setSearchQuery] = useState(() => sessionStorage.getItem('competitions_searchQuery') || '')
   const [parentComp, setParentComp] = useState(() => sessionStorage.getItem('competitions_parentComp') || 'All')
   const [division, setDivision] = useState(() => sessionStorage.getItem('competitions_division') || 'All')
+
+  useEffect(() => {
+    sessionStorage.setItem('competitions_selectedYear', selectedYear)
+  }, [selectedYear])
 
   useEffect(() => {
     sessionStorage.setItem('competitions_searchQuery', searchQuery)
@@ -142,6 +147,24 @@ export default function Competitions() {
           </div>
 
           <div className="clubs-filter-select-group">
+            <select
+              className="clubs-select-filter"
+              value={selectedYear}
+              onChange={(e) => {
+                setSelectedYear(e.target.value)
+                setParentComp('All')
+                setDivision('All')
+              }}
+            >
+              <option value="2026">2026 Season</option>
+              <option value="2025">2025 Season</option>
+              <option value="2024">2024 Season</option>
+              <option value="2023">2023 Season</option>
+              <option value="2022">2022 Season</option>
+              <option value="2021">2021 Season</option>
+              <option value="2020">2020 Season</option>
+            </select>
+
             <select
               className="clubs-select-filter"
               value={parentComp}

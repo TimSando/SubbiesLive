@@ -9,6 +9,7 @@ import { formatDivisionName } from '../utils/format.js'
 export default function Stats() {
   const [hasLiveGames, setHasLiveGames] = useState(false)
   const [activeTab, setActiveTab] = useState(() => sessionStorage.getItem('stats_activeTab') || 'players')
+  const [selectedYear, setSelectedYear] = useState(() => sessionStorage.getItem('stats_year') || '2026')
   const [filter, setFilter] = useState(() => {
     const cached = sessionStorage.getItem('stats_filter')
     return cached ? JSON.parse(cached) : { type: 'all', value: '' }
@@ -32,6 +33,10 @@ export default function Stats() {
   useEffect(() => {
     sessionStorage.setItem('stats_activeTab', activeTab)
   }, [activeTab])
+
+  useEffect(() => {
+    sessionStorage.setItem('stats_year', selectedYear)
+  }, [selectedYear])
 
   useEffect(() => {
     sessionStorage.setItem('stats_filter', JSON.stringify(filter))
@@ -75,15 +80,15 @@ export default function Stats() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
   
-  const { data: competitions } = useApi(api.getCompetitions)
+  const { data: competitions } = useApi(() => api.getCompetitions({ year: selectedYear }), [selectedYear])
   
   const filterParams = useMemo(() => {
-    const params = {}
+    const params = { year: selectedYear }
     if (filter.type === 'comp') params.competition_id = filter.value
     if (filter.type === 'parent') params.parent_competition = filter.value
     if (filter.type === 'division') params.division = filter.value
     return params
-  }, [filter])
+  }, [filter, selectedYear])
 
   const { data: playerStats, loading: playersLoading, error: playersError } = useApi(
     () => api.getPlayerStats(filterParams),
@@ -260,6 +265,28 @@ export default function Stats() {
             <p style={{ color: 'var(--color-text-secondary)' }}>
               Top performers and season breakdowns
             </p>
+          </div>
+
+          <div className="stats-filter-group">
+            <label className="stats-filter-label" htmlFor="stats-year-select">Year</label>
+            <select
+              id="stats-year-select"
+              className="stats-select"
+              value={selectedYear}
+              onChange={(e) => {
+                setSelectedYear(e.target.value)
+                setFilter({ type: 'all', value: '' })
+              }}
+              style={{ minWidth: '150px' }}
+            >
+              <option value="2026">2026 Season</option>
+              <option value="2025">2025 Season</option>
+              <option value="2024">2024 Season</option>
+              <option value="2023">2023 Season</option>
+              <option value="2022">2022 Season</option>
+              <option value="2021">2021 Season</option>
+              <option value="2020">2020 Season</option>
+            </select>
           </div>
 
           <div className="stats-filter-group">

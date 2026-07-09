@@ -7,6 +7,7 @@ their respective modules.
 
 import logging
 from datetime import datetime
+from src.core.config import get_settings
 
 from src.ingestion.fusesport import get_teams, get_comp_info, get_game_info
 from src.ingestion.transformers import transform_game
@@ -51,6 +52,8 @@ def run_ingestion(session_factory):
     logger.info("=" * 60)
 
     session = session_factory()
+    settings = get_settings()
+    year = settings.current_season_year
 
     try:
         competitions, raw_teams = get_teams()
@@ -59,7 +62,9 @@ def run_ingestion(session_factory):
         team_id_map = {}
 
         for comp_data in competitions:
-            comp_id = upsert_competition(session, comp_data["id"], comp_data["name"])
+            comp_id = upsert_competition(
+                session, comp_data["id"], comp_data["name"], year=year
+            )
             logger.info(f"Processing: {comp_data['name']} (ext_id={comp_data['id']})")
 
             try:

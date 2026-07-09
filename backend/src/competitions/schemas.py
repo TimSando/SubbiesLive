@@ -39,6 +39,8 @@ class CompetitionBrief(BaseModel):
     id: int
     name: str
     external_id: int
+    year: int
+    season_id: int | None = None
     competition_mapping_id: int | None = None
     parent_competition: str | None = None
     division: str | None = None
@@ -58,6 +60,8 @@ class CompetitionDetail(BaseModel):
     id: int
     name: str
     external_id: int
+    year: int
+    season_id: int | None = None
     rounds: list[RoundBrief] = []
     team_count: int = 0
 

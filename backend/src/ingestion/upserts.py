@@ -57,10 +57,12 @@ def upsert_club(
     return result.fetchone()[0]
 
 
-def upsert_competition(session, external_id: int, name: str) -> int:
+def upsert_competition(
+    session, external_id: int, name: str, year: int, season_id: int = None
+) -> int:
     result = session.execute(
-        text("SELECT id FROM competitions WHERE external_id = :eid"),
-        {"eid": external_id},
+        text("SELECT id FROM competitions WHERE external_id = :eid AND year = :year"),
+        {"eid": external_id, "year": year},
     )
     row = result.fetchone()
     if row:
@@ -68,16 +70,23 @@ def upsert_competition(session, external_id: int, name: str) -> int:
 
     # Try to find a mapping
     mapping_res = session.execute(
-        text("SELECT id FROM competition_mapping WHERE name = :name"), {"name": name}
+        text("SELECT id FROM competition_mapping WHERE LOWER(name) = LOWER(:name)"),
+        {"name": name},
     )
     mapping_row = mapping_res.fetchone()
     mapping_id = mapping_row[0] if mapping_row else None
 
     result = session.execute(
         text(
-            "INSERT INTO competitions (name, external_id, competition_mapping_id) VALUES (:name, :eid, :mid) RETURNING id"
+            "INSERT INTO competitions (name, external_id, competition_mapping_id, year, season_id) VALUES (:name, :eid, :mid, :year, :sid) RETURNING id"
         ),
-        {"name": name, "eid": external_id, "mid": mapping_id},
+        {
+            "name": name,
+            "eid": external_id,
+            "mid": mapping_id,
+            "year": year,
+            "sid": season_id,
+        },
     )
     session.commit()
     return result.fetchone()[0]

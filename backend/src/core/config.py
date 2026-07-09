@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     # App metadata
     app_name: str = "Subbies Live API"
     app_version: str = "0.1.0"
+    current_season_year: int = 2026
 
     # Ingestion Schedule
     ingestion_interval_minutes: int = 15

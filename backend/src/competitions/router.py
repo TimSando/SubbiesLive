@@ -1,6 +1,7 @@
 """Competitions API router."""
 
-from fastapi import APIRouter, HTTPException
+from typing import Optional
+from fastapi import APIRouter, HTTPException, Query
 
 from src.core.dependencies import DbSession
 from src.competitions import service
@@ -10,9 +11,9 @@ router = APIRouter()
 
 
 @router.get("", response_model=list[CompetitionBrief])
-async def list_competitions(db: DbSession):
+async def list_competitions(db: DbSession, year: Optional[int] = Query(None)):
     """List all competitions with team and round counts."""
-    return await service.list_competitions(db)
+    return await service.list_competitions(db, year=year)
 
 
 @router.get("/{competition_id}", response_model=CompetitionDetail)

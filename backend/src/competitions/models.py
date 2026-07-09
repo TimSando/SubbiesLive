@@ -42,6 +42,8 @@ class Competition(Base):
     external_id: Mapped[int] = mapped_column(
         Integer, unique=True, nullable=False, index=True
     )
+    year: Mapped[int] = mapped_column(Integer, nullable=False, default=2026, index=True)
+    season_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     # Relationships (use string references to avoid circular imports)
     competition_mapping: Mapped["CompetitionMapping | None"] = relationship(

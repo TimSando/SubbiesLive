@@ -235,7 +235,7 @@ export default function CompetitionDetail() {
             <PageSubscribeButton topicType="competition" topicId={competition.id} topicName={competition.name} />
           </div>
           <p style={{ color: 'var(--color-text-secondary)' }}>
-            {competition.team_count} teams · {competition.rounds?.length} rounds
+            {competition.year && `${competition.year} Season · `}{competition.team_count} teams · {competition.rounds?.length} rounds
           </p>
         </header>
 
