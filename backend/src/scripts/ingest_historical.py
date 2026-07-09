@@ -59,13 +59,24 @@ def main():
         action="store_true",
         help="Skip game event and player history ingestion.",
     )
+    parser.add_argument(
+        "--competition-type",
+        choices=["subbies", "premiership"],
+        default="subbies",
+        help="Competition type to ingest (subbies or premiership).",
+    )
     args = parser.parse_args()
 
     # Load competition ids
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    json_path = os.path.join(script_dir, "competition_ids.json")
+    filename = (
+        "competition_ids.json"
+        if args.competition_type == "subbies"
+        else "premiership_competition_ids.json"
+    )
+    json_path = os.path.join(script_dir, filename)
     if not os.path.exists(json_path):
-        logger.error(f"competition_ids.json not found at {json_path}")
+        logger.error(f"{filename} not found at {json_path}")
         return
 
     with open(json_path, "r") as f:
@@ -78,7 +89,7 @@ def main():
     if args.year:
         years_to_process = [str(args.year)]
         if str(args.year) not in comp_ids_data:
-            logger.error(f"Year {args.year} not found in competition_ids.json")
+            logger.error(f"Year {args.year} not found in {filename}")
             return
     else:
         # Process all historical years (all years in JSON except current_year)

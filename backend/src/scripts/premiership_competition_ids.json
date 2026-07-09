@@ -1,0 +1,336 @@
+{
+  "2020": {
+    "SRU Premiership Competition": {
+      "division_comp_id": 587949,
+      "season_id": 751,
+      "competitions": [
+        {
+          "competition_name": "Shute Shield",
+          "competition_id": 601735
+        },
+        {
+          "competition_name": "2nd Grade Colin Caird",
+          "competition_id": 601833
+        },
+        {
+          "competition_name": "1st Colts W McMahon Shield",
+          "competition_id": 601834
+        },
+        {
+          "competition_name": "3rd Grade",
+          "competition_id": 601845
+        },
+        {
+          "competition_name": "4th Grade",
+          "competition_id": 601846
+        },
+        {
+          "competition_name": "2nd Colts",
+          "competition_id": 601847
+        },
+        {
+          "competition_name": "3rd Colts",
+          "competition_id": 601848
+        }
+      ]
+    }
+  },
+  "2021": {
+    "SRU Premiership Competition": {
+      "division_comp_id": 1225724,
+      "season_id": 841,
+      "competitions": [
+        {
+          "competition_name": "Shute Shield",
+          "competition_id": 1218693
+        },
+        {
+          "competition_name": "2nd Grade - Colin Caird Shield",
+          "competition_id": 1219090
+        },
+        {
+          "competition_name": "3rd Grade - Henderson Shield",
+          "competition_id": 1219091
+        },
+        {
+          "competition_name": "4th Grade - Henderson Cup",
+          "competition_id": 1219324
+        },
+        {
+          "competition_name": "1st Colts - W McMahon Shield",
+          "competition_id": 1218700
+        },
+        {
+          "competition_name": "2nd Colts - Shell Trophy",
+          "competition_id": 1219323
+        },
+        {
+          "competition_name": "3rd Colts - Bill Simpson Shield",
+          "competition_id": 1219325
+        },
+        {
+          "competition_name": "Grade Extras",
+          "competition_id": 1226147
+        },
+        {
+          "competition_name": "Colts Extras",
+          "competition_id": 1226148
+        }
+      ]
+    }
+  },
+  "2022": {
+    "SRU Premiership Competition": {
+      "division_comp_id": 1340329,
+      "season_id": 980,
+      "competitions": [
+        {
+          "competition_name": "Shute Shield",
+          "competition_id": 1340330
+        },
+        {
+          "competition_name": "2nd Grade",
+          "competition_id": 1340456
+        },
+        {
+          "competition_name": "3rd Grade",
+          "competition_id": 1340470
+        },
+        {
+          "competition_name": "4th Grade",
+          "competition_id": 1340820
+        },
+        {
+          "competition_name": "1st Colts",
+          "competition_id": 1340821
+        },
+        {
+          "competition_name": "2nd Colts",
+          "competition_id": 1340822
+        },
+        {
+          "competition_name": "3rd Colts",
+          "competition_id": 1340823
+        }
+      ]
+    }
+  },
+  "2023": {
+    "Premiership Competition": {
+      "division_comp_id": 1463022,
+      "season_id": 1093,
+      "competitions": [
+        {
+          "competition_name": "1st Grade Shute Shield",
+          "competition_id": 1432337
+        },
+        {
+          "competition_name": "2nd Grade Colin Caird",
+          "competition_id": 1432362
+        },
+        {
+          "competition_name": "3rd Grade Henderson Shield",
+          "competition_id": 1432363
+        },
+        {
+          "competition_name": "4th Grade Henderson Cup",
+          "competition_id": 1432364
+        },
+        {
+          "competition_name": "1st Colts",
+          "competition_id": 1432396
+        },
+        {
+          "competition_name": "2nd Colts",
+          "competition_id": 1434219
+        },
+        {
+          "competition_name": "3rd Colts",
+          "competition_id": 1434220
+        },
+        {
+          "competition_name": "Jack Scott Cup",
+          "competition_id": 1463006
+        },
+        {
+          "competition_name": "Jack Scott Div 2",
+          "competition_id": 1484754
+        }
+      ]
+    }
+  },
+  "2026": {
+    "SRU Premiership": {
+      "division_comp_id": 1821806,
+      "season_id": 1393,
+      "competitions": [
+        {
+          "competition_name": "1st Grade Shute Shield",
+          "competition_id": 1821808
+        },
+        {
+          "competition_name": "2nd Grade Colin Caird",
+          "competition_id": 1823846
+        },
+        {
+          "competition_name": "3rd Grade Henderson Shield",
+          "competition_id": 1823847
+        },
+        {
+          "competition_name": "4th Grade Henderson Cup",
+          "competition_id": 1823848
+        },
+        {
+          "competition_name": "1st Colts Heffernan Shield",
+          "competition_id": 1828380
+        },
+        {
+          "competition_name": "2nd Colts Shell Trophy",
+          "competition_id": 1828381
+        },
+        {
+          "competition_name": "3rd Colts Bill Simpson Shield",
+          "competition_id": 1828382
+        }
+      ]
+    },
+    "Sydney Womens Rugby": {
+      "division_comp_id": 1828383,
+      "season_id": 1393,
+      "competitions": [
+        {
+          "competition_name": "Chikarovski Cup",
+          "competition_id": 1828391
+        },
+        {
+          "competition_name": "Div 2",
+          "competition_id": 1858346
+        }
+      ]
+    }
+  },
+  "2025": {
+    "SRU Premiership": {
+      "division_comp_id": 1679891,
+      "season_id": 1313,
+      "competitions": [
+        {
+          "competition_name": "1st Grade Shute Shield",
+          "competition_id": 1679892
+        },
+        {
+          "competition_name": "1st Colts W McMahon Shield",
+          "competition_id": 1701698
+        },
+        {
+          "competition_name": "2nd Colts Shell Trophy",
+          "competition_id": 1707538
+        },
+        {
+          "competition_name": "2nd Grade Colin Caird",
+          "competition_id": 1683908
+        },
+        {
+          "competition_name": "3rd Colts Bill Simpson Shield",
+          "competition_id": 1707539
+        },
+        {
+          "competition_name": "3rd Grade Henderson Shield",
+          "competition_id": 1683909
+        },
+        {
+          "competition_name": "4th Grade Henderson Cup",
+          "competition_id": 1683910
+        }
+      ]
+    },
+    "Womens Premier Rugby": {
+      "division_comp_id": 1688635,
+      "season_id": 1313,
+      "competitions": [
+        {
+          "competition_name": "Chikarovski Cup",
+          "competition_id": 1688636
+        },
+        {
+          "competition_name": "Women's Div 2",
+          "competition_id": 1688637
+        },
+        {
+          "competition_name": "Chikarovski Cup Pool A",
+          "competition_id": 1737913
+        },
+        {
+          "competition_name": "Chikarovski Cup Pool B",
+          "competition_id": 1737914
+        },
+        {
+          "competition_name": "Div 2 Pool A",
+          "competition_id": 1737967
+        },
+        {
+          "competition_name": "Div 2 Pool B",
+          "competition_id": 1737968
+        }
+      ]
+    }
+  },
+  "2024": {
+    "SRU Premiership": {
+      "division_comp_id": 1556370,
+      "season_id": 1195,
+      "competitions": [
+        {
+          "competition_name": "1st Grade Shute Shield",
+          "competition_id": 1556373
+        },
+        {
+          "competition_name": "2nd Grade Colin Caird",
+          "competition_id": 1556384
+        },
+        {
+          "competition_name": "3rd Grade Henderson Shield",
+          "competition_id": 1556481
+        },
+        {
+          "competition_name": "4th Grade Henderson Cup",
+          "competition_id": 1556482
+        },
+        {
+          "competition_name": "1st Colts W McMahon Shield",
+          "competition_id": 1556383
+        },
+        {
+          "competition_name": "2nd Colts Shell Trophy",
+          "competition_id": 1556483
+        },
+        {
+          "competition_name": "3rd Colts Bill Simpson Shield",
+          "competition_id": 1556484
+        }
+      ]
+    },
+    "NSW Womens Premier Rugby": {
+      "division_comp_id": 1556381,
+      "season_id": 1195,
+      "competitions": [
+        {
+          "competition_name": "Womens Premier XVs",
+          "competition_id": 1556382
+        },
+        {
+          "competition_name": "Womens Premier Xs",
+          "competition_id": 1592914
+        },
+        {
+          "competition_name": "Womens XV Div 1",
+          "competition_id": 1605040
+        },
+        {
+          "competition_name": "Womens XV Div 2",
+          "competition_id": 1605039
+        }
+      ]
+    }
+  }
+}
