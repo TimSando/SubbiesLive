@@ -153,21 +153,151 @@ def main():
 
                         for raw_round in round_objects:
                             try:
-                                # 3. Upsert Round
-                                round_id = upsert_round(
-                                    session,
-                                    competition_id=comp_id,
-                                    external_id=raw_round["id"],
-                                    name=raw_round["name"],
+                                raw_round_id = raw_round["id"]
+                                raw_round_name = raw_round["name"]
+                                raw_games = raw_round.get("games", [])
+
+                                # Check if round exists in DB
+                                round_res = session.execute(
+                                    text(
+                                        "SELECT id FROM rounds WHERE external_id = :eid"
+                                    ),
+                                    {"eid": raw_round_id},
                                 )
+                                round_row = round_res.fetchone()
+
+                                round_id = None
+                                round_is_fully_ingested = False
+                                db_games = {}
+
+                                if round_row:
+                                    round_id = round_row[0]
+                                    # Fetch existing games for this round
+                                    games_res = session.execute(
+                                        text(
+                                            "SELECT id, external_id, status FROM games WHERE round_id = :rid"
+                                        ),
+                                        {"rid": round_id},
+                                    )
+                                    db_games = {
+                                        row[1]: (row[0], row[2])
+                                        for row in games_res.fetchall()
+                                    }
+
+                                    # Verify if all raw games are already fully ingested in DB
+                                    all_games_fully_ingested = True
+                                    for raw_game in raw_games:
+                                        game_data = transform_game(
+                                            raw_game, raw_round_id
+                                        )
+                                        game_ext_id = game_data["external_id"]
+                                        game_status = game_data["status"]
+
+                                        if game_ext_id not in db_games:
+                                            all_games_fully_ingested = False
+                                            break
+
+                                        db_game_id, stored_status = db_games[
+                                            game_ext_id
+                                        ]
+                                        if stored_status != game_status:
+                                            all_games_fully_ingested = False
+                                            break
+
+                                        if (
+                                            game_status == "completed"
+                                            and not args.skip_events
+                                        ):
+                                            # Check game events
+                                            events_exist = session.execute(
+                                                text(
+                                                    "SELECT EXISTS(SELECT 1 FROM game_events WHERE game_id = :gid)"
+                                                ),
+                                                {"gid": db_game_id},
+                                            ).scalar()
+                                            if not events_exist:
+                                                all_games_fully_ingested = False
+                                                break
+
+                                            # Check player history
+                                            existing_sheets = session.execute(
+                                                text(
+                                                    "SELECT COUNT(DISTINCT team_id) FROM player_history WHERE game_id = :gid"
+                                                ),
+                                                {"gid": db_game_id},
+                                            ).scalar()
+                                            if existing_sheets < 2:
+                                                all_games_fully_ingested = False
+                                                break
+
+                                    if all_games_fully_ingested and len(raw_games) > 0:
+                                        round_is_fully_ingested = True
+
+                                if round_is_fully_ingested:
+                                    logger.info(
+                                        f"  Round '{raw_round_name}' (ext_id={raw_round_id}) already fully ingested. Skipping all games."
+                                    )
+                                    total_rounds += 1
+                                    total_games += len(raw_games)
+                                    continue
+
+                                # 3. Upsert Round
+                                if round_id is None:
+                                    round_id = upsert_round(
+                                        session,
+                                        competition_id=comp_id,
+                                        external_id=raw_round_id,
+                                        name=raw_round_name,
+                                    )
                                 total_rounds += 1
 
-                                games = raw_round.get("games", [])
-                                for raw_game in games:
+                                for raw_game in raw_games:
                                     try:
                                         game_data = transform_game(
-                                            raw_game, raw_round["id"]
+                                            raw_game, raw_round_id
                                         )
+                                        game_ext_id = game_data["external_id"]
+                                        game_status = game_data["status"]
+
+                                        # Check if individual game is already fully ingested
+                                        is_game_ingested = False
+                                        db_game_id = None
+                                        if round_row and game_ext_id in db_games:
+                                            db_game_id, stored_status = db_games[
+                                                game_ext_id
+                                            ]
+                                            if stored_status == game_status:
+                                                if (
+                                                    game_status != "completed"
+                                                    or args.skip_events
+                                                ):
+                                                    is_game_ingested = True
+                                                else:
+                                                    events_exist = session.execute(
+                                                        text(
+                                                            "SELECT EXISTS(SELECT 1 FROM game_events WHERE game_id = :gid)"
+                                                        ),
+                                                        {"gid": db_game_id},
+                                                    ).scalar()
+                                                    existing_sheets = session.execute(
+                                                        text(
+                                                            "SELECT COUNT(DISTINCT team_id) FROM player_history WHERE game_id = :gid"
+                                                        ),
+                                                        {"gid": db_game_id},
+                                                    ).scalar()
+                                                    if (
+                                                        events_exist
+                                                        and existing_sheets >= 2
+                                                    ):
+                                                        is_game_ingested = True
+
+                                        if is_game_ingested:
+                                            logger.info(
+                                                f"    Game {game_ext_id} already fully ingested. Skipping."
+                                            )
+                                            total_games += 1
+                                            continue
+
                                         ht = game_data["home_team"]
                                         at = game_data["away_team"]
 
