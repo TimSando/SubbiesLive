@@ -102,10 +102,10 @@ export default function Clubs() {
     grouped[parent][div].push(club)
   }
 
-  // Sort parent groups: Shute Shield first, Suburban second, others last
+  // Sort parent groups: Premiership first, Suburban second, others last
   const sortedParents = Object.keys(grouped).sort((a, b) => {
-    if (a === 'Shute Shield') return -1
-    if (b === 'Shute Shield') return 1
+    if (a === 'Premiership') return -1
+    if (b === 'Premiership') return 1
     if (a === 'Suburban Rugby Union') return -1
     if (b === 'Suburban Rugby Union') return 1
     if (a === 'Other') return 1
@@ -177,7 +177,7 @@ export default function Clubs() {
               }}
             >
               <option value="All">All Competitions</option>
-              <option value="Shute Shield">Shute Shield</option>
+              <option value="Premiership">Premiership</option>
               <option value="Suburban Rugby Union">Suburban Rugby Union</option>
             </select>
 

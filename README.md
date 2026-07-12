@@ -156,11 +156,11 @@ For HTTPS, place a reverse proxy (e.g., Nginx or Caddy) in front of port `8081`.
 
 - Enable API access to DB for queries/extracting data for analytics
 - ~Fix the remember me timing for the rugbyXplorer login~
-- Update "shute shield" to "premiership"
+- ~Update "shute shield" to "premiership"~
 - ~Update the menu header to be more easily navigatable and clear~
-- Update the page icon
-- Improve the notifications to be easier to read on mobile
-- Handle duplicates of rugby ref appointments
+- ~Update the page icon~
+- ~Improve the notifications to be easier to read on mobile~
+- ~Handle duplicates of rugby ref appointments~
 - ~For upcoming fixtures on the home page, it should show the next match by date (rather than the last in the list)~
 - Update the rounds view to somehow include dates (in each competition deails page)
 - Improve the video matching with nswRugbyTV

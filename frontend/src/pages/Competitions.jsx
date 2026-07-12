@@ -91,7 +91,7 @@ export default function Competitions() {
   }
 
   // Define parent sort order
-  const parentOrder = ['Shute Shield', 'Suburban Rugby Union', 'Other']
+  const parentOrder = ['Premiership', 'Suburban Rugby Union', 'Other']
   const existingParents = Object.keys(grouped).sort((a, b) => {
     const idxA = parentOrder.indexOf(a)
     const idxB = parentOrder.indexOf(b)
@@ -174,7 +174,7 @@ export default function Competitions() {
               }}
             >
               <option value="All">All Competitions</option>
-              <option value="Shute Shield">Shute Shield</option>
+              <option value="Premiership">Premiership</option>
               <option value="Suburban Rugby Union">Suburban Rugby Union</option>
             </select>
 
