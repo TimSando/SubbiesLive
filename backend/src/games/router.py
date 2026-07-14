@@ -23,6 +23,7 @@ async def list_games(
     ),
     player_id: int | None = Query(None, description="Filter by player"),
     game_date: str | None = Query(None, description="Filter by game date (YYYY-MM-DD)"),
+    year: int | None = Query(None, description="Filter by year (YYYY)"),
     limit: int = Query(50, ge=1, le=200, description="Max results"),
     offset: int = Query(0, ge=0, description="Offset for pagination"),
 ):
@@ -36,6 +37,7 @@ async def list_games(
         status=status,
         player_id=player_id,
         game_date=game_date,
+        year=year,
         limit=limit,
         offset=offset,
     )

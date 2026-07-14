@@ -57,7 +57,7 @@ def _build_game_base_query():
 def _row_to_game_dict(row) -> dict:
     """Convert a query result row to a game dict."""
     data = row._asdict()
-    return {
+    res = {
         "id": data["id"],
         "round_name": data["round_name"],
         "competition_name": data["competition_name"],
@@ -85,6 +85,9 @@ def _row_to_game_dict(row) -> dict:
         "video_url": data["video_url"],
         "video_url_needs_review": data["video_url_needs_review"],
     }
+    if "player_team_id" in data:
+        res["player_team_id"] = data["player_team_id"]
+    return res
 
 
 async def get_games(
@@ -98,6 +101,7 @@ async def get_games(
     limit: int = 50,
     offset: int = 0,
     game_date: str | None = None,
+    year: int | None = None,
 ) -> list[dict]:
     """Fetch games with optional filters."""
     stmt = _build_game_base_query()
@@ -128,11 +132,15 @@ async def get_games(
                 )
             )
     if player_id:
+        stmt = stmt.add_columns(PlayerHistory.team_id.label("player_team_id"))
         stmt = stmt.join(PlayerHistory, PlayerHistory.game_id == Game.id).where(
             PlayerHistory.player_id == player_id
         )
+
     if game_date:
         stmt = stmt.where(func.to_char(Game.game_date, "YYYY-MM-DD") == game_date)
+    if year:
+        stmt = stmt.where(func.extract("year", Game.game_date) == year)
 
     if status == "scheduled":
         stmt = stmt.where(Game.game_date >= datetime.now())

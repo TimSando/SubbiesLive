@@ -52,6 +52,7 @@ class GameBrief(BaseModel):
     external_id: int
     video_url: str | None = None
     video_url_needs_review: bool = False
+    player_team_id: int | None = None
 
     class Config:
         from_attributes = True
@@ -75,6 +76,7 @@ class GameDetail(BaseModel):
     video_url: str | None = None
     video_url_needs_review: bool = False
     events: list[GameEventSchema] = []
+    player_team_id: int | None = None
 
     class Config:
         from_attributes = True

@@ -39,7 +39,9 @@ async def get_players(
     return [row._asdict() for row in result.all()]
 
 
-async def get_player_by_id(db: AsyncSession, player_id: int) -> dict | None:
+async def get_player_by_id(
+    db: AsyncSession, player_id: int, year: int | None = None
+) -> dict | None:
     """Fetch a single player with team history and aggregated stats."""
     # Get player
     stmt = select(Player).where(Player.id == player_id)
@@ -61,9 +63,15 @@ async def get_player_by_id(db: AsyncSession, player_id: int) -> dict | None:
         .join(Club, Club.id == Team.club_id)
         .join(Competition, Competition.id == Team.competition_id)
         .where(PlayerHistory.player_id == player_id)
-        .group_by(Team.id, Team.name, Club.name, Competition.name)
-        .order_by(Competition.name)
     )
+    if year:
+        teams_stmt = teams_stmt.join(Game, Game.id == PlayerHistory.game_id).where(
+            func.extract("year", Game.game_date) == year
+        )
+
+    teams_stmt = teams_stmt.group_by(
+        Team.id, Team.name, Club.name, Competition.name
+    ).order_by(Competition.name)
     teams_result = await db.execute(teams_stmt)
     teams = [row._asdict() for row in teams_result.all()]
 
@@ -78,6 +86,12 @@ async def get_player_by_id(db: AsyncSession, player_id: int) -> dict | None:
         func.sum(PlayerHistory.points).label("points"),
         func.count(PlayerHistory.game_id).label("games_played"),
     ).where(PlayerHistory.player_id == player_id)
+
+    if year:
+        stats_stmt = stats_stmt.join(Game, Game.id == PlayerHistory.game_id).where(
+            func.extract("year", Game.game_date) == year
+        )
+
     stats_result = await db.execute(stats_stmt)
     row = stats_result.one_or_none()
 
@@ -110,9 +124,13 @@ async def get_player_by_id(db: AsyncSession, player_id: int) -> dict | None:
         .join(Club, Club.id == Team.club_id)
         .join(Game, Game.id == PlayerHistory.game_id)
         .where(PlayerHistory.player_id == player_id)
-        .order_by(desc(Game.game_date))
-        .limit(1)
     )
+    if year:
+        recent_club_stmt = recent_club_stmt.where(
+            func.extract("year", Game.game_date) == year
+        )
+
+    recent_club_stmt = recent_club_stmt.order_by(desc(Game.game_date)).limit(1)
     recent_club = (await db.execute(recent_club_stmt)).scalar_one_or_none()
 
     if not recent_club and teams:

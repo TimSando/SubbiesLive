@@ -17,6 +17,8 @@ async def list_players(
     )
 
 
-async def get_player(db: AsyncSession, player_id: int) -> dict | None:
+async def get_player(
+    db: AsyncSession, player_id: int, year: int | None = None
+) -> dict | None:
     """Get a single player with stats and team history."""
-    return await repository.get_player_by_id(db, player_id)
+    return await repository.get_player_by_id(db, player_id, year)

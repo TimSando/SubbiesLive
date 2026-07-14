@@ -15,6 +15,7 @@ from src.standings.router import router as standings_router
 from src.stats.router import router as stats_router
 from src.refzone.router import router as refzone_router
 from src.notifications.router import router as notifications_router
+from src.teams.router import router as teams_router
 
 settings = get_settings()
 logger = logging.getLogger("uvicorn")
@@ -78,6 +79,7 @@ app.include_router(refzone_router, prefix="/api/refzone", tags=["RefZone"])
 app.include_router(
     notifications_router, prefix="/api/notifications", tags=["Notifications"]
 )
+app.include_router(teams_router, prefix="/api/teams", tags=["Teams"])
 
 
 @app.get("/api/health", tags=["Health"])

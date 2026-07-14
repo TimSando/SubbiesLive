@@ -38,7 +38,7 @@ function StandingsTable({ standings }) {
                 {row.position}
               </td>
               <td>
-                <Link to={`/clubs/${row.club_id}`} className="standings-team-link">
+                <Link to={`/teams/${row.team_id}`} className="standings-team-link">
                   {row.club_name || row.team_name}
                 </Link>
               </td>
@@ -65,6 +65,7 @@ function StandingsTable({ standings }) {
 }
 
 function GamesForRound({ competitionId, round }) {
+  const navigate = useNavigate()
   const { data: games, loading } = useApi(
     () => api.getGames({
       competition_id: competitionId,
@@ -94,9 +95,24 @@ function GamesForRound({ competitionId, round }) {
         if (isNotCompleted) rowClass += ' fixture-row--not-completed'
 
         return (
-          <Link to={`/games/${game.id}`} key={game.id} className={rowClass} id={`fixture-${game.id}`}>
+          <div 
+            key={game.id} 
+            className={rowClass} 
+            id={`fixture-${game.id}`}
+            onClick={() => navigate(`/games/${game.id}`)}
+            style={{ cursor: 'pointer' }}
+          >
             <span className="fixture-row__date">{formatDate(game.game_date)}</span>
-            <span className={`fixture-row__team fixture-row__team--home ${homeWin ? 'fixture-row__team--winner' : ''}`}>
+            <span 
+              className={`fixture-row__team fixture-row__team--home ${homeWin ? 'fixture-row__team--winner' : ''}`}
+              onClick={(e) => {
+                e.stopPropagation()
+                navigate(`/teams/${game.home_team.id}`)
+              }}
+              style={{ cursor: 'pointer' }}
+              onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
+              onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
+            >
               {game.home_team.club_name || game.home_team.name}
             </span>
             
@@ -124,7 +140,16 @@ function GamesForRound({ competitionId, round }) {
               </>
             )}
 
-            <span className={`fixture-row__team fixture-row__team--away ${awayWin ? 'fixture-row__team--winner' : ''}`}>
+            <span 
+              className={`fixture-row__team fixture-row__team--away ${awayWin ? 'fixture-row__team--winner' : ''}`}
+              onClick={(e) => {
+                e.stopPropagation()
+                navigate(`/teams/${game.away_team.id}`)
+              }}
+              style={{ cursor: 'pointer' }}
+              onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
+              onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
+            >
               {game.away_team.club_name || game.away_team.name}
             </span>
             <span className="fixture-row__location">
@@ -136,12 +161,13 @@ function GamesForRound({ competitionId, round }) {
                 game.location ? `📍 ${game.location}` : ''
               )}
             </span>
-          </Link>
+          </div>
         )
       })}
     </div>
   )
 }
+
 
 export default function CompetitionDetail() {
   const navigate = useNavigate()

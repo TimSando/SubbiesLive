@@ -24,9 +24,13 @@ async def list_players(
 
 
 @router.get("/{player_id}", response_model=PlayerDetail)
-async def get_player(player_id: int, db: DbSession):
+async def get_player(
+    player_id: int,
+    db: DbSession,
+    year: int | None = Query(None, description="Filter stats by year"),
+):
     """Get a single player with stats history."""
-    result = await service.get_player(db, player_id)
+    result = await service.get_player(db, player_id, year)
     if not result:
         raise HTTPException(status_code=404, detail="Player not found")
     return result

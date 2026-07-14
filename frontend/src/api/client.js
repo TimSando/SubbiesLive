@@ -54,7 +54,11 @@ export const api = {
   getPlayers: (params = {}) => {
     return request(`/players${buildQuery(params)}`)
   },
-  getPlayer: (id) => request(`/players/${id}`),
+  getPlayer: (id, params = {}) => request(`/players/${id}${buildQuery(params)}`),
+
+  // Teams
+  getTeam: (id, params = {}) => request(`/teams/${id}${buildQuery(params)}`),
+
 
   // Standings
   getStandings: (competitionId) => request(`/standings/${competitionId}`),

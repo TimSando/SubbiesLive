@@ -450,13 +450,15 @@ export default function ClubDetail() {
                 {club.teams?.map(team => {
                   const totalGames = (team.wins || 0) + (team.losses || 0) + (team.draws || 0)
                   return (
-                    <div key={team.id} className="card" style={{
+                    <Link to={`/teams/${team.id}`} key={team.id} className="card" style={{
                       padding: 'var(--space-4) var(--space-5)',
                       display: 'flex',
                       flexDirection: 'column',
                       justifyContent: 'space-between',
                       minHeight: '120px',
-                      background: 'rgba(17, 24, 39, 0.4)'
+                      background: 'rgba(17, 24, 39, 0.4)',
+                      textDecoration: 'none',
+                      color: 'inherit'
                     }}>
                       <div>
                         <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-accent)', fontWeight: 'var(--font-weight-semibold)', display: 'block', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '2px' }}>
@@ -486,9 +488,10 @@ export default function ClubDetail() {
                           <strong style={{ color: 'var(--color-draw)' }}>{team.draws || 0}D</strong>
                         </span>
                       </div>
-                    </div>
+                    </Link>
                   )
                 })}
+
               </div>
             </section>
 

@@ -9,6 +9,7 @@ import GameDetail from './pages/GameDetail.jsx'
 import GamePrep from './pages/GamePrep.jsx'
 import Stats from './pages/Stats.jsx'
 import PlayerDetail from './pages/PlayerDetail.jsx'
+import TeamDetail from './pages/TeamDetail.jsx'
 import RefZone, { RefZoneProvider } from './pages/RefZone.jsx'
 import Notifications from './pages/Notifications.jsx'
 import LiveGames from './pages/LiveGames.jsx'
@@ -29,6 +30,7 @@ export default function App() {
             <Route path="/games/:id/prep" element={<GamePrep />} />
             <Route path="/stats" element={<Stats />} />
             <Route path="/players/:id" element={<PlayerDetail />} />
+            <Route path="/teams/:id" element={<TeamDetail />} />
             <Route path="/refzone" element={<RefZone />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/live" element={<LiveGames />} />
@@ -38,3 +40,4 @@ export default function App() {
     </RefZoneProvider>
   )
 }
+
