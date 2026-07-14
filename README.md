@@ -119,9 +119,45 @@ docker compose -f docker-compose.yml up
 
 ## Data Ingestion
 
-Competition data is sourced from the FuseSport API and synced on a scheduled basis. The scheduler runs automatically on startup and is configured to refresh daily.
+Competition data is sourced from the FuseSport API and synced on a scheduled basis. The scheduler runs automatically on startup and is configured for:
+* **Startup**: A quick check (`fast` mode) running on a background thread.
+* **Saturdays (1:00 AM)**: Pre-game sync (`fast` mode).
+* **Saturdays (9:00 AM - 8:00 PM)**: Rapid game-day intervals (`live_only` mode).
+* **Sundays (6:00 PM)**: Correction sync (`recent` mode).
 
-A manual refresh can be triggered from the home page via the floating action button. This requires the `INGESTION_PASSWORD` set in your `.env`.
+### Manual Ingestion
+
+A manual refresh can be triggered from the terminal using the `manual_ingest.py` script inside the backend container.
+
+#### Commands
+
+**Run a fast sync (default)** - skips all completed games that are already in the database:
+```bash
+docker compose exec backend python src/scripts/manual_ingest.py
+```
+
+**Run a recent sync** - checks and re-fetches game details and player stats for the previous 14 days (useful for picking up late scorer additions or corrections):
+```bash
+docker compose exec backend python src/scripts/manual_ingest.py --mode recent
+```
+
+**Run a full sync** - re-fetches all completed games across the entire season:
+```bash
+docker compose exec backend python src/scripts/manual_ingest.py --mode full
+```
+
+#### Command Options
+
+| Flag | Short | Choices | Default | Description |
+|------|-------|---------|---------|-------------|
+| `--mode` | `-m` | `fast`, `recent`, `full`, `live_only` | `fast` | Controls which games are checked/re-fetched. |
+| `--skip-notifications` | | | | Disables sending push notifications to devices. Highly recommended for manual/historical corrections. |
+
+For example, to run a 14-day sync without triggering push notifications for any corrected events:
+```bash
+docker compose exec backend python src/scripts/manual_ingest.py --mode recent --skip-notifications
+```
+
 
 ---
 

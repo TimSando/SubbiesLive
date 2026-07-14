@@ -66,6 +66,12 @@ def _send_webpush_sync(session_factory, subscription, payload):
 
 def dispatch_push_notifications(title: str, body: str, url: str = "/"):
     """Fetch all PWA subscriptions and dispatch push notifications in a background thread."""
+    import os
+
+    if os.environ.get("SKIP_NOTIFICATIONS") == "true":
+        logger.info("Skipping push notification dispatch (SKIP_NOTIFICATIONS=true)")
+        return
+
     from src.ingestion.engine import get_sync_engine
 
     engine = get_sync_engine()
@@ -109,7 +115,16 @@ def notify_game_update(
         detail_message: Specific details (e.g. try scorer, card text)
         event_club_name: Club responsible for the event
     """
+    import os
+
+    if os.environ.get("SKIP_NOTIFICATIONS") == "true":
+        logger.info(
+            f"Skipping game update notification for game {game_id} ({update_type}) (SKIP_NOTIFICATIONS=true)"
+        )
+        return
+
     # 1. Fetch game details including club names and scores
+
     game_query = text(
         """
         SELECT 

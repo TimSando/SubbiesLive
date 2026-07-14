@@ -47,12 +47,13 @@ def ingest_game_events(
         )
         return
 
-    # In LIVE_ONLY mode, only process games played today
+    # In LIVE_ONLY mode, only process games played today that are not completed
     if sync_mode == SyncMode.LIVE_ONLY:
         is_today = game_date is not None and game_date.date() == datetime.now().date()
-        if not is_today:
+        is_completed = status == "completed"
+        if not is_today or is_completed:
             logger.debug(
-                f"  Skipping game_events fetch for game {game_external_id} — not played today (LIVE_ONLY mode)"
+                f"  Skipping game_events fetch for game {game_external_id} — not played today or already completed (LIVE_ONLY mode)"
             )
             return
 
@@ -345,12 +346,13 @@ def ingest_player_history_for_game(
         )
         return
 
-    # In LIVE_ONLY mode, only process games played today
+    # In LIVE_ONLY mode, only process games played today that are not completed
     if sync_mode == SyncMode.LIVE_ONLY:
         is_today = game_date is not None and game_date.date() == datetime.now().date()
-        if not is_today:
+        is_completed = status == "completed"
+        if not is_today or is_completed:
             logger.debug(
-                f"  Skipping player_history fetch for game {game_external_id} — not played today (LIVE_ONLY mode)"
+                f"  Skipping player_history fetch for game {game_external_id} — not played today or already completed (LIVE_ONLY mode)"
             )
             return
 

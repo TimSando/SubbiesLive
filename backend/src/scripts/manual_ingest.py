@@ -31,7 +31,15 @@ def main():
         default=SyncMode.FAST.value,
         help="Sync mode: fast (default), recent, full, or live_only",
     )
+    parser.add_argument(
+        "--skip-notifications",
+        action="store_true",
+        help="Disable sending push notifications to devices",
+    )
     args = parser.parse_args()
+
+    if args.skip_notifications:
+        os.environ["SKIP_NOTIFICATIONS"] = "true"
 
     engine = get_sync_engine()
     SessionLocal = sessionmaker(bind=engine)

@@ -87,10 +87,15 @@ def run_ingestion(session_factory, sync_mode: SyncMode = SyncMode.FAST):
                         try:
                             game_data = transform_game(raw_game, raw_round["id"])
 
-                            # In LIVE_ONLY mode, skip any game not played today
+                            # In LIVE_ONLY mode, skip any game not played today or already completed
                             if sync_mode == SyncMode.LIVE_ONLY:
                                 gdate = game_data.get("game_date")
-                                if not gdate or gdate.date() != datetime.now().date():
+                                is_today = (
+                                    gdate is not None
+                                    and gdate.date() == datetime.now().date()
+                                )
+                                is_completed = game_data.get("status") == "completed"
+                                if not is_today or is_completed:
                                     continue
 
                             ht = game_data["home_team"]
