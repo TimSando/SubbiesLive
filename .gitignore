@@ -50,3 +50,4 @@ logs/
 # Unrelated folders
 originalFiles/
 scratch/
+.agents/AGENTS.md
