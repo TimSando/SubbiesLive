@@ -6,7 +6,8 @@ import PageSubscribeButton from '../components/NotificationToggle/PageSubscribeB
 import { formatDivisionName } from '../utils/format.js'
 
 export default function Clubs() {
-  const { data: clubs, loading, error } = useApi(() => api.getClubs(), [])
+  const [selectedYear, setSelectedYear] = useState(() => sessionStorage.getItem('clubs_selectedYear') || '2026')
+  const { data: clubs, loading, error } = useApi(() => api.getClubs({ year: selectedYear }), [selectedYear])
 
   const [followingClubIds, setFollowingClubIds] = useState(() => {
     const existing = JSON.parse(localStorage.getItem('subbies_following_clubs') || '[]')
@@ -44,6 +45,10 @@ export default function Clubs() {
   const [parentComp, setParentComp] = useState(() => sessionStorage.getItem('clubs_parentComp') || 'All')
   const [division, setDivision] = useState(() => sessionStorage.getItem('clubs_division') || 'All')
   const [onlyWomens, setOnlyWomens] = useState(() => sessionStorage.getItem('clubs_onlyWomens') === 'true')
+
+  useEffect(() => {
+    sessionStorage.setItem('clubs_selectedYear', selectedYear)
+  }, [selectedYear])
 
   useEffect(() => {
     sessionStorage.setItem('clubs_searchQuery', searchQuery)
@@ -84,7 +89,10 @@ export default function Clubs() {
     // 4. Women's team filter
     const matchesWomens = !onlyWomens || club.has_womens_team === true
 
-    return matchesSearch && matchesParent && matchesDivision && matchesWomens
+    // 5. Only show clubs that have active teams in the selected year
+    const hasActiveTeams = club.team_count === undefined || club.team_count > 0
+
+    return matchesSearch && matchesParent && matchesDivision && matchesWomens && hasActiveTeams
   })
 
   // Group clubs by parent_competition, then by division
@@ -168,6 +176,24 @@ export default function Clubs() {
           </div>
 
           <div className="clubs-filter-select-group">
+            <select
+              className="clubs-select-filter"
+              value={selectedYear}
+              onChange={(e) => {
+                setSelectedYear(e.target.value)
+                setParentComp('All')
+                setDivision('All')
+              }}
+            >
+              <option value="2026">2026 Season</option>
+              <option value="2025">2025 Season</option>
+              <option value="2024">2024 Season</option>
+              <option value="2023">2023 Season</option>
+              <option value="2022">2022 Season</option>
+              <option value="2021">2021 Season</option>
+              <option value="2020">2020 Season</option>
+            </select>
+
             <select
               className="clubs-select-filter"
               value={parentComp}

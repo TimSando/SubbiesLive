@@ -10,6 +10,12 @@ async def test_list_clubs_empty(client):
     assert response.json() == []
 
 
+async def test_list_clubs_with_year(client):
+    response = await client.get("/api/clubs?year=2026")
+    assert response.status_code == 200
+    assert response.json() == []
+
+
 async def test_list_clubs_returns_seeded_data(client, db_session):
     await make_club(db_session, name="Mosman Whales", short_name="Mosman")
     response = await client.get("/api/clubs")

@@ -40,8 +40,8 @@ export const api = {
   getCompetition: (id) => request(`/competitions/${id}`),
 
   // Clubs
-  getClubs: () => request('/clubs'),
-  getClub: (id) => request(`/clubs/${id}`),
+  getClubs: (params = {}) => request(`/clubs${buildQuery(params)}`),
+  getClub: (id, params = {}) => request(`/clubs/${id}${buildQuery(params)}`),
 
   // Games
   getGames: (params = {}) => {

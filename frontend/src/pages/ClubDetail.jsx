@@ -7,7 +7,8 @@ import PageSubscribeButton from '../components/NotificationToggle/PageSubscribeB
 export default function ClubDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { data: club, loading } = useApi(() => api.getClub(id), [id])
+  const [selectedYear, setSelectedYear] = useState(() => sessionStorage.getItem('club_detail_selectedYear') || '2026')
+  const { data: club, loading } = useApi(() => api.getClub(id, { year: selectedYear }), [id, selectedYear])
 
   const [isFollowing, setIsFollowing] = useState(false)
 
@@ -17,6 +18,10 @@ export default function ClubDetail() {
       setIsFollowing(clubs.some(c => c.id === club.id))
     }
   }, [club])
+
+  useEffect(() => {
+    sessionStorage.setItem('club_detail_selectedYear', selectedYear)
+  }, [selectedYear])
 
   function toggleFollow() {
     if (!club) return
@@ -92,9 +97,29 @@ export default function ClubDetail() {
   return (
     <div className="page">
       <div className="container animate-in" style={{ maxWidth: '1280px' }}>
-        <Link to="/competitions" className="breadcrumb" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', marginBottom: 'var(--space-6)' }} onClick={(e) => { e.preventDefault(); navigate(-1); }}>
-          ← Back
-        </Link>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
+          <Link to="/competitions" className="breadcrumb" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', margin: 0 }} onClick={(e) => { e.preventDefault(); navigate(-1); }}>
+            ← Back
+          </Link>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+            <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', fontWeight: 'var(--font-weight-medium)' }}>Season:</span>
+            <select
+              className="clubs-select-filter"
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+              style={{ width: 'auto', minWidth: '140px', margin: 0 }}
+            >
+              <option value="2026">2026 Season</option>
+              <option value="2025">2025 Season</option>
+              <option value="2024">2024 Season</option>
+              <option value="2023">2023 Season</option>
+              <option value="2022">2022 Season</option>
+              <option value="2021">2021 Season</option>
+              <option value="2020">2020 Season</option>
+            </select>
+          </div>
+        </div>
 
         {/* Dashboard Grid Container */}
         <div className="club-dashboard">

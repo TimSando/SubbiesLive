@@ -1,5 +1,4 @@
-"""Club data access layer."""
-
+from datetime import datetime
 from sqlalchemy import select, func, case, and_, or_, literal_column
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,63 +7,78 @@ from src.competitions.models import Competition, CompetitionMapping, Round
 from src.games.models import Game
 
 
-async def get_all_clubs(db: AsyncSession) -> list[dict]:
+async def get_all_clubs(db: AsyncSession, year: int | None = None) -> list[dict]:
     """Fetch all clubs with team counts and season win/loss/draw record."""
-    record_sub = (
-        select(
-            Team.club_id,
-            func.sum(
-                case(
-                    (
-                        and_(
-                            Game.home_team_id == Team.id,
-                            Game.home_score > Game.away_score,
-                        ),
-                        1,
+    record_sub_select = select(
+        Team.club_id,
+        func.sum(
+            case(
+                (
+                    and_(
+                        Game.home_team_id == Team.id,
+                        Game.home_score > Game.away_score,
                     ),
-                    (
-                        and_(
-                            Game.away_team_id == Team.id,
-                            Game.away_score > Game.home_score,
-                        ),
-                        1,
+                    1,
+                ),
+                (
+                    and_(
+                        Game.away_team_id == Team.id,
+                        Game.away_score > Game.home_score,
                     ),
-                    else_=0,
-                )
-            ).label("wins"),
-            func.sum(
-                case(
-                    (
-                        and_(
-                            Game.home_team_id == Team.id,
-                            Game.home_score < Game.away_score,
-                        ),
-                        1,
+                    1,
+                ),
+                else_=0,
+            )
+        ).label("wins"),
+        func.sum(
+            case(
+                (
+                    and_(
+                        Game.home_team_id == Team.id,
+                        Game.home_score < Game.away_score,
                     ),
-                    (
-                        and_(
-                            Game.away_team_id == Team.id,
-                            Game.away_score < Game.home_score,
-                        ),
-                        1,
+                    1,
+                ),
+                (
+                    and_(
+                        Game.away_team_id == Team.id,
+                        Game.away_score < Game.home_score,
                     ),
-                    else_=0,
-                )
-            ).label("losses"),
-            func.sum(case((Game.home_score == Game.away_score, 1), else_=0)).label(
-                "draws"
-            ),
-        )
-        .join(
-            Game,
-            and_(
-                or_(Game.home_team_id == Team.id, Game.away_team_id == Team.id),
-                Game.status == "completed",
-            ),
-        )
-        .group_by(Team.club_id)
-        .subquery("record_sub")
+                    1,
+                ),
+                else_=0,
+            )
+        ).label("losses"),
+        func.sum(case((Game.home_score == Game.away_score, 1), else_=0)).label("draws"),
+    ).join(
+        Game,
+        and_(
+            or_(Game.home_team_id == Team.id, Game.away_team_id == Team.id),
+            Game.status == "completed",
+        ),
     )
+
+    if year is not None:
+        record_sub_select = record_sub_select.join(
+            Competition, Team.competition_id == Competition.id
+        ).where(Competition.year == year)
+
+    record_sub = record_sub_select.group_by(Team.club_id).subquery("record_sub")
+
+    if year is not None:
+        team_sub = (
+            select(Team.id, Team.club_id)
+            .join(Competition, Competition.id == Team.competition_id)
+            .where(Competition.year == year)
+            .subquery("team_sub")
+        )
+        team_entity = team_sub
+        team_join_cond = team_sub.c.club_id == Club.id
+        team_count_col = team_sub.c.id
+    else:
+        team_entity = Team
+        team_join_cond = Team.club_id == Club.id
+        team_count_col = Team.id
 
     stmt = (
         select(
@@ -75,7 +89,7 @@ async def get_all_clubs(db: AsyncSession) -> list[dict]:
             Club.home_ground_name,
             Club.home_ground_map_url,
             Club.has_womens_team,
-            func.count(Team.id).label("team_count"),
+            func.count(team_count_col).label("team_count"),
             func.coalesce(record_sub.c.wins, 0).label("wins"),
             func.coalesce(record_sub.c.losses, 0).label("losses"),
             func.coalesce(record_sub.c.draws, 0).label("draws"),
@@ -85,7 +99,7 @@ async def get_all_clubs(db: AsyncSession) -> list[dict]:
             CompetitionMapping.division,
             CompetitionMapping.grade,
         )
-        .outerjoin(Team, Team.club_id == Club.id)
+        .outerjoin(team_entity, team_join_cond)
         .outerjoin(record_sub, record_sub.c.club_id == Club.id)
         .outerjoin(
             CompetitionMapping, Club.competition_mapping_id == CompetitionMapping.id
@@ -144,7 +158,9 @@ async def get_all_clubs(db: AsyncSession) -> list[dict]:
     return clubs
 
 
-async def get_club_by_id(db: AsyncSession, club_id: int) -> dict | None:
+async def get_club_by_id(
+    db: AsyncSession, club_id: int, year: int | None = None
+) -> dict | None:
     """Fetch a single club with its teams, records, fallbacks, and sorted fixtures."""
     stmt = (
         select(
@@ -235,7 +251,7 @@ async def get_club_by_id(db: AsyncSession, club_id: int) -> dict | None:
     d["home_ground_map_url"] = d.get("home_ground_map_url") or fallback_map_url
 
     # 2. Get teams with distinct W/L/D records
-    record_sub = (
+    record_sub_select = (
         select(
             Team.id.label("team_id"),
             func.sum(
@@ -289,7 +305,15 @@ async def get_club_by_id(db: AsyncSession, club_id: int) -> dict | None:
             ),
             isouter=True,
         )
-        .where(Team.club_id == club_id)
+    )
+
+    if year is not None:
+        record_sub_select = record_sub_select.join(
+            Competition, Competition.id == Team.competition_id
+        ).where(Competition.year == year)
+
+    record_sub = (
+        record_sub_select.where(Team.club_id == club_id)
         .group_by(Team.id)
         .subquery("record_sub")
     )
@@ -307,8 +331,12 @@ async def get_club_by_id(db: AsyncSession, club_id: int) -> dict | None:
         .join(Competition, Competition.id == Team.competition_id)
         .outerjoin(record_sub, record_sub.c.team_id == Team.id)
         .where(Team.club_id == club_id)
-        .order_by(Competition.name)
     )
+    if year is not None:
+        teams_stmt = teams_stmt.where(Competition.year == year)
+
+    teams_stmt = teams_stmt.order_by(Competition.name)
+
     teams_result = await db.execute(teams_stmt)
     d["teams"] = [row._asdict() for row in teams_result.all()]
 
@@ -356,11 +384,16 @@ async def get_club_by_id(db: AsyncSession, club_id: int) -> dict | None:
                     (
                         Game.status == "completed"
                         if status_filter == "completed"
-                        else Game.status != "completed"
+                        else and_(
+                            Game.status != "completed", Game.game_date >= datetime.now()
+                        )
                     ),
                 )
             )
         )
+        if year is not None:
+            stmt_fix = stmt_fix.where(Competition.year == year)
+
         if order_desc:
             stmt_fix = stmt_fix.order_by(desc(Game.game_date))
         else:
@@ -435,10 +468,10 @@ async def get_club_by_id(db: AsyncSession, club_id: int) -> dict | None:
     upcoming_games = await get_fixtures("scheduled", order_desc=False, limit_count=40)
 
     recent_games.sort(
-        key=lambda g: (get_game_grade_rank(g), -g["game_date"].timestamp())
+        key=lambda g: (-g["game_date"].timestamp(), get_game_grade_rank(g))
     )
     upcoming_games.sort(
-        key=lambda g: (get_game_grade_rank(g), g["game_date"].timestamp())
+        key=lambda g: (g["game_date"].timestamp(), get_game_grade_rank(g))
     )
 
     d["recent_fixtures"] = recent_games[:15]
