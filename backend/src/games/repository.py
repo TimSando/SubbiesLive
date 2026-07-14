@@ -202,7 +202,7 @@ async def get_games_by_competition(db: AsyncSession, competition_id: int) -> lis
         .where(
             GameEvent.game_id == Game.id,
             GameEvent.team_id == Game.home_team_id,
-            GameEvent.event_type == "try",
+            GameEvent.event_type.in_(["try", "rugby_union_penalty_try"]),
         )
         .correlate(Game)
         .scalar_subquery()
@@ -214,7 +214,7 @@ async def get_games_by_competition(db: AsyncSession, competition_id: int) -> lis
         .where(
             GameEvent.game_id == Game.id,
             GameEvent.team_id == Game.away_team_id,
-            GameEvent.event_type == "try",
+            GameEvent.event_type.in_(["try", "rugby_union_penalty_try"]),
         )
         .correlate(Game)
         .scalar_subquery()

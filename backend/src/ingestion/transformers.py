@@ -93,6 +93,27 @@ def determine_game_status(game: dict) -> str:
     return "scheduled"
 
 
+def clean_round_name(round_name: str) -> str:
+    """Clean and normalize round names from FuseSport."""
+    name = round_name.strip()
+
+    # Handle Wet Weather Weekend
+    if name.upper() == "WWW" or "WET WEATHER" in name.upper():
+        return "Wet Weather Weekend"
+
+    # Handle "Rd" -> "Round"
+    name = re.sub(r"(?i)^Rd\s*", "Round ", name)
+    name = re.sub(r"(?i)^Wk\s*", "Week ", name)
+
+    # Handle reschedules
+    name = re.sub(r"(?i)\s*\(?reschedule(?:d)?\)?", "", name).strip()
+
+    # Clean up multiple spaces
+    name = re.sub(r"\s+", " ", name)
+
+    return name
+
+
 def extract_round_number(round_name: str) -> int | None:
     """Extract numeric round number from round name.
 

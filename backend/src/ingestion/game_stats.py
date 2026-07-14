@@ -5,6 +5,8 @@ and team IDs before inserting or updating them in the database.
 """
 
 import logging
+from datetime import datetime
+from enum import Enum
 from sqlalchemy import text
 from src.ingestion.fusesport import get_game_info, get_score_sheet
 from src.ingestion.transformers import transform_game_event
@@ -13,20 +15,26 @@ from src.ingestion.upserts import upsert_player
 logger = logging.getLogger("ingestion")
 
 
+class SyncMode(str, Enum):
+    FAST = "fast"  # skip all completed games already in DB
+    LIVE_ONLY = "live_only"  # only today's games
+    RECENT = "recent"  # re-fetch if game_date within 14 days
+    FULL = "full"  # re-fetch everything
+
+
 def ingest_game_events(
     session,
     game_id: int,
     game_external_id: int,
     team_id_map: dict,
     game_info: dict | None = None,
+    game_date: datetime | None = None,
+    sync_mode: SyncMode = SyncMode.FAST,
 ):
     """Fetch and ingest game events for a completed/in-progress game.
 
     Accepts an optional pre-fetched game_info dict to avoid a redundant HTTP call
     when called alongside ingest_player_history_for_game.
-
-    For completed games whose events are already fully ingested, skips the network
-    call entirely so startup re-syncs stay fast.
     """
     # Fetch status of the game from the DB
     status = session.execute(
@@ -39,16 +47,45 @@ def ingest_game_events(
         )
         return
 
+    # In LIVE_ONLY mode, only process games played today
+    if sync_mode == SyncMode.LIVE_ONLY:
+        is_today = game_date is not None and game_date.date() == datetime.now().date()
+        if not is_today:
+            logger.debug(
+                f"  Skipping game_events fetch for game {game_external_id} — not played today (LIVE_ONLY mode)"
+            )
+            return
+
     if status == "completed":
         existing_count = session.execute(
             text("SELECT COUNT(*) FROM game_events WHERE game_id = :gid"),
             {"gid": game_id},
         ).scalar()
         if existing_count > 0:
-            logger.debug(
-                f"  Skipping game_events fetch for game {game_external_id} — already ingested ({existing_count} events)"
-            )
-            return
+            if sync_mode == SyncMode.FAST:
+                logger.debug(
+                    f"  Skipping game_events fetch for game {game_external_id} — already ingested (FAST mode)"
+                )
+                return
+            elif sync_mode == SyncMode.RECENT:
+                is_recent = (
+                    game_date is not None
+                    and (datetime.now() - game_date.replace(tzinfo=None)).days <= 14
+                )
+                if not is_recent:
+                    logger.debug(
+                        f"  Skipping game_events fetch for game {game_external_id} "
+                        f"— already ingested ({existing_count} events) and game is older than 14 days"
+                    )
+                    return
+                logger.debug(
+                    f"  Re-fetching game_events for recent game {game_external_id} "
+                    f"({existing_count} events already stored) to pick up any corrections"
+                )
+            elif sync_mode == SyncMode.FULL:
+                logger.debug(
+                    f"  Re-fetching game_events for game {game_external_id} (FULL mode)"
+                )
 
     if game_info is None:
         try:
@@ -257,7 +294,8 @@ def ingest_player_history(
                 "pos": record.get("position_id"),
                 "pnum": record.get("player_number"),
                 "pts": record.get("points", 0),
-                "tries": record.get("rugby_union_try", 0),
+                "tries": record.get("rugby_union_try", 0)
+                + record.get("rugby_union_penalty_try", 0),
                 "conv": record.get("rugby_union_conversion", 0),
                 "pen": record.get("rugby_union_penalty_goal", 0),
                 "dg": record.get("rugby_union_drop_goal", 0),
@@ -288,14 +326,13 @@ def ingest_player_history_for_game(
     game_external_id: int,
     team_id_map: dict,
     game_info: dict | None = None,
+    game_date: datetime | None = None,
+    sync_mode: SyncMode = SyncMode.FAST,
 ):
     """Fetch game details to get score sheet IDs and ingest history.
 
     Accepts an optional pre-fetched game_info dict to avoid a redundant HTTP call
     when called alongside ingest_game_events.
-
-    For completed games whose player_history rows are already fully ingested for
-    both teams, skips the network call entirely.
     """
     # Fetch status of the game from the DB
     status = session.execute(
@@ -308,8 +345,17 @@ def ingest_player_history_for_game(
         )
         return
 
+    # In LIVE_ONLY mode, only process games played today
+    if sync_mode == SyncMode.LIVE_ONLY:
+        is_today = game_date is not None and game_date.date() == datetime.now().date()
+        if not is_today:
+            logger.debug(
+                f"  Skipping player_history fetch for game {game_external_id} — not played today (LIVE_ONLY mode)"
+            )
+            return
+
     if status == "completed":
-        # Skip if both score sheets are already recorded in player_history.
+        # Skip check if we already ingested both sheets
         existing_sheets = session.execute(
             text(
                 "SELECT COUNT(DISTINCT team_id) FROM player_history WHERE game_id = :gid"
@@ -317,10 +363,30 @@ def ingest_player_history_for_game(
             {"gid": game_id},
         ).scalar()
         if existing_sheets >= 2:
-            logger.debug(
-                f"  Skipping player_history fetch for game {game_external_id} — both score sheets already ingested"
-            )
-            return
+            if sync_mode == SyncMode.FAST:
+                logger.debug(
+                    f"  Skipping player_history fetch for game {game_external_id} — both score sheets already ingested (FAST mode)"
+                )
+                return
+            elif sync_mode == SyncMode.RECENT:
+                is_recent = (
+                    game_date is not None
+                    and (datetime.now() - game_date.replace(tzinfo=None)).days <= 14
+                )
+                if not is_recent:
+                    logger.debug(
+                        f"  Skipping player_history fetch for game {game_external_id} "
+                        f"— both score sheets already ingested and game is older than 14 days"
+                    )
+                    return
+                logger.debug(
+                    f"  Re-fetching player_history for recent game {game_external_id} "
+                    f"to pick up any corrections"
+                )
+            elif sync_mode == SyncMode.FULL:
+                logger.debug(
+                    f"  Re-fetching player_history for game {game_external_id} (FULL mode)"
+                )
 
     if game_info is None:
         try:

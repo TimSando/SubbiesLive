@@ -10,7 +10,7 @@ from datetime import datetime
 from src.core.config import get_settings
 
 from src.ingestion.fusesport import get_teams, get_comp_info, get_game_info
-from src.ingestion.transformers import transform_game
+from src.ingestion.transformers import transform_game, clean_round_name
 from src.ingestion.upserts import (
     upsert_competition,
     upsert_round,
@@ -20,6 +20,7 @@ from src.ingestion.upserts import (
 from src.ingestion.game_stats import (
     ingest_game_events,
     ingest_player_history_for_game,
+    SyncMode,
 )
 
 import threading
@@ -35,7 +36,7 @@ def is_ingestion_running() -> bool:
     return _is_ingestion_running
 
 
-def run_ingestion(session_factory):
+def run_ingestion(session_factory, sync_mode: SyncMode = SyncMode.FAST):
     """Run a full data ingestion cycle."""
     global _is_ingestion_running
 
@@ -48,7 +49,9 @@ def run_ingestion(session_factory):
     _is_ingestion_running = True
     start_time = datetime.now()
     logger.info("=" * 60)
-    logger.info(f"Starting data ingestion at {start_time.isoformat()}")
+    logger.info(
+        f"Starting data ingestion ({sync_mode.value} mode) at {start_time.isoformat()}"
+    )
     logger.info("=" * 60)
 
     session = session_factory()
@@ -75,13 +78,20 @@ def run_ingestion(session_factory):
 
             for raw_round in comp_info.get("round_objects", []):
                 try:
+                    clean_name = clean_round_name(raw_round["name"])
                     round_id = upsert_round(
-                        session, comp_id, raw_round["id"], raw_round["name"]
+                        session, comp_id, raw_round["id"], clean_name
                     )
 
                     for raw_game in raw_round.get("games", []):
                         try:
                             game_data = transform_game(raw_game, raw_round["id"])
+
+                            # In LIVE_ONLY mode, skip any game not played today
+                            if sync_mode == SyncMode.LIVE_ONLY:
+                                gdate = game_data.get("game_date")
+                                if not gdate or gdate.date() != datetime.now().date():
+                                    continue
 
                             ht = game_data["home_team"]
                             at = game_data["away_team"]
@@ -136,6 +146,8 @@ def run_ingestion(session_factory):
                                     game_data["external_id"],
                                     team_id_map,
                                     shared_game_info,
+                                    game_date=game_data.get("game_date"),
+                                    sync_mode=sync_mode,
                                 )
                                 ingest_player_history_for_game(
                                     session,
@@ -143,6 +155,8 @@ def run_ingestion(session_factory):
                                     game_data["external_id"],
                                     team_id_map,
                                     shared_game_info,
+                                    game_date=game_data.get("game_date"),
+                                    sync_mode=sync_mode,
                                 )
                         except Exception as e:
                             logger.error(

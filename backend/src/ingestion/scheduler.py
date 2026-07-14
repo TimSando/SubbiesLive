@@ -14,6 +14,7 @@ from sqlalchemy.orm import sessionmaker
 from src.core.config import get_settings
 from src.ingestion.engine import get_sync_engine
 from src.ingestion.service import run_ingestion
+from src.ingestion.game_stats import SyncMode
 from src.scripts.seed_mapping import seed_mapping
 
 logger = logging.getLogger("ingestion")
@@ -46,7 +47,7 @@ def start_ingestion_scheduler():
             logger.error(f"Failed to seed mapping: {e}")
 
         logger.info("Running initial data ingestion...")
-        run_ingestion(Session)
+        run_ingestion(Session, SyncMode.FAST)
 
         logger.info("Checking for missing club details to seed...")
         try:
@@ -80,7 +81,7 @@ def start_ingestion_scheduler():
     _scheduler.add_job(
         run_ingestion,
         CronTrigger(day_of_week="sun", hour=18, minute=0, timezone=TIMEZONE),
-        args=[Session],
+        args=[Session, SyncMode.RECENT],
         id="sunday_evening_ingestion",
         name="Sunday evening ingestion (Sun 6:00 PM)",
     )
@@ -89,7 +90,7 @@ def start_ingestion_scheduler():
     _scheduler.add_job(
         run_ingestion,
         CronTrigger(day_of_week="sat", hour=1, minute=0, timezone=TIMEZONE),
-        args=[Session],
+        args=[Session, SyncMode.FAST],
         id="saturday_morning_ingestion",
         name="Saturday morning ingestion (Sat 1:00 AM)",
     )
@@ -103,7 +104,7 @@ def start_ingestion_scheduler():
             minute=f"*/{interval_minutes}",
             timezone=TIMEZONE,
         ),
-        args=[Session],
+        args=[Session, SyncMode.LIVE_ONLY],
         id="gameday_ingestion",
         name=f"Game day ingestion (Sat every {interval_minutes} min, 9 AM - 8 PM)",
     )

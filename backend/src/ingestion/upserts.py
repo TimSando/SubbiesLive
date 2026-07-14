@@ -93,14 +93,22 @@ def upsert_competition(
 
 
 def upsert_round(session, competition_id: int, external_id: int, name: str) -> int:
+    number = extract_round_number(name)
     result = session.execute(
-        text("SELECT id FROM rounds WHERE external_id = :eid"), {"eid": external_id}
+        text("SELECT id, name, number FROM rounds WHERE external_id = :eid"),
+        {"eid": external_id},
     )
     row = result.fetchone()
     if row:
-        return row[0]
+        stored_id, stored_name, stored_number = row
+        if stored_name != name or stored_number != number:
+            session.execute(
+                text("UPDATE rounds SET name = :name, number = :number WHERE id = :id"),
+                {"name": name, "number": number, "id": stored_id},
+            )
+            session.commit()
+        return stored_id
 
-    number = extract_round_number(name)
     result = session.execute(
         text(
             """INSERT INTO rounds (competition_id, name, number, external_id) 
@@ -154,7 +162,7 @@ def upsert_game(
 ) -> int:
     result = session.execute(
         text(
-            "SELECT id, home_score, away_score, status, game_date, location, round_id FROM games WHERE external_id = :eid"
+            "SELECT id, home_score, away_score, status, game_date, location, round_id, home_team_id, away_team_id FROM games WHERE external_id = :eid"
         ),
         {"eid": game_data["external_id"]},
     )
@@ -169,8 +177,10 @@ def upsert_game(
             stored_gd,
             stored_loc,
             stored_rid,
+            stored_htid,
+            stored_atid,
         ) = row
-        # Check if anything changed: status, home_score, away_score, game_date, location, or round_id
+        # Check if anything changed: status, home_score, away_score, game_date, location, round_id, home_team_id, or away_team_id
         if (
             game_data["status"] != stored_status
             or game_data["home_score"] != stored_hs
@@ -178,11 +188,14 @@ def upsert_game(
             or game_data["game_date"] != stored_gd
             or game_data["location"] != stored_loc
             or round_id != stored_rid
+            or home_team_id != stored_htid
+            or away_team_id != stored_atid
         ):
             session.execute(
                 text(
                     """UPDATE games SET home_score = :hs, away_score = :as_, status = :status, 
-                        game_date = :gd, location = :loc, round_id = :rid 
+                        game_date = :gd, location = :loc, round_id = :rid,
+                        home_team_id = :htid, away_team_id = :atid
                         WHERE id = :id"""
                 ),
                 {
@@ -192,6 +205,8 @@ def upsert_game(
                     "gd": game_data["game_date"],
                     "loc": game_data["location"],
                     "rid": round_id,
+                    "htid": home_team_id,
+                    "atid": away_team_id,
                     "id": stored_id,
                 },
             )
