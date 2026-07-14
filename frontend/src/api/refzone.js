@@ -108,3 +108,16 @@ export async function fetchProfile(authContext) {
   const url = `${API_BASE}/profile?userId=${userId}`;
   return fetchWithRefresh(url, { method: 'GET' }, authContext);
 }
+
+export async function updateAppointmentStatus(appointmentId, status, authContext) {
+  const url = `${API_BASE}/appointments/update`;
+  return fetchWithRefresh(
+    url,
+    {
+      method: 'POST',
+      body: JSON.stringify({ id: appointmentId, status }),
+    },
+    authContext
+  );
+}
+

@@ -48,6 +48,11 @@ class Verify2FARequest(BaseModel):
     remember_me: bool = False
 
 
+class UpdateAppointmentRequest(BaseModel):
+    id: str
+    status: str
+
+
 def decode_jwt_payload(token: str) -> dict:
     try:
         parts = token.split(".")
@@ -642,3 +647,37 @@ async def get_profile(userId: str, request: Request):
                 f"Error fetching profile from RugbyXplorer: {exc}. Using fallback profile."
             )
             return {"firstname": "Referee", "lastname": "", "headshot": ""}
+
+
+@router.post("/appointments/update")
+async def update_appointment(body: UpdateAppointmentRequest, request: Request):
+    token = request.cookies.get("rx_access_token")
+    if not token:
+        raise HTTPException(status_code=401, detail="Missing rx_access_token cookie")
+
+    headers = get_rx_headers(token)
+    url = f"{RX_BASE_URL}/rau/api/v2/appointments"
+    payload = {"id": body.id, "status": body.status}
+
+    async with httpx.AsyncClient() as client:
+        try:
+            r = await client.post(url, json=payload, headers=headers, timeout=10.0)
+            if r.status_code == 401:
+                raise HTTPException(status_code=401, detail="RugbyXplorer unauthorized")
+            elif r.status_code not in (200, 201, 204):
+                logger.error(
+                    f"RX update appointment failed: status={r.status_code}, response={r.text}"
+                )
+                raise HTTPException(
+                    status_code=r.status_code,
+                    detail=f"Failed to update appointment: {r.text}",
+                )
+            try:
+                return r.json()
+            except Exception:
+                return {"status": "ok"}
+        except httpx.RequestError as exc:
+            logger.error(f"RX API error updating appointment: {exc}")
+            raise HTTPException(
+                status_code=503, detail="RugbyXplorer service unavailable"
+            )

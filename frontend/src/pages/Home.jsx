@@ -178,7 +178,7 @@ export default function Home() {
             {weekendAppointments.length > 0 ? (
               <div className="grid grid--2">
                 {weekendAppointments.map((app) => (
-                  <AppointmentCard key={app._id} appointment={app} />
+                  <AppointmentCard key={app._id} appointment={app} hideActions={true} />
                 ))}
               </div>
             ) : (

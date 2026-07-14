@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { updateAppointmentStatus } from '../../api/refzone';
 import '../../pages/RefZone.css';
 
-export default function AppointmentCard({ appointment }) {
+export default function AppointmentCard({ appointment, onUpdate, hideActions }) {
   const [showOfficials, setShowOfficials] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [error, setError] = useState(null);
 
   if (!appointment || !appointment.match) return null;
 
@@ -23,8 +26,9 @@ export default function AppointmentCard({ appointment }) {
     statusClass = 'badge--past';
   } else if (statusText.toLowerCase() === 'pending') {
     statusClass = 'badge--pending';
+  } else if (statusText.toLowerCase() === 'declined') {
+    statusClass = 'badge--cancelled';
   }
-
 
   // Format date & time in Sydney timezone
   const matchDate = new Date(match.moment);
@@ -46,6 +50,28 @@ export default function AppointmentCard({ appointment }) {
 
   // Referee Role labeling
   const roleText = appointment.type || 'Referee';
+
+  // Handle status update
+  const handleStatusChange = async (status) => {
+    setIsUpdating(true);
+    setError(null);
+    try {
+      await updateAppointmentStatus(appointment._id, status);
+      if (onUpdate) {
+        onUpdate();
+      }
+    } catch (err) {
+      console.error(`Failed to update appointment status to ${status}:`, err);
+      setError(`Failed to ${status === 'approved' ? 'accept' : 'reject'} match. Please try again.`);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const lowerStatus = statusText.toLowerCase();
+  const showAccept = !hideActions && !isPast && !isCancelled && lowerStatus === 'pending';
+  const showReject = !hideActions && !isPast && !isCancelled && (lowerStatus === 'pending' || lowerStatus === 'approved' || lowerStatus === 'confirmed');
+
 
   return (
     <div className="card appointment-card">
@@ -96,9 +122,42 @@ export default function AppointmentCard({ appointment }) {
         </div>
       )}
 
+      {(showAccept || showReject) && (
+        <div className="appointment-card__response-actions" style={{ display: 'flex', gap: 'var(--space-2)', marginTop: 'var(--space-4)' }}>
+          {showAccept && (
+            <button
+              type="button"
+              className="btn btn--primary"
+              style={{ flex: 1 }}
+              onClick={() => handleStatusChange('approved')}
+              disabled={isUpdating}
+            >
+              {isUpdating ? 'Accepting...' : '✓ Accept'}
+            </button>
+          )}
+          {showReject && (
+            <button
+              type="button"
+              className="btn btn--danger"
+              style={{ flex: 1 }}
+              onClick={() => handleStatusChange('declined')}
+              disabled={isUpdating}
+            >
+              {isUpdating ? 'Rejecting...' : '✗ Reject'}
+            </button>
+          )}
+        </div>
+      )}
+
+      {error && (
+        <div style={{ color: 'var(--color-loss)', fontSize: 'var(--font-size-xs)', marginTop: 'var(--space-2)', textAlign: 'center' }}>
+          {error}
+        </div>
+      )}
+
       {
         appointment.otherReferees && appointment.otherReferees.length > 0 && (
-          <div className="officials-panel">
+          <div className="officials-panel" style={{ marginTop: 'var(--space-4)' }}>
             <button
               type="button"
               className="officials-panel__trigger"

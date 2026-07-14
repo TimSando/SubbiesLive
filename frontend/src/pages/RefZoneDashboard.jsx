@@ -207,7 +207,7 @@ export default function RefZoneDashboard() {
                 ) : (
                   <div className="grid grid--2">
                     {thisWeekend.map((app) => (
-                      <AppointmentCard key={app._id} appointment={app} />
+                      <AppointmentCard key={app._id} appointment={app} onUpdate={loadData} />
                     ))}
                   </div>
                 )}
@@ -227,7 +227,7 @@ export default function RefZoneDashboard() {
                 ) : (
                   <div className="grid grid--2">
                     {upcoming.map((app) => (
-                      <AppointmentCard key={app._id} appointment={app} />
+                      <AppointmentCard key={app._id} appointment={app} onUpdate={loadData} />
                     ))}
                   </div>
                 )}
@@ -247,12 +247,13 @@ export default function RefZoneDashboard() {
                 ) : (
                   <div className="grid grid--2">
                     {past.map((app) => (
-                      <AppointmentCard key={app._id} appointment={app} />
+                      <AppointmentCard key={app._id} appointment={app} onUpdate={loadData} />
                     ))}
                   </div>
                 )}
               </div>
             )}
+
           </div>
         )}
       </div>

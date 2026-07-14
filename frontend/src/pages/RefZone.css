@@ -475,3 +475,16 @@
   color: var(--color-text-secondary);
   cursor: pointer;
 }
+
+.btn--danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--color-loss);
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+.btn--danger:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.45);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+}
+
