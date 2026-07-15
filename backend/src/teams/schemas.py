@@ -28,4 +28,3 @@ class TeamDetail(BaseModel):
     competition_name: str
     year: int
     stats: TeamStats
-
