@@ -24,3 +24,5 @@ httpx>=0.28
 pywebpush>=2.3.0
 cryptography>=42.0.0
 
+# GCP Export
+google-cloud-storage==2.18.2

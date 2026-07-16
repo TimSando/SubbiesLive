@@ -51,3 +51,4 @@ logs/
 originalFiles/
 scratch/
 .agents/AGENTS.md
+credentials/*

@@ -123,10 +123,24 @@ def start_ingestion_scheduler():
     except Exception as e:
         logger.error(f"Failed to schedule video ingestion job: {e}")
 
+    # GCP Export (Sunday at 7:30 PM)
+    try:
+        from src.scripts.export_to_gcp import export_db_to_gcp
+
+        _scheduler.add_job(
+            export_db_to_gcp,
+            CronTrigger(day_of_week="sun", hour=19, minute=30, timezone=TIMEZONE),
+            id="gcp_export_job",
+            name="GCP database export (Sun 7:30 PM)",
+        )
+    except Exception as e:
+        logger.error(f"Failed to schedule GCP export job: {e}")
+
     _scheduler.start()
 
     logger.info("Ingestion scheduler started:")
     logger.info("  • Sunday: 6:00 PM AEST")
+    logger.info("  • Sunday: GCP Database Export 7:30 PM AEST")
     logger.info("  • Saturday: 1:00 AM AEST")
     logger.info(f"  • Saturday: Every {interval_minutes} min, 9:00 AM - 8:00 PM AEST")
     logger.info(
