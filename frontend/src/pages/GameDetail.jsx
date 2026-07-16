@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useApi } from '../hooks/useApi.js'
 import { api } from '../api/client.js'
@@ -82,6 +83,45 @@ export default function GameDetail() {
   const { id } = useParams()
   const { data: game, loading } = useApi(() => api.getGame(id), [id])
 
+  const [weather, setWeather] = useState(null)
+  const [loadingWeather, setLoadingWeather] = useState(false)
+  const [venueCoords, setVenueCoords] = useState({ latitude: null, longitude: null })
+
+  useEffect(() => {
+    let isMounted = true
+    if (game?.location && game?.game_date) {
+      const gameDate = new Date(game.game_date)
+      const now = new Date()
+      const diffTime = gameDate - now
+      const diffDays = diffTime / (1000 * 60 * 60 * 24)
+      const isWithinSevenDaysFuture = diffDays > 0 && diffDays < 7
+
+      if (isWithinSevenDaysFuture) {
+        setLoadingWeather(true)
+        api.getVenueWeather(game.location, game.game_date, game.id)
+          .then((data) => {
+            if (isMounted && data) {
+              setVenueCoords({
+                latitude: data.latitude,
+                longitude: data.longitude
+              })
+              setWeather(data.weather)
+              setLoadingWeather(false)
+            }
+          })
+          .catch((err) => {
+            console.warn('Failed to load venue/weather for game:', err)
+            if (isMounted) {
+              setLoadingWeather(false)
+            }
+          })
+      }
+    }
+    return () => {
+      isMounted = false
+    }
+  }, [game?.location, game?.game_date, game?.id])
+
   if (loading) {
     return (
       <div className="page"><div className="container">
@@ -136,7 +176,7 @@ export default function GameDetail() {
 
           <div className="match-header__teams">
             <div className={`match-header__team ${homeWin ? 'match-header__team--winner' : ''}`}>
-              <Link to={`/clubs/${game.home_team.club_id}`} className="match-header__team-name">
+              <Link to={`/teams/${game.home_team.id}`} className="match-header__team-name">
                 {game.home_team.club_name || game.home_team.name}
               </Link>
               <span className="match-header__label">Home</span>
@@ -155,16 +195,50 @@ export default function GameDetail() {
             </div>
 
             <div className={`match-header__team ${awayWin ? 'match-header__team--winner' : ''}`}>
-              <Link to={`/clubs/${game.away_team.club_id}`} className="match-header__team-name">
+              <Link to={`/teams/${game.away_team.id}`} className="match-header__team-name">
                 {game.away_team.club_name || game.away_team.name}
               </Link>
               <span className="match-header__label">Away</span>
             </div>
           </div>
 
-          <div className="match-header__info">
-            <span>📅 {formatDateTime(game.game_date)}</span>
-            {game.location && <span>📍 {game.location}</span>}
+          <div className="match-header__info" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
+              <span>📅 {formatDateTime(game.game_date)}</span>
+              {game.location && (
+                <span>
+                  📍{' '}
+                  <a
+                    href={
+                      venueCoords.latitude !== null && venueCoords.longitude !== null
+                        ? `https://www.google.com/maps/search/?api=1&query=${venueCoords.latitude},${venueCoords.longitude}`
+                        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                            game.location + ' Sydney'
+                          )}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: 'var(--color-text-accent)', textDecoration: 'none' }}
+                  >
+                    {game.location} ↗
+                  </a>
+                </span>
+              )}
+            </div>
+            {loadingWeather && (
+              <div className="weather-strip">
+                <span style={{ fontWeight: 'var(--font-weight-semibold)' }}>Weather Forecast:</span>
+                <span>🌡️ Loading...</span>
+              </div>
+            )}
+            {!loadingWeather && weather && weather.temperature !== undefined && (
+              <div className="weather-strip">
+                <span style={{ fontWeight: 'var(--font-weight-semibold)' }}>Weather Forecast:</span>
+                <span>🌡️ {weather.temperature !== null && weather.temperature !== undefined ? `${weather.temperature}°C` : 'N/A'}</span>
+                <span>🌧️ {weather.precipitation_probability !== null && weather.precipitation_probability !== undefined ? `${weather.precipitation_probability}%` : '0%'}</span>
+                <span>💨 {weather.wind_speed !== null && weather.wind_speed !== undefined ? `${weather.wind_speed} km/h` : 'N/A'}</span>
+              </div>
+            )}
           </div>
 
           {game.video_url && (

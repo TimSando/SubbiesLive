@@ -95,4 +95,13 @@ export const api = {
     method: 'POST',
     body: JSON.stringify(payload)
   }),
+
+  // Weather/Venue
+  getVenueWeather: (venueName, moment, dbGameId) => {
+    let query = `?venue_name=${encodeURIComponent(venueName)}&moment=${encodeURIComponent(moment)}`
+    if (dbGameId) {
+      query += `&db_game_id=${dbGameId}`
+    }
+    return request(`/refzone/venue-weather${query}`)
+  },
 }

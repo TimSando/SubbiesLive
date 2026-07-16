@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useApi } from '../hooks/useApi.js'
 import { api } from '../api/client.js'
@@ -8,6 +9,37 @@ export default function GamePrep() {
 
   // 1. Fetch upcoming game details
   const { data: game, loading: gameLoading } = useApi(() => api.getGame(id), [id])
+
+  const [weather, setWeather] = useState(null)
+  const [loadingWeather, setLoadingWeather] = useState(false)
+  const [venueCoords, setVenueCoords] = useState({ latitude: null, longitude: null })
+
+  useEffect(() => {
+    let isMounted = true
+    if (game?.location && game?.game_date) {
+      setLoadingWeather(true)
+      api.getVenueWeather(game.location, game.game_date, game.id)
+        .then((data) => {
+          if (isMounted && data) {
+            setVenueCoords({
+              latitude: data.latitude,
+              longitude: data.longitude
+            })
+            setWeather(data.weather)
+            setLoadingWeather(false)
+          }
+        })
+        .catch((err) => {
+          console.warn('Failed to load venue/weather for game prep:', err)
+          if (isMounted) {
+            setLoadingWeather(false)
+          }
+        })
+    }
+    return () => {
+      isMounted = false
+    }
+  }, [game?.location, game?.game_date, game?.id])
 
   // 2. Fetch recent matches (Scores) for both teams
   const { data: homeGames } = useApi(
@@ -204,16 +236,49 @@ export default function GamePrep() {
             {game.competition_name} • {game.round_name}
           </p>
           
-          <div style={{ display: 'inline-flex', flexWrap: 'wrap', gap: 'var(--space-4)', marginTop: 'var(--space-4)', padding: 'var(--space-2) var(--space-4)', background: 'var(--color-bg-glass)', borderRadius: 'var(--radius-full)', border: '1px solid var(--color-border)' }}>
-             <span style={{ color: 'var(--color-text-accent)', fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-semibold)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-               📍 {game.location || 'TBD Venue'}
-             </span>
-             <span style={{ color: 'var(--color-text-primary)', fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-semibold)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-               📅 {dateStr}
-             </span>
-             <span style={{ color: 'var(--color-text-primary)', fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-semibold)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-               ⏰ {timeStr}
-             </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', marginTop: 'var(--space-4)' }}>
+            <div style={{ display: 'inline-flex', flexWrap: 'wrap', gap: 'var(--space-4)', padding: 'var(--space-2) var(--space-4)', background: 'var(--color-bg-glass)', borderRadius: 'var(--radius-full)', border: '1px solid var(--color-border)', width: 'fit-content' }}>
+               {game.location ? (
+                 <a
+                   href={
+                     venueCoords.latitude !== null && venueCoords.longitude !== null
+                       ? `https://www.google.com/maps/search/?api=1&query=${venueCoords.latitude},${venueCoords.longitude}`
+                       : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                           game.location + ' Sydney'
+                         )}`
+                   }
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   style={{ color: 'var(--color-text-accent)', fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-semibold)', display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}
+                 >
+                   📍 {game.location} ↗
+                 </a>
+               ) : (
+                 <span style={{ color: 'var(--color-text-accent)', fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-semibold)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                   📍 TBD Venue
+                 </span>
+               )}
+               <span style={{ color: 'var(--color-text-primary)', fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-semibold)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                 📅 {dateStr}
+               </span>
+               <span style={{ color: 'var(--color-text-primary)', fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-semibold)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                 ⏰ {timeStr}
+               </span>
+            </div>
+            {loadingWeather && (
+              <div className="weather-strip" style={{ marginTop: '0' }}>
+                <span style={{ fontWeight: 'var(--font-weight-semibold)' }}>Weather Forecast:</span>
+                <span>🌡️ Loading...</span>
+              </div>
+            )}
+            {!loadingWeather && weather && weather.temperature !== undefined && (
+              <div className="weather-strip" style={{ marginTop: '0' }}>
+                <span style={{ fontWeight: 'var(--font-weight-semibold)' }}>Weather Forecast:</span>
+                <span>🌡️ {weather.temperature !== null && weather.temperature !== undefined ? `${weather.temperature}°C` : 'N/A'}</span>
+                <span>🌧️ {weather.precipitation_probability !== null && weather.precipitation_probability !== undefined ? `${weather.precipitation_probability}%` : '0%'}</span>
+                <span>💨 {weather.wind_speed !== null && weather.wind_speed !== undefined ? `${weather.wind_speed} km/h` : 'N/A'}</span>
+              </div>
+            )}
           </div>
         </div>
 

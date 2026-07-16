@@ -34,6 +34,9 @@ class Settings(BaseSettings):
     vapid_private_key: str
     vapid_mailto: str
 
+    # Google Maps API Key
+    google_maps_api_key: Optional[str] = None
+
     @model_validator(mode="after")
     def derive_sync_url(self) -> "Settings":
         if not self.database_url_sync:

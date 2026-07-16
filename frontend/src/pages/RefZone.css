@@ -398,6 +398,32 @@
   gap: var(--space-1);
 }
 
+.appointment-card__venue-link {
+  color: var(--color-text-primary);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--color-text-secondary);
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.appointment-card__venue-link:hover {
+  color: var(--color-text-accent);
+  border-bottom-color: var(--color-text-accent);
+}
+
+.appointment-card__weather {
+  margin-top: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: rgba(255, 255, 255, 0.03);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  width: fit-content;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
 /* Officials Panel */
 .officials-panel {
   background: rgba(255, 255, 255, 0.01);

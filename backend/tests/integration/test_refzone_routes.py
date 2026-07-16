@@ -3,6 +3,7 @@ import base64
 import json
 import time
 from unittest.mock import AsyncMock, patch, MagicMock
+from sqlalchemy import select
 
 pytestmark = pytest.mark.asyncio
 
@@ -395,3 +396,372 @@ async def test_status_endpoint_silent_refresh_on_expired_access_token(client):
     assert r.status_code == 200
     assert r.json() == {"authenticated": True, "userId": "333"}
     assert r.cookies.get("rx_refresh_token") == "new-refresh-tok"
+
+
+async def test_appointments_game_linking(client, db_session):
+    """Verify that appointments endpoint matches games and sets db_game_id."""
+    from src.venues.models import Venue
+    from src.games.models import Game
+    from src.clubs.models import Club, Team
+    from src.competitions.models import Competition, Round
+    from datetime import datetime
+
+    # Setup database records for matching game
+    comp = Competition(name="Kentwell Cup", external_id=1001)
+    db_session.add(comp)
+    await db_session.flush()
+
+    rnd = Round(competition_id=comp.id, name="Round 1", external_id=2001)
+    db_session.add(rnd)
+    await db_session.flush()
+
+    club_home = Club(name="Colleagues")
+    club_away = Club(name="Mosman")
+    db_session.add_all([club_home, club_away])
+    await db_session.flush()
+
+    team_home = Team(
+        club_id=club_home.id,
+        name="Colleagues",
+        competition_id=comp.id,
+        external_id=3001,
+    )
+    team_away = Team(
+        club_id=club_away.id, name="Mosman", competition_id=comp.id, external_id=3002
+    )
+    db_session.add_all([team_home, team_away])
+    await db_session.flush()
+
+    game = Game(
+        round_id=rnd.id,
+        home_team_id=team_home.id,
+        away_team_id=team_away.id,
+        game_date=datetime(2026, 7, 16, 1, 30, 0),
+        external_id=5001,
+    )
+    db_session.add(game)
+    await db_session.commit()
+
+    jwt_tok = generate_mock_jwt(user_id="123")
+    client.cookies.set("rx_access_token", jwt_tok)
+
+    mock_appointment = {
+        "_id": "app-1",
+        "status": "pending",
+        "isActive": True,
+        "type": "Referee",
+        "match": {
+            "moment": "2026-07-15T15:30:00.000Z",
+            "homeTeam": {"name": "Colleagues"},
+            "awayTeam": {"name": "Mosman"},
+            "competition": {"name": "Kentwell Cup"},
+            "venue": {"name": "Forsyth Park"},
+        },
+    }
+
+    confirmed_resp = MagicMock(status_code=200)
+    confirmed_resp.json.return_value = [mock_appointment]
+    pending_resp = MagicMock(status_code=200)
+    pending_resp.json.return_value = []
+
+    with patch("src.refzone.router.httpx.AsyncClient") as mock_cls:
+        mock_cls.return_value.__aenter__.return_value.get = AsyncMock(
+            side_effect=[confirmed_resp, pending_resp]
+        )
+
+        r = await client.get("/api/refzone/appointments", params={"userId": "123"})
+
+    assert r.status_code == 200
+    data = r.json()
+    assert len(data) == 1
+    assert data[0]["db_game_id"] == game.id
+
+
+async def test_venue_weather_existing_venue(client, db_session):
+    """Verify that venue-weather endpoint resolves an existing venue and returns coordinates and weather."""
+    from src.venues.models import Venue
+
+    # Add venue to DB
+    venue = Venue(name="Forsyth Park", latitude=-33.8340, longitude=151.2140)
+    db_session.add(venue)
+    await db_session.commit()
+
+    mock_weather = {
+        "temperature": 18.5,
+        "precipitation_probability": 10,
+        "wind_speed": 15.0,
+    }
+
+    jwt_tok = generate_mock_jwt(user_id="123")
+    client.cookies.set("rx_access_token", jwt_tok)
+
+    with patch(
+        "src.refzone.router.get_weather_for_appointment", new_callable=AsyncMock
+    ) as mock_get_weather:
+        mock_get_weather.return_value = mock_weather
+
+        r = await client.get(
+            "/api/refzone/venue-weather",
+            params={
+                "venue_name": "Forsyth Park",
+                "moment": "2026-07-15T15:30:00.000Z",
+            },
+        )
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["latitude"] == -33.8340
+    assert data["longitude"] == 151.2140
+    assert data["weather"] == mock_weather
+
+
+async def test_venue_weather_db_game_fallback(client, db_session):
+    """Verify that venue-weather endpoint falls back to matched game's venue if missing coords."""
+    from src.venues.models import Venue
+    from src.games.models import Game
+    from src.clubs.models import Club, Team
+    from src.competitions.models import Competition, Round
+    from datetime import datetime
+
+    # 1. Create a venue with coordinates
+    known_venue = Venue(name="Known Oval", latitude=-33.1111, longitude=151.2222)
+    db_session.add(known_venue)
+    await db_session.flush()
+
+    comp = Competition(name="Subbies", external_id=1002)
+    db_session.add(comp)
+    await db_session.flush()
+    rnd = Round(competition_id=comp.id, name="R1", external_id=2002)
+    db_session.add(rnd)
+    await db_session.flush()
+    club_h = Club(name="Club A")
+    club_a = Club(name="Club B")
+    db_session.add_all([club_h, club_a])
+    await db_session.flush()
+    team_h = Team(
+        club_id=club_h.id, name="Team A", competition_id=comp.id, external_id=4001
+    )
+    team_a = Team(
+        club_id=club_a.id, name="Team B", competition_id=comp.id, external_id=4002
+    )
+    db_session.add_all([team_h, team_a])
+    await db_session.flush()
+
+    # Create game with known venue
+    game = Game(
+        round_id=rnd.id,
+        home_team_id=team_h.id,
+        away_team_id=team_a.id,
+        game_date=datetime(2026, 7, 15, 15, 30, 0),
+        venue_id=known_venue.id,
+        external_id=5002,
+    )
+    db_session.add(game)
+    await db_session.commit()
+
+    jwt_tok = generate_mock_jwt(user_id="123")
+    client.cookies.set("rx_access_token", jwt_tok)
+
+    with patch(
+        "src.refzone.router.get_weather_for_appointment", new_callable=AsyncMock
+    ) as mock_get_weather:
+        mock_get_weather.return_value = None
+
+        r = await client.get(
+            "/api/refzone/venue-weather",
+            params={
+                "venue_name": "New Unresolved Venue",
+                "moment": "2026-07-15T15:30:00.000Z",
+                "db_game_id": game.id,
+            },
+        )
+
+    assert r.status_code == 200
+    data = r.json()
+    # It should copy coordinates from the matched game's venue
+    assert data["latitude"] == -33.1111
+    assert data["longitude"] == 151.2222
+
+    # Check that a new Venue was created in DB for "New Unresolved Venue"
+    res = await db_session.execute(
+        select(Venue).where(Venue.name == "New Unresolved Venue")
+    )
+    new_venue = res.scalar_one_or_none()
+    assert new_venue is not None
+    assert new_venue.latitude == -33.1111
+
+
+async def test_venue_weather_geocoding_lookup(client, db_session):
+    """Verify that venue-weather endpoint calls Nominatim geocoding for unknown venues and saves coordinates."""
+    jwt_tok = generate_mock_jwt(user_id="123")
+    client.cookies.set("rx_access_token", jwt_tok)
+
+    mock_nominatim_resp = MagicMock(status_code=200)
+    mock_nominatim_resp.json.return_value = [{"lat": "-33.9999", "lon": "151.8888"}]
+
+    from src.venues.models import Venue
+
+    with patch(
+        "src.refzone.router.safe_nominatim_request_async", new_callable=AsyncMock
+    ) as mock_req:
+        mock_req.return_value = mock_nominatim_resp
+
+        with patch(
+            "src.refzone.router.get_weather_for_appointment", new_callable=AsyncMock
+        ) as mock_get_weather:
+            mock_get_weather.return_value = None
+
+            r = await client.get(
+                "/api/refzone/venue-weather",
+                params={
+                    "venue_name": "Mysterious Park",
+                    "moment": "2026-07-15T15:30:00.000Z",
+                },
+            )
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["latitude"] == -33.9999
+    assert data["longitude"] == 151.8888
+
+    # Check that new venue was saved to database
+    res = await db_session.execute(select(Venue).where(Venue.name == "Mysterious Park"))
+    venue = res.scalar_one_or_none()
+    assert venue is not None
+    assert venue.latitude == -33.9999
+    assert venue.longitude == 151.8888
+
+
+async def test_venue_weather_geocoding_lookup_google_maps_success(client, db_session):
+    """Verify that venue-weather endpoint queries Google Maps geocoding when API key is set and saves coordinates."""
+    jwt_tok = generate_mock_jwt(user_id="123")
+    client.cookies.set("rx_access_token", jwt_tok)
+
+    mock_settings = MagicMock()
+    mock_settings.google_maps_api_key = "fake-gmaps-key"
+
+    mock_gmaps_resp = MagicMock(status_code=200)
+    mock_gmaps_resp.json.return_value = {
+        "status": "OK",
+        "results": [{"geometry": {"location": {"lat": -33.7777, "lng": 151.7777}}}],
+    }
+
+    from src.venues.models import Venue
+
+    with patch("src.refzone.router.get_settings", return_value=mock_settings):
+        with patch("src.refzone.router.httpx.AsyncClient") as mock_cls:
+            mock_client = AsyncMock()
+            mock_client.get.return_value = mock_gmaps_resp
+            mock_cls.return_value.__aenter__.return_value = mock_client
+
+            with patch(
+                "src.refzone.router.get_weather_for_appointment", new_callable=AsyncMock
+            ) as mock_get_weather:
+                mock_get_weather.return_value = None
+
+                r = await client.get(
+                    "/api/refzone/venue-weather",
+                    params={
+                        "venue_name": "Google Park",
+                        "moment": "2026-07-15T15:30:00.000Z",
+                    },
+                )
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["latitude"] == -33.7777
+    assert data["longitude"] == 151.7777
+
+    # Check that new venue was saved to database
+    res = await db_session.execute(select(Venue).where(Venue.name == "Google Park"))
+    venue = res.scalar_one_or_none()
+    assert venue is not None
+    assert venue.latitude == -33.7777
+    assert venue.longitude == 151.7777
+
+
+async def test_venue_weather_geocoding_lookup_google_maps_fallback_to_nominatim(
+    client, db_session
+):
+    """Verify that venue-weather endpoint falls back to Nominatim when Google Maps geocoding fails."""
+    jwt_tok = generate_mock_jwt(user_id="123")
+    client.cookies.set("rx_access_token", jwt_tok)
+
+    mock_settings = MagicMock()
+    mock_settings.google_maps_api_key = "fake-gmaps-key"
+
+    # Nominatim succeeds
+    mock_nominatim_resp = MagicMock(status_code=200)
+    mock_nominatim_resp.json.return_value = [{"lat": "-33.6666", "lon": "151.6666"}]
+
+    from src.venues.models import Venue
+
+    # We patch safe_nominatim_request_async to return the mock Nominatim response
+    with patch("src.refzone.router.get_settings", return_value=mock_settings):
+        with patch(
+            "src.refzone.router.google_maps_geocode_async", new_callable=AsyncMock
+        ) as mock_gmaps_geocode:
+            mock_gmaps_geocode.return_value = None
+
+            with patch(
+                "src.refzone.router.safe_nominatim_request_async",
+                new_callable=AsyncMock,
+            ) as mock_nominatim:
+                mock_nominatim.return_value = mock_nominatim_resp
+
+                with patch(
+                    "src.refzone.router.get_weather_for_appointment",
+                    new_callable=AsyncMock,
+                ) as mock_get_weather:
+                    mock_get_weather.return_value = None
+
+                    r = await client.get(
+                        "/api/refzone/venue-weather",
+                        params={
+                            "venue_name": "Fallback Park",
+                            "moment": "2026-07-15T15:30:00.000Z",
+                        },
+                    )
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["latitude"] == -33.6666
+    assert data["longitude"] == 151.6666
+
+    # Check that new venue was saved to database
+    res = await db_session.execute(select(Venue).where(Venue.name == "Fallback Park"))
+    venue = res.scalar_one_or_none()
+    assert venue is not None
+    assert venue.latitude == -33.6666
+    assert venue.longitude == 151.6666
+
+
+async def test_weather_endpoint_returns_forecast(client):
+    """Verify that the weather endpoint invokes the service and returns forecast data."""
+    mock_weather = {
+        "temperature": 18.5,
+        "precipitation_probability": 10,
+        "wind_speed": 15.0,
+    }
+
+    # Setup token cookie (if route requires auth, wait, does /weather require auth?
+    # No, it does not require auth cookies in our endpoint definition, but setting it is safe)
+    jwt_tok = generate_mock_jwt(user_id="123")
+    client.cookies.set("rx_access_token", jwt_tok)
+
+    with patch(
+        "src.refzone.router.get_weather_for_appointment", new_callable=AsyncMock
+    ) as mock_get_weather:
+        mock_get_weather.return_value = mock_weather
+
+        r = await client.get(
+            "/api/refzone/weather",
+            params={
+                "latitude": -33.8340,
+                "longitude": 151.2140,
+                "moment": "2026-07-15T15:30:00.000Z",
+            },
+        )
+
+    assert r.status_code == 200
+    assert r.json() == mock_weather

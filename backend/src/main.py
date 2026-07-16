@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+import src.core.models  # noqa: F401
 from src.core.config import get_settings
 from src.competitions.router import router as competitions_router
 from src.clubs.router import router as clubs_router

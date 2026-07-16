@@ -1,16 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { updateAppointmentStatus } from '../../api/refzone';
+import { updateAppointmentStatus, fetchVenueWeather } from '../../api/refzone';
 import '../../pages/RefZone.css';
 
 export default function AppointmentCard({ appointment, onUpdate, hideActions }) {
   const [showOfficials, setShowOfficials] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState(null);
+  const [weather, setWeather] = useState(null);
+  const [loadingWeather, setLoadingWeather] = useState(false);
+  const [venueCoords, setVenueCoords] = useState({ latitude: null, longitude: null });
+
+  const match = appointment?.match;
+
+  useEffect(() => {
+    let isMounted = true;
+    if (match?.venue?.name) {
+      setLoadingWeather(true);
+      fetchVenueWeather(match.venue.name, match.moment, appointment.db_game_id)
+        .then((data) => {
+          if (isMounted && data) {
+            setVenueCoords({
+              latitude: data.latitude,
+              longitude: data.longitude
+            });
+            setWeather(data.weather);
+            setLoadingWeather(false);
+          }
+        })
+        .catch((err) => {
+          console.warn('Failed to load venue/weather for appointment:', err);
+          if (isMounted) {
+            setLoadingWeather(false);
+          }
+        });
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [match?.venue?.name, match?.moment, appointment?.db_game_id]);
 
   if (!appointment || !appointment.match) return null;
 
-  const match = appointment.match;
   const isPast = match.moment < Date.now();
   const isCancelled = appointment.isActive === false;
 
@@ -106,8 +137,40 @@ export default function AppointmentCard({ appointment, onUpdate, hideActions }) 
           )}
         </div>
         <div className="appointment-card__venue">
-          📍 {match.venue ? match.venue.name : 'TBD Venue'}
+          📍{' '}
+          {match.venue && match.venue.name ? (
+            <a
+              href={
+                venueCoords.latitude !== null && venueCoords.longitude !== null
+                  ? `https://www.google.com/maps/search/?api=1&query=${venueCoords.latitude},${venueCoords.longitude}`
+                  : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                      match.venue.name + ' Sydney'
+                    )}`
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              className="appointment-card__venue-link"
+            >
+              {match.venue.name} ↗
+            </a>
+          ) : (
+            'TBD Venue'
+          )}
         </div>
+        {loadingWeather && (
+          <div className="appointment-card__weather">
+            <span style={{ fontWeight: 'var(--font-weight-semibold)' }}>Weather Forecast:</span>
+            <span>🌡️ Loading...</span>
+          </div>
+        )}
+        {!loadingWeather && weather && weather.temperature !== undefined && (
+          <div className="appointment-card__weather">
+            <span style={{ fontWeight: 'var(--font-weight-semibold)' }}>Weather Forecast:</span>
+            <span>🌡️ {weather.temperature !== null && weather.temperature !== undefined ? `${weather.temperature}°C` : 'N/A'}</span>
+            <span>🌧️ {weather.precipitation_probability !== null && weather.precipitation_probability !== undefined ? `${weather.precipitation_probability}%` : '0%'}</span>
+            <span>💨 {weather.wind_speed !== null && weather.wind_speed !== undefined ? `${weather.wind_speed} km/h` : 'N/A'}</span>
+          </div>
+        )}
       </div>
 
       {appointment.db_game_id && (

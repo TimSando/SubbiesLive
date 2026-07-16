@@ -1,0 +1,1255 @@
+[
+  {
+    "id": 1,
+    "name": "A R Hurst Reserve",
+    "address": null,
+    "latitude": -34.0124939,
+    "longitude": 151.0897715
+  },
+  {
+    "id": 2,
+    "name": "Airey Park",
+    "address": null,
+    "latitude": -33.8675724,
+    "longitude": 151.0736535
+  },
+  {
+    "id": 3,
+    "name": "Allianz Stadium",
+    "address": null,
+    "latitude": -33.8891571,
+    "longitude": 151.2251352
+  },
+  {
+    "id": 5,
+    "name": "Alwyn Lindfield Reserve",
+    "address": null,
+    "latitude": -33.7359693,
+    "longitude": 150.9293092
+  },
+  {
+    "id": 6,
+    "name": "Alwyn Lindfield Reserve #2",
+    "address": null,
+    "latitude": -33.7359693,
+    "longitude": 150.9293092
+  },
+  {
+    "id": 7,
+    "name": "Balmoral Oval",
+    "address": null,
+    "latitude": -33.8298677,
+    "longitude": 151.2542157
+  },
+  {
+    "id": 8,
+    "name": "Barker College",
+    "address": null,
+    "latitude": -33.7110584,
+    "longitude": 151.1003645
+  },
+  {
+    "id": 9,
+    "name": "Barker College Oval",
+    "address": null,
+    "latitude": -33.7110584,
+    "longitude": 151.1003645
+  },
+  {
+    "id": 10,
+    "name": "Beauchamp Oval",
+    "address": null,
+    "latitude": -33.7907269,
+    "longitude": 151.1860337
+  },
+  {
+    "id": 11,
+    "name": "Beauchamp Park",
+    "address": null,
+    "latitude": -33.7907269,
+    "longitude": 151.1860337
+  },
+  {
+    "id": 12,
+    "name": "Belrose Oval",
+    "address": null,
+    "latitude": -33.740376,
+    "longitude": 151.1820452
+  },
+  {
+    "id": 13,
+    "name": "Bicentennial Park",
+    "address": null,
+    "latitude": -33.8441836,
+    "longitude": 151.0781955
+  },
+  {
+    "id": 14,
+    "name": "Bon Andrews Oval",
+    "address": null,
+    "latitude": -33.8305979,
+    "longitude": 151.2121904
+  },
+  {
+    "id": 15,
+    "name": "Bon Andrews Oval (Nth Syd #2)",
+    "address": null,
+    "latitude": -33.8305979,
+    "longitude": 151.2121904
+  },
+  {
+    "id": 16,
+    "name": "Booralee Park",
+    "address": null,
+    "latitude": -33.9409382,
+    "longitude": 151.2008731
+  },
+  {
+    "id": 17,
+    "name": "Booralee Park #2",
+    "address": null,
+    "latitude": -33.9468932,
+    "longitude": 151.1910784
+  },
+  {
+    "id": 18,
+    "name": "Boronia Park",
+    "address": null,
+    "latitude": -33.8253116,
+    "longitude": 151.1389196
+  },
+  {
+    "id": 19,
+    "name": "Boronia Park #2",
+    "address": null,
+    "latitude": -33.8253116,
+    "longitude": 151.1389196
+  },
+  {
+    "id": 20,
+    "name": "Boronia Park #3",
+    "address": null,
+    "latitude": -33.8253116,
+    "longitude": 151.1389196
+  },
+  {
+    "id": 21,
+    "name": "Burrows Park",
+    "address": null,
+    "latitude": -33.8146255,
+    "longitude": 151.1129264
+  },
+  {
+    "id": 22,
+    "name": "C A Redmond Field",
+    "address": null,
+    "latitude": -33.9551885,
+    "longitude": 151.1508423
+  },
+  {
+    "id": 23,
+    "name": "Camden",
+    "address": null,
+    "latitude": -34.06864,
+    "longitude": 150.6812907
+  },
+  {
+    "id": 24,
+    "name": "Camden Rugby Park",
+    "address": null,
+    "latitude": -34.06864,
+    "longitude": 150.6812907
+  },
+  {
+    "id": 25,
+    "name": "Campbelltown Showground",
+    "address": null,
+    "latitude": -34.0643852,
+    "longitude": 150.8210404
+  },
+  {
+    "id": 26,
+    "name": "Camperdown Oval",
+    "address": null,
+    "latitude": -33.889459,
+    "longitude": 151.1736451
+  },
+  {
+    "id": 29,
+    "name": "Chatswood Oval",
+    "address": null,
+    "latitude": -33.7999347,
+    "longitude": 151.1792078
+  },
+  {
+    "id": 30,
+    "name": "Chifley Sports Reserve",
+    "address": null,
+    "latitude": -33.97435,
+    "longitude": 151.2355224
+  },
+  {
+    "id": 31,
+    "name": "Christison Park",
+    "address": null,
+    "latitude": -33.8559222,
+    "longitude": 151.2847009
+  },
+  {
+    "id": 32,
+    "name": "Christison Park #2",
+    "address": null,
+    "latitude": -33.3076286,
+    "longitude": 115.7101768
+  },
+  {
+    "id": 33,
+    "name": "College Oval",
+    "address": null,
+    "latitude": -37.8491497,
+    "longitude": 144.7234978
+  },
+  {
+    "id": 34,
+    "name": "Colonial Reserve",
+    "address": null,
+    "latitude": -33.6395411,
+    "longitude": 150.7999726
+  },
+  {
+    "id": 35,
+    "name": "Concord Oval",
+    "address": null,
+    "latitude": -33.8684377,
+    "longitude": 151.1093031
+  },
+  {
+    "id": 36,
+    "name": "Coogee Oval",
+    "address": null,
+    "latitude": -33.9192855,
+    "longitude": 151.2558499
+  },
+  {
+    "id": 37,
+    "name": "Cowra",
+    "address": null,
+    "latitude": -33.8104935,
+    "longitude": 150.9359218
+  },
+  {
+    "id": 38,
+    "name": "Dangar Park",
+    "address": null,
+    "latitude": -32.9021382,
+    "longitude": 151.7457002
+  },
+  {
+    "id": 40,
+    "name": "David Phillips Field",
+    "address": null,
+    "latitude": -33.9317909,
+    "longitude": 151.2232826
+  },
+  {
+    "id": 41,
+    "name": "Deerubbin Park",
+    "address": null,
+    "latitude": -33.605044,
+    "longitude": 150.8129133
+  },
+  {
+    "id": 42,
+    "name": "Don Lucas Reserve",
+    "address": null,
+    "latitude": -34.0400697,
+    "longitude": 151.1625775
+  },
+  {
+    "id": 47,
+    "name": "Drummoyne Oval",
+    "address": null,
+    "latitude": -33.8509497,
+    "longitude": 151.1499685
+  },
+  {
+    "id": 48,
+    "name": "Epping Boys HS",
+    "address": null,
+    "latitude": -33.769312,
+    "longitude": 151.0996126
+  },
+  {
+    "id": 49,
+    "name": "Eric Tweedale #1",
+    "address": null,
+    "latitude": -33.8400779,
+    "longitude": 150.9935259
+  },
+  {
+    "id": 50,
+    "name": "Eric Tweedale #2",
+    "address": null,
+    "latitude": -33.8400779,
+    "longitude": 150.9935259
+  },
+  {
+    "id": 51,
+    "name": "Eric Tweedale Stadium",
+    "address": null,
+    "latitude": -33.8400779,
+    "longitude": 150.9935259
+  },
+  {
+    "id": 52,
+    "name": "Ernie Calland Gateshead",
+    "address": null,
+    "latitude": -32.9840006,
+    "longitude": 151.686827
+  },
+  {
+    "id": 53,
+    "name": "Evatt Park",
+    "address": null,
+    "latitude": -33.9554014,
+    "longitude": 151.111174
+  },
+  {
+    "id": 111,
+    "name": "Forshaw No 2",
+    "address": null,
+    "latitude": -33.9591529,
+    "longitude": 151.0666878
+  },
+  {
+    "id": 112,
+    "name": "Forshaw Park",
+    "address": null,
+    "latitude": -34.0245798,
+    "longitude": 151.1111788
+  },
+  {
+    "id": 113,
+    "name": "Forshaw Rugby Park",
+    "address": null,
+    "latitude": -34.0245798,
+    "longitude": 151.1111788
+  },
+  {
+    "id": 114,
+    "name": "Forshaw Rugby Park #2",
+    "address": null,
+    "latitude": -34.0245798,
+    "longitude": 151.1111788
+  },
+  {
+    "id": 118,
+    "name": "Glen Willow Mudgee",
+    "address": null,
+    "latitude": -32.5821215,
+    "longitude": 149.5816416
+  },
+  {
+    "id": 119,
+    "name": "Grantham Reserve",
+    "address": null,
+    "latitude": -33.788867,
+    "longitude": 150.9292045
+  },
+  {
+    "id": 120,
+    "name": "Grantham Reserve - Blacktown",
+    "address": null,
+    "latitude": -33.788867,
+    "longitude": 150.9292045
+  },
+  {
+    "id": 121,
+    "name": "Granville Oval No 1",
+    "address": null,
+    "latitude": -33.8400452,
+    "longitude": 150.9948496
+  },
+  {
+    "id": 122,
+    "name": "H. V. Evatt Park",
+    "address": null,
+    "latitude": -33.9818235,
+    "longitude": 151.0440655
+  },
+  {
+    "id": 123,
+    "name": "Hassall Park",
+    "address": null,
+    "latitude": -33.7160312,
+    "longitude": 151.1722498
+  },
+  {
+    "id": 124,
+    "name": "Hassall Park #2",
+    "address": null,
+    "latitude": -33.8045627,
+    "longitude": 150.6816734
+  },
+  {
+    "id": 125,
+    "name": "Hassell Park - St Ives",
+    "address": null,
+    "latitude": -33.7173242,
+    "longitude": 151.1731642
+  },
+  {
+    "id": 126,
+    "name": "Headen Park",
+    "address": null,
+    "latitude": -33.7251331,
+    "longitude": 151.0795358
+  },
+  {
+    "id": 127,
+    "name": "Heffron Park",
+    "address": null,
+    "latitude": -33.9503114,
+    "longitude": 151.2354489
+  },
+  {
+    "id": 128,
+    "name": "Henson Park - Field 1",
+    "address": null,
+    "latitude": -33.904485,
+    "longitude": 151.1557887
+  },
+  {
+    "id": 129,
+    "name": "Holroyd Sports Ground",
+    "address": null,
+    "latitude": -33.8289843,
+    "longitude": 150.996759
+  },
+  {
+    "id": 130,
+    "name": "Holroyd Sportsground",
+    "address": null,
+    "latitude": -33.8288336,
+    "longitude": 150.9997163
+  },
+  {
+    "id": 131,
+    "name": "Hudson Park",
+    "address": null,
+    "latitude": -33.6357145,
+    "longitude": 151.3124168
+  },
+  {
+    "id": 132,
+    "name": "Hurstville Oval",
+    "address": null,
+    "latitude": -33.9612886,
+    "longitude": 151.0993178
+  },
+  {
+    "id": 133,
+    "name": "J S White Oval, King's School",
+    "address": null,
+    "latitude": -33.8289774,
+    "longitude": 150.9581333
+  },
+  {
+    "id": 134,
+    "name": "James Morgan",
+    "address": null,
+    "latitude": -33.7419661,
+    "longitude": 151.2816203
+  },
+  {
+    "id": 135,
+    "name": "James Morgan Res",
+    "address": null,
+    "latitude": -33.7419661,
+    "longitude": 151.2816203
+  },
+  {
+    "id": 140,
+    "name": "John Dwyer Oval",
+    "address": null,
+    "latitude": -34.582893,
+    "longitude": 150.7909748
+  },
+  {
+    "id": 141,
+    "name": "Keirle Park",
+    "address": null,
+    "latitude": -33.7850814,
+    "longitude": 151.2800475
+  },
+  {
+    "id": 142,
+    "name": "Kellyville Park",
+    "address": null,
+    "latitude": -33.7144149,
+    "longitude": 150.9623405
+  },
+  {
+    "id": 143,
+    "name": "King's School J S White Oval - Field 1",
+    "address": null,
+    "latitude": -33.8289774,
+    "longitude": 150.9581333
+  },
+  {
+    "id": 144,
+    "name": "Knox Grammar School",
+    "address": null,
+    "latitude": -33.7231377,
+    "longitude": 151.1198058
+  },
+  {
+    "id": 145,
+    "name": "Koola Park",
+    "address": null,
+    "latitude": -33.755828,
+    "longitude": 151.1719963
+  },
+  {
+    "id": 146,
+    "name": "Lapstone Oval",
+    "address": null,
+    "latitude": -33.7711362,
+    "longitude": 150.6356385
+  },
+  {
+    "id": 147,
+    "name": "Latham Park",
+    "address": null,
+    "latitude": -33.9352223,
+    "longitude": 151.2505465
+  },
+  {
+    "id": 148,
+    "name": "Latham Park, Lower Field",
+    "address": null,
+    "latitude": -33.9352223,
+    "longitude": 151.2505465
+  },
+  {
+    "id": 149,
+    "name": "Leichhardt Oval",
+    "address": null,
+    "latitude": -33.8686481,
+    "longitude": 151.1548118
+  },
+  {
+    "id": 150,
+    "name": "Leichhardt Oval #2",
+    "address": null,
+    "latitude": -33.8686481,
+    "longitude": 151.1548118
+  },
+  {
+    "id": 151,
+    "name": "Lidcombe Oval",
+    "address": null,
+    "latitude": -33.8568254,
+    "longitude": 151.03749
+  },
+  {
+    "id": 153,
+    "name": "Lofberg Oval",
+    "address": null,
+    "latitude": -33.7629394,
+    "longitude": 151.1275825
+  },
+  {
+    "id": 154,
+    "name": "Lyne Park",
+    "address": null,
+    "latitude": -33.871401,
+    "longitude": 151.2632677
+  },
+  {
+    "id": 156,
+    "name": "Macquarie Uni Sports Fields",
+    "address": null,
+    "latitude": -33.7656752,
+    "longitude": 151.1155197
+  },
+  {
+    "id": 157,
+    "name": "Macquarie University Sport Fields",
+    "address": null,
+    "latitude": -33.7656752,
+    "longitude": 151.1155197
+  },
+  {
+    "id": 158,
+    "name": "Manly Oval",
+    "address": null,
+    "latitude": -33.7960382,
+    "longitude": 151.2839839
+  },
+  {
+    "id": 159,
+    "name": "Marcellin Rugby Park",
+    "address": null,
+    "latitude": -32.7246288,
+    "longitude": 151.5673364
+  },
+  {
+    "id": 160,
+    "name": "Marsfield Park",
+    "address": null,
+    "latitude": -33.7710019,
+    "longitude": 151.1042492
+  },
+  {
+    "id": 164,
+    "name": "McKay Oval",
+    "address": null,
+    "latitude": -33.8998194,
+    "longitude": 151.2262176
+  },
+  {
+    "id": 165,
+    "name": "McQuade Park",
+    "address": null,
+    "latitude": -33.6103617,
+    "longitude": 150.8127493
+  },
+  {
+    "id": 169,
+    "name": "Melwood Oval",
+    "address": null,
+    "latitude": -33.7659546,
+    "longitude": 151.209402
+  },
+  {
+    "id": 170,
+    "name": "Merrylands Oval",
+    "address": null,
+    "latitude": -33.8319028,
+    "longitude": 150.9760409
+  },
+  {
+    "id": 171,
+    "name": "Mittigar Res #1",
+    "address": null,
+    "latitude": -33.7325428,
+    "longitude": 150.844735
+  },
+  {
+    "id": 172,
+    "name": "Mittigar Res #2",
+    "address": null,
+    "latitude": -33.7325428,
+    "longitude": 150.844735
+  },
+  {
+    "id": 173,
+    "name": "Mittigar Reserve",
+    "address": null,
+    "latitude": -33.7325428,
+    "longitude": 150.844735
+  },
+  {
+    "id": 178,
+    "name": "St Luke's Park",
+    "address": null,
+    "latitude": -33.698166,
+    "longitude": 150.819632
+  },
+  {
+    "id": 185,
+    "name": "Nagle Park",
+    "address": null,
+    "latitude": -33.943153,
+    "longitude": 151.2331218
+  },
+  {
+    "id": 186,
+    "name": "Nagle Park 2",
+    "address": null,
+    "latitude": -33.7150081,
+    "longitude": 150.7368211
+  },
+  {
+    "id": 187,
+    "name": "Narrabeen",
+    "address": null,
+    "latitude": -33.7135699,
+    "longitude": 151.2978164
+  },
+  {
+    "id": 188,
+    "name": "Nepean Rugby Park",
+    "address": null,
+    "latitude": -33.7354474,
+    "longitude": 150.7043299
+  },
+  {
+    "id": 189,
+    "name": "Newcastle Sports Ground 2",
+    "address": null,
+    "latitude": -32.9304511,
+    "longitude": 151.7578264
+  },
+  {
+    "id": 190,
+    "name": "Newcastle Uni",
+    "address": null,
+    "latitude": -33.8684074,
+    "longitude": 151.2101958
+  },
+  {
+    "id": 191,
+    "name": "Newcastle no 5",
+    "address": null,
+    "latitude": -33.6956245,
+    "longitude": 151.1208533
+  },
+  {
+    "id": 192,
+    "name": "Newport Oval",
+    "address": null,
+    "latitude": -33.6571784,
+    "longitude": 151.3132745
+  },
+  {
+    "id": 194,
+    "name": "No. 2 Sportsground",
+    "address": null,
+    "latitude": -34.1971407,
+    "longitude": 150.7843385
+  },
+  {
+    "id": 195,
+    "name": "North Sydney Oval",
+    "address": null,
+    "latitude": -33.8318879,
+    "longitude": 151.2093253
+  },
+  {
+    "id": 196,
+    "name": "Old Boys Ground",
+    "address": null,
+    "latitude": null,
+    "longitude": null
+  },
+  {
+    "id": 197,
+    "name": "Old Bush Road Oval",
+    "address": null,
+    "latitude": -34.0578002,
+    "longitude": 151.0247078
+  },
+  {
+    "id": 198,
+    "name": "Passmore Oval",
+    "address": null,
+    "latitude": -32.9195472,
+    "longitude": 151.7548841
+  },
+  {
+    "id": 199,
+    "name": "Peakhurst Park",
+    "address": null,
+    "latitude": -33.9814346,
+    "longitude": 151.0614505
+  },
+  {
+    "id": 200,
+    "name": "Pennant Hills Oval",
+    "address": null,
+    "latitude": -33.7412236,
+    "longitude": 151.0760375
+  },
+  {
+    "id": 202,
+    "name": "Peter Van Hasselt #2",
+    "address": null,
+    "latitude": -33.7272432,
+    "longitude": 150.7997678
+  },
+  {
+    "id": 203,
+    "name": "Peter Van Hasselt Park",
+    "address": null,
+    "latitude": -33.7272432,
+    "longitude": 150.7997678
+  },
+  {
+    "id": 204,
+    "name": "Peter van Hasselt Park",
+    "address": null,
+    "latitude": -33.7272432,
+    "longitude": 150.7997678
+  },
+  {
+    "id": 205,
+    "name": "Pioneers Park",
+    "address": null,
+    "latitude": -33.9591616,
+    "longitude": 151.248475
+  },
+  {
+    "id": 206,
+    "name": "Pittwater Rugby Park",
+    "address": null,
+    "latitude": -33.6970412,
+    "longitude": 151.3044761
+  },
+  {
+    "id": 207,
+    "name": "Pittwater Rugby Park no.2",
+    "address": null,
+    "latitude": -33.6970412,
+    "longitude": 151.3044761
+  },
+  {
+    "id": 208,
+    "name": "Porter Reserve",
+    "address": null,
+    "latitude": -33.6499925,
+    "longitude": 151.322006
+  },
+  {
+    "id": 213,
+    "name": "Primrose Park No 1",
+    "address": null,
+    "latitude": -33.8224826,
+    "longitude": 151.2221882
+  },
+  {
+    "id": 215,
+    "name": "Norford Park #1",
+    "address": null,
+    "latitude": -37.8420812,
+    "longitude": 145.0368122
+  },
+  {
+    "id": 220,
+    "name": "Norford Park #2",
+    "address": null,
+    "latitude": -37.8420812,
+    "longitude": 145.0368122
+  },
+  {
+    "id": 224,
+    "name": "Rawson Oval",
+    "address": null,
+    "latitude": -33.8351954,
+    "longitude": 151.2489922
+  },
+  {
+    "id": 225,
+    "name": "Rawson Park",
+    "address": null,
+    "latitude": -33.8350749,
+    "longitude": 151.249749
+  },
+  {
+    "id": 226,
+    "name": "Redfield College",
+    "address": null,
+    "latitude": -33.6889066,
+    "longitude": 151.0329779
+  },
+  {
+    "id": 227,
+    "name": "Redfield College Oval",
+    "address": null,
+    "latitude": -33.6889066,
+    "longitude": 151.0329779
+  },
+  {
+    "id": 228,
+    "name": "Riverwood Park",
+    "address": null,
+    "latitude": -33.9500376,
+    "longitude": 151.0464016
+  },
+  {
+    "id": 229,
+    "name": "Rodney Reserve",
+    "address": null,
+    "latitude": -33.8747827,
+    "longitude": 151.2836825
+  },
+  {
+    "id": 230,
+    "name": "Roseville Chase Oval",
+    "address": null,
+    "latitude": -33.7736703,
+    "longitude": 151.1949061
+  },
+  {
+    "id": 231,
+    "name": "Rothwell Park",
+    "address": null,
+    "latitude": -33.8598612,
+    "longitude": 151.1047316
+  },
+  {
+    "id": 233,
+    "name": "Rushcutters Bay Park",
+    "address": null,
+    "latitude": -33.8747917,
+    "longitude": 151.2303371
+  },
+  {
+    "id": 234,
+    "name": "Ryde Park",
+    "address": null,
+    "latitude": -33.814331,
+    "longitude": 151.1098227
+  },
+  {
+    "id": 245,
+    "name": "Samantha Riley Drive Res",
+    "address": null,
+    "latitude": -33.6961565,
+    "longitude": 150.96658
+  },
+  {
+    "id": 246,
+    "name": "Saunders Oval",
+    "address": null,
+    "latitude": -28.8654616,
+    "longitude": 153.5546937
+  },
+  {
+    "id": 248,
+    "name": "Singleton Rugby Club",
+    "address": null,
+    "latitude": -32.5707511,
+    "longitude": 151.1873207
+  },
+  {
+    "id": 249,
+    "name": "Soldiers Memorial Park",
+    "address": null,
+    "latitude": -33.7394367,
+    "longitude": 151.1525545
+  },
+  {
+    "id": 250,
+    "name": "Soldiers Memorial Park #2",
+    "address": null,
+    "latitude": -34.8262076,
+    "longitude": 138.8817849
+  },
+  {
+    "id": 251,
+    "name": "Somerville Oval",
+    "address": null,
+    "latitude": -33.7830359,
+    "longitude": 151.082183
+  },
+  {
+    "id": 252,
+    "name": "St Andrews College",
+    "address": null,
+    "latitude": -33.8887946,
+    "longitude": 151.2027441
+  },
+  {
+    "id": 253,
+    "name": "St John's College Oval",
+    "address": null,
+    "latitude": -33.8885994,
+    "longitude": 151.1816633
+  },
+  {
+    "id": 254,
+    "name": "St Luke's North",
+    "address": null,
+    "latitude": -37.7871254,
+    "longitude": 144.9801682
+  },
+  {
+    "id": 255,
+    "name": "St Luke's Park #3",
+    "address": null,
+    "latitude": -37.7871254,
+    "longitude": 144.9801682
+  },
+  {
+    "id": 256,
+    "name": "St Lukes",
+    "address": null,
+    "latitude": -33.9206689,
+    "longitude": 150.923487
+  },
+  {
+    "id": 257,
+    "name": "St Paul's College Oval",
+    "address": null,
+    "latitude": -33.8889508,
+    "longitude": 151.1832066
+  },
+  {
+    "id": 258,
+    "name": "Sydney University Football Ground",
+    "address": null,
+    "latitude": -33.886559,
+    "longitude": 151.1817981
+  },
+  {
+    "id": 259,
+    "name": "T G Millner Field",
+    "address": null,
+    "latitude": -33.776671,
+    "longitude": 151.0955873
+  },
+  {
+    "id": 260,
+    "name": "T G Millner Field #1",
+    "address": null,
+    "latitude": -33.776671,
+    "longitude": 151.0955873
+  },
+  {
+    "id": 261,
+    "name": "T.G. Millner Field",
+    "address": null,
+    "latitude": -33.776671,
+    "longitude": 151.0955873
+  },
+  {
+    "id": 263,
+    "name": "TG Millner Field 2",
+    "address": null,
+    "latitude": -33.776671,
+    "longitude": 151.0955873
+  },
+  {
+    "id": 264,
+    "name": "Tantallon Oval",
+    "address": null,
+    "latitude": -33.809178,
+    "longitude": 151.1594346
+  },
+  {
+    "id": 265,
+    "name": "Taplin Oval",
+    "address": null,
+    "latitude": -33.8499575,
+    "longitude": 151.1489147
+  },
+  {
+    "id": 266,
+    "name": "Taplin Park",
+    "address": null,
+    "latitude": -33.8499575,
+    "longitude": 151.1489147
+  },
+  {
+    "id": 267,
+    "name": "The King's School Old Boys' Field",
+    "address": null,
+    "latitude": 33.8089181,
+    "longitude": 150.9976328
+  },
+  {
+    "id": 268,
+    "name": "The King's School Oval",
+    "address": null,
+    "latitude": -33.8089181,
+    "longitude": 150.9976328
+  },
+  {
+    "id": 269,
+    "name": "The Ponds Stadium",
+    "address": null,
+    "latitude": -33.7132547,
+    "longitude": 150.9098624
+  },
+  {
+    "id": 270,
+    "name": "The Ridge",
+    "address": null,
+    "latitude": -33.7405979,
+    "longitude": 151.2240999
+  },
+  {
+    "id": 271,
+    "name": "The Ridge Playing Fields",
+    "address": null,
+    "latitude": -33.7405979,
+    "longitude": 151.2240999
+  },
+  {
+    "id": 272,
+    "name": "Thornton Park",
+    "address": null,
+    "latitude": -33.8567802,
+    "longitude": 151.1953894
+  },
+  {
+    "id": 275,
+    "name": "Tomaree Nelson Bay",
+    "address": null,
+    "latitude": -32.7532672,
+    "longitude": 152.1421854
+  },
+  {
+    "id": 276,
+    "name": "Tryon Oval #2",
+    "address": null,
+    "latitude": -33.7696708,
+    "longitude": 151.1794601
+  },
+  {
+    "id": 277,
+    "name": "Turramurra Oval",
+    "address": null,
+    "latitude": -33.7535333,
+    "longitude": 151.1110082
+  },
+  {
+    "id": 278,
+    "name": "UNSW Village Green - UNSW",
+    "address": null,
+    "latitude": -33.9184307,
+    "longitude": 151.2254018
+  },
+  {
+    "id": 279,
+    "name": "UOW Sports Fields",
+    "address": null,
+    "latitude": -34.4068262,
+    "longitude": 150.8618048
+  },
+  {
+    "id": 280,
+    "name": "Uni of Wollongong",
+    "address": null,
+    "latitude": -33.9224423,
+    "longitude": 150.9254984
+  },
+  {
+    "id": 281,
+    "name": "University Oval #1",
+    "address": null,
+    "latitude": -34.9142965,
+    "longitude": 138.6012123
+  },
+  {
+    "id": 284,
+    "name": "Wade Park, Orange",
+    "address": null,
+    "latitude": -33.2891146,
+    "longitude": 149.1013701
+  },
+  {
+    "id": 285,
+    "name": "Waitara Oval",
+    "address": null,
+    "latitude": -33.7078495,
+    "longitude": 151.1064996
+  },
+  {
+    "id": 286,
+    "name": "Wakehurst",
+    "address": null,
+    "latitude": -33.715152,
+    "longitude": 151.2134531
+  },
+  {
+    "id": 287,
+    "name": "Wakehurst Rugby Park",
+    "address": null,
+    "latitude": -33.715152,
+    "longitude": 151.2134531
+  },
+  {
+    "id": 293,
+    "name": "Waterloo Oval",
+    "address": null,
+    "latitude": -33.901342,
+    "longitude": 151.2052468
+  },
+  {
+    "id": 294,
+    "name": "Waverley Oval",
+    "address": null,
+    "latitude": -33.8944893,
+    "longitude": 151.2587412
+  },
+  {
+    "id": 295,
+    "name": "Wills Ground",
+    "address": null,
+    "latitude": -33.9146564,
+    "longitude": 151.1329129
+  },
+  {
+    "id": 296,
+    "name": "Wollongong Uni",
+    "address": null,
+    "latitude": -33.9224423,
+    "longitude": 150.9254984
+  },
+  {
+    "id": 297,
+    "name": "Woollahra No 3",
+    "address": null,
+    "latitude": -33.8857968,
+    "longitude": 151.2440867
+  },
+  {
+    "id": 298,
+    "name": "Woollahra Oval",
+    "address": null,
+    "latitude": -33.8784337,
+    "longitude": 151.2638021
+  },
+  {
+    "id": 299,
+    "name": "Woollahra Oval #1",
+    "address": null,
+    "latitude": -33.8784337,
+    "longitude": 151.2638021
+  },
+  {
+    "id": 300,
+    "name": "Woollahra Oval #2",
+    "address": null,
+    "latitude": -33.8784337,
+    "longitude": 151.2638021
+  },
+  {
+    "id": 301,
+    "name": "Woollahra Oval #3",
+    "address": null,
+    "latitude": -33.8784337,
+    "longitude": 151.2638021
+  },
+  {
+    "id": 302,
+    "name": "Woollahra Oval 2",
+    "address": null,
+    "latitude": -33.8784337,
+    "longitude": 151.2638021
+  },
+  {
+    "id": 303,
+    "name": "Woy Woy Oval",
+    "address": null,
+    "latitude": -33.4858092,
+    "longitude": 151.3266859
+  },
+  {
+    "id": 304,
+    "name": "Yattenden Oval",
+    "address": null,
+    "latitude": -33.7662725,
+    "longitude": 150.994524
+  },
+  {
+    "id": 305,
+    "name": "Yulong Oval",
+    "address": null,
+    "latitude": -32.738499,
+    "longitude": 151.8622247
+  }
+]

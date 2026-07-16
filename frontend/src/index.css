@@ -1824,3 +1824,17 @@ tbody tr:last-child td {
   border-color: var(--color-border-hover) !important;
   transform: translateX(4px);
 }
+
+/* --- Weather Strip --- */
+.weather-strip {
+  margin-top: var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  background: var(--color-bg-glass);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}

@@ -122,6 +122,11 @@ def parse_rx_moment_to_sydney(moment_val: Any) -> Optional[datetime]:
     if moment_val is None:
         return None
     try:
+        if isinstance(moment_val, datetime):
+            if moment_val.tzinfo is None:
+                return moment_val
+            return moment_val.astimezone(SYDNEY_TZ).replace(tzinfo=None)
+
         if isinstance(moment_val, (int, float)):
             if moment_val > 1e11:
                 moment_val = moment_val / 1000.0
@@ -139,7 +144,8 @@ def parse_rx_moment_to_sydney(moment_val: Any) -> Optional[datetime]:
 
         dt = dateparser.parse(str(moment_val))
         if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
+            # If naive, assume already in local Sydney time
+            return dt
         return dt.astimezone(SYDNEY_TZ).replace(tzinfo=None)
     except Exception:
         return None

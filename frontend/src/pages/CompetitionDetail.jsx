@@ -103,16 +103,7 @@ function GamesForRound({ competitionId, round }) {
             style={{ cursor: 'pointer' }}
           >
             <span className="fixture-row__date">{formatDate(game.game_date)}</span>
-            <span 
-              className={`fixture-row__team fixture-row__team--home ${homeWin ? 'fixture-row__team--winner' : ''}`}
-              onClick={(e) => {
-                e.stopPropagation()
-                navigate(`/teams/${game.home_team.id}`)
-              }}
-              style={{ cursor: 'pointer' }}
-              onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
-              onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
-            >
+            <span className={`fixture-row__team fixture-row__team--home ${homeWin ? 'fixture-row__team--winner' : ''}`}>
               {game.home_team.club_name || game.home_team.name}
             </span>
             
@@ -140,16 +131,7 @@ function GamesForRound({ competitionId, round }) {
               </>
             )}
 
-            <span 
-              className={`fixture-row__team fixture-row__team--away ${awayWin ? 'fixture-row__team--winner' : ''}`}
-              onClick={(e) => {
-                e.stopPropagation()
-                navigate(`/teams/${game.away_team.id}`)
-              }}
-              style={{ cursor: 'pointer' }}
-              onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
-              onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
-            >
+            <span className={`fixture-row__team fixture-row__team--away ${awayWin ? 'fixture-row__team--winner' : ''}`}>
               {game.away_team.club_name || game.away_team.name}
             </span>
             <span className="fixture-row__location">

@@ -8,6 +8,7 @@ import * as api from '../../../api/refzone'
 
 vi.mock('../../../api/refzone', () => ({
   updateAppointmentStatus: vi.fn(),
+  fetchVenueWeather: vi.fn().mockResolvedValue({ latitude: null, longitude: null, weather: null }),
 }))
 
 const mockAppointmentPending = {
@@ -154,6 +155,68 @@ describe('AppointmentCard Component', () => {
 
     expect(screen.queryByRole('button', { name: /Accept/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Reject/i })).not.toBeInTheDocument()
+  })
+
+  it('renders Google Maps link when venue is present', () => {
+    const appointmentWithVenue = {
+      ...mockAppointmentPending,
+      match: {
+        ...mockAppointmentPending.match,
+        venue: { name: 'Forsyth Park' },
+      },
+    }
+
+    render(
+      <MemoryRouter>
+        <AppointmentCard appointment={appointmentWithVenue} />
+      </MemoryRouter>
+    )
+
+    const link = screen.getByRole('link', { name: /Forsyth Park/i })
+    expect(link).toBeInTheDocument()
+    expect(link).toHaveAttribute('href', 'https://www.google.com/maps/search/?api=1&query=Forsyth%20Park%20Sydney')
+    expect(link).toHaveAttribute('target', '_blank')
+  })
+
+  it('renders weather details and updates map link when venue-weather is loaded', async () => {
+    const appointmentWithVenue = {
+      ...mockAppointmentPending,
+      match: {
+        ...mockAppointmentPending.match,
+        venue: { name: 'Forsyth Park' },
+      },
+    }
+
+    const mockWeather = {
+      temperature: 19.5,
+      precipitation_probability: 20,
+      wind_speed: 12.5,
+    }
+
+    api.fetchVenueWeather.mockResolvedValueOnce({
+      latitude: -33.8,
+      longitude: 151.2,
+      weather: mockWeather,
+    })
+
+    render(
+      <MemoryRouter>
+        <AppointmentCard appointment={appointmentWithVenue} />
+      </MemoryRouter>
+    )
+
+    // Initially displays loading weather placeholder
+    expect(screen.getByText(/Loading.../i)).toBeInTheDocument()
+
+    // Wait for the state to update, display weather details, and check maps link updates to use resolved coordinates
+    await waitFor(() => {
+      expect(screen.getByText(/19.5°C/i)).toBeInTheDocument()
+      expect(screen.getByText(/20%/i)).toBeInTheDocument()
+      expect(screen.getByText(/12.5 km\/h/i)).toBeInTheDocument()
+
+      const link = screen.getByRole('link', { name: /Forsyth Park/i })
+      expect(link).toHaveAttribute('href', 'https://www.google.com/maps/search/?api=1&query=-33.8,151.2')
+    })
   })
 })
 

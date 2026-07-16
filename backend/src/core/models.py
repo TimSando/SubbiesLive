@@ -6,3 +6,4 @@ from src.clubs.models import Club, Team  # noqa: F401
 from src.games.models import Game, GameEvent  # noqa: F401
 from src.players.models import Player  # noqa: F401
 from src.notifications.models import PwaSubscription, PwaSubscriptionTopic  # noqa: F401
+from src.venues.models import Venue  # noqa: F401

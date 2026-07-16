@@ -1,3 +1,5 @@
+import { api } from './client.js';
+
 const API_BASE = '/api/refzone';
 
 export async function loginToRX(email, password, rememberMe = false) {
@@ -119,5 +121,14 @@ export async function updateAppointmentStatus(appointmentId, status, authContext
     },
     authContext
   );
+}
+
+export async function fetchWeather(latitude, longitude, moment, authContext) {
+  const url = `${API_BASE}/weather?latitude=${latitude}&longitude=${longitude}&moment=${encodeURIComponent(moment)}`;
+  return fetchWithRefresh(url, { method: 'GET' }, authContext);
+}
+
+export async function fetchVenueWeather(venueName, moment, dbGameId) {
+  return api.getVenueWeather(venueName, moment, dbGameId);
 }
 

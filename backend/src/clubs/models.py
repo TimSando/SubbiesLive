@@ -21,6 +21,9 @@ class Club(Base):
     competition_mapping_id: Mapped[int | None] = mapped_column(
         ForeignKey("competition_mapping.id"), nullable=True
     )
+    primary_venue_id: Mapped[int | None] = mapped_column(
+        ForeignKey("venues.id"), nullable=True
+    )
 
     about_text: Mapped[str | None] = mapped_column(String(5000), nullable=True)
     division_info: Mapped[str | None] = mapped_column(String(200), nullable=True)
@@ -39,6 +42,9 @@ class Club(Base):
     # Relationships
     competition_mapping: Mapped["CompetitionMapping | None"] = relationship(
         "CompetitionMapping", back_populates="clubs"
+    )
+    primary_venue: Mapped["Venue | None"] = relationship(
+        "Venue", back_populates="clubs"
     )
     teams: Mapped[list["Team"]] = relationship(
         "Team", back_populates="club", cascade="all, delete-orphan"

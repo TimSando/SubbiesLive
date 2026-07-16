@@ -35,6 +35,9 @@ class Game(Base):
     )
     game_date: Mapped[str] = mapped_column(DateTime, nullable=False, index=True)
     location: Mapped[str | None] = mapped_column(String(300), nullable=True)
+    venue_id: Mapped[int | None] = mapped_column(
+        ForeignKey("venues.id"), nullable=True, index=True
+    )
     home_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
     away_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
     status: Mapped[str] = mapped_column(String(30), nullable=False, default="scheduled")
@@ -48,6 +51,7 @@ class Game(Base):
 
     # Relationships
     round: Mapped["Round"] = relationship("Round", back_populates="games")
+    venue: Mapped["Venue | None"] = relationship("Venue", back_populates="games")
     home_team: Mapped["Team"] = relationship(
         "Team", foreign_keys=[home_team_id], back_populates="home_games"
     )
