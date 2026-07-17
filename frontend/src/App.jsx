@@ -6,7 +6,6 @@ import ClubDetail from './pages/ClubDetail.jsx'
 import Competitions from './pages/Competitions.jsx'
 import CompetitionDetail from './pages/CompetitionDetail.jsx'
 import GameDetail from './pages/GameDetail.jsx'
-import GamePrep from './pages/GamePrep.jsx'
 import Stats from './pages/Stats.jsx'
 import PlayerDetail from './pages/PlayerDetail.jsx'
 import TeamDetail from './pages/TeamDetail.jsx'
@@ -27,7 +26,6 @@ export default function App() {
             <Route path="/competitions" element={<Competitions />} />
             <Route path="/competitions/:id" element={<CompetitionDetail />} />
             <Route path="/games/:id" element={<GameDetail />} />
-            <Route path="/games/:id/prep" element={<GamePrep />} />
             <Route path="/stats" element={<Stats />} />
             <Route path="/players/:id" element={<PlayerDetail />} />
             <Route path="/teams/:id" element={<TeamDetail />} />
