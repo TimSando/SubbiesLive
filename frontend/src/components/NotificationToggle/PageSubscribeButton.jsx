@@ -177,8 +177,9 @@ export default function PageSubscribeButton({ topicType, topicId, topicName }) {
           Alerts: {topicName}
         </div>
         
-        <label className="page-subscribe-popup__option">
+        <label className="page-subscribe-popup__option" htmlFor={`popup-${topicType}-${topicId}-outcome`}>
           <input 
+            id={`popup-${topicType}-${topicId}-outcome`}
             type="checkbox" 
             checked={notifyOutcome}
             onChange={(e) => handleOptionChange('outcome', e.target.checked)}
@@ -187,8 +188,9 @@ export default function PageSubscribeButton({ topicType, topicId, topicName }) {
           Game Outcome (Final Score)
         </label>
 
-        <label className="page-subscribe-popup__option">
+        <label className="page-subscribe-popup__option" htmlFor={`popup-${topicType}-${topicId}-events`}>
           <input 
+            id={`popup-${topicType}-${topicId}-events`}
             type="checkbox" 
             checked={notifyEvents}
             onChange={(e) => handleOptionChange('events', e.target.checked)}

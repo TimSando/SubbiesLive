@@ -362,8 +362,9 @@ export default function Notifications() {
       
       <div className="subscription-card__actions">
         <div className="subscription-card__options">
-          <label className="subscription-card__option">
+          <label className="subscription-card__option" htmlFor={`sub-${sub.topic_type}-${sub.topic_id}-outcome`}>
             <input 
+              id={`sub-${sub.topic_type}-${sub.topic_id}-outcome`}
               type="checkbox" 
               checked={sub.notify_outcome} 
               onChange={(e) => handleToggleOption(sub, 'outcome', e.target.checked)}
@@ -371,8 +372,9 @@ export default function Notifications() {
             />
             Game Outcome
           </label>
-          <label className="subscription-card__option">
+          <label className="subscription-card__option" htmlFor={`sub-${sub.topic_type}-${sub.topic_id}-events`}>
             <input 
+              id={`sub-${sub.topic_type}-${sub.topic_id}-events`}
               type="checkbox" 
               checked={sub.notify_events} 
               onChange={(e) => handleToggleOption(sub, 'events', e.target.checked)}
@@ -480,10 +482,8 @@ export default function Notifications() {
                                   <div
                                     key={club.id}
                                     className="search-select-option"
-                                    onMouseDown={(e) => {
-                                      e.preventDefault();
-                                      handleSubscribeTopic('club', club.id);
-                                    }}
+                                    onPointerDown={(e) => e.preventDefault()}
+                                    onClick={() => handleSubscribeTopic('club', club.id)}
                                   >
                                     {club.name}
                                   </div>
@@ -496,10 +496,8 @@ export default function Notifications() {
                               <div
                                 key={club.id}
                                 className="search-select-option"
-                                onMouseDown={(e) => {
-                                  e.preventDefault();
-                                  handleSubscribeTopic('club', club.id);
-                                }}
+                                onPointerDown={(e) => e.preventDefault()}
+                                onClick={() => handleSubscribeTopic('club', club.id)}
                               >
                                 {club.name}
                               </div>
@@ -548,10 +546,8 @@ export default function Notifications() {
                                   <div
                                     key={c.id}
                                     className="search-select-option"
-                                    onMouseDown={(e) => {
-                                      e.preventDefault();
-                                      handleSubscribeTopic('competition', c.id);
-                                    }}
+                                    onPointerDown={(e) => e.preventDefault()}
+                                    onClick={() => handleSubscribeTopic('competition', c.id)}
                                   >
                                     {c.name}
                                   </div>
@@ -564,10 +560,8 @@ export default function Notifications() {
                               <div
                                 key={c.id}
                                 className="search-select-option"
-                                onMouseDown={(e) => {
-                                  e.preventDefault();
-                                  handleSubscribeTopic('competition', c.id);
-                                }}
+                                onPointerDown={(e) => e.preventDefault()}
+                                onClick={() => handleSubscribeTopic('competition', c.id)}
                               >
                                 {c.name}
                               </div>
