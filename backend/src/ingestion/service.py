@@ -11,6 +11,7 @@ from src.core.config import get_settings
 
 from src.ingestion.fusesport import get_teams, get_comp_info, get_game_info
 from src.ingestion.transformers import transform_game, clean_round_name
+from sqlalchemy import text
 from src.ingestion.upserts import (
     upsert_competition,
     upsert_round,
@@ -87,15 +88,18 @@ def run_ingestion(session_factory, sync_mode: SyncMode = SyncMode.FAST):
                         try:
                             game_data = transform_game(raw_game, raw_round["id"])
 
-                            # In LIVE_ONLY mode, skip any game not played today or already completed
+                            # In LIVE_ONLY mode, skip any game not played today or already completed in our DB
                             if sync_mode == SyncMode.LIVE_ONLY:
                                 gdate = game_data.get("game_date")
                                 is_today = (
                                     gdate is not None
                                     and gdate.date() == datetime.now().date()
                                 )
-                                is_completed = game_data.get("status") == "completed"
-                                if not is_today or is_completed:
+                                db_status = session.execute(
+                                    text("SELECT status FROM games WHERE external_id = :eid"),
+                                    {"eid": game_data["external_id"]}
+                                ).scalar()
+                                if not is_today or db_status == "completed":
                                     continue
 
                             ht = game_data["home_team"]

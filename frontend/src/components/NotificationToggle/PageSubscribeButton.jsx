@@ -143,6 +143,30 @@ export default function PageSubscribeButton({ topicType, topicId, topicName }) {
     }
   }
 
+  const handleOptionChange = async (optionName, checked) => {
+    if (optionName === 'outcome') setNotifyOutcome(checked)
+    if (optionName === 'events') setNotifyEvents(checked)
+
+    if (!isSubscribed) return
+
+    try {
+      const registration = await navigator.serviceWorker.ready
+      const subscription = await registration.pushManager.getSubscription()
+      if (!subscription) return
+
+      await api.toggleSubscriptionTopic({
+        endpoint: subscription.endpoint,
+        topic_type: topicType,
+        topic_id: parseInt(topicId),
+        subscribe: true,
+        notify_outcome: optionName === 'outcome' ? checked : notifyOutcome,
+        notify_events: optionName === 'events' ? checked : notifyEvents
+      })
+    } catch (err) {
+      console.error('Error auto-saving subscription topic:', err)
+    }
+  }
+
   if (!isSupported) return null
 
   const popupContent = (
@@ -157,7 +181,7 @@ export default function PageSubscribeButton({ topicType, topicId, topicName }) {
           <input 
             type="checkbox" 
             checked={notifyOutcome}
-            onChange={(e) => setNotifyOutcome(e.target.checked)}
+            onChange={(e) => handleOptionChange('outcome', e.target.checked)}
             className="page-subscribe-popup__checkbox"
           />
           Game Outcome (Final Score)
@@ -167,7 +191,7 @@ export default function PageSubscribeButton({ topicType, topicId, topicName }) {
           <input 
             type="checkbox" 
             checked={notifyEvents}
-            onChange={(e) => setNotifyEvents(e.target.checked)}
+            onChange={(e) => handleOptionChange('events', e.target.checked)}
             className="page-subscribe-popup__checkbox"
           />
           Live Events (Tries, Cards, Kicks)
@@ -183,10 +207,10 @@ export default function PageSubscribeButton({ topicType, topicId, topicName }) {
             </button>
           )}
           <button 
-            onClick={handleSaveSubscription}
+            onClick={isSubscribed ? () => setShowPopup(false) : handleSaveSubscription}
             className="btn btn--primary btn--sm page-subscribe-popup__btn"
           >
-            {isSubscribed ? 'Update' : 'Subscribe'}
+            {isSubscribed ? 'Close' : 'Subscribe'}
           </button>
         </div>
       </div>

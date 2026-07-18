@@ -56,7 +56,9 @@ export default function Notifications() {
 
   // Filter and group clubs visually by parent competition and division
   const filteredClubs = useMemo(() => {
-    return clubs.filter(club => !mySubscriptions.some(sub => sub.topic_type === 'club' && sub.topic_id === club.id))
+    return clubs
+      .filter(club => club.team_count > 0)
+      .filter(club => !mySubscriptions.some(sub => sub.topic_type === 'club' && sub.topic_id === club.id))
   }, [clubs, mySubscriptions])
 
   const groupedClubs = useMemo(() => {
@@ -200,9 +202,10 @@ export default function Notifications() {
 
   const loadClubsAndCompetitions = async () => {
     try {
+      const currentYear = new Date().getFullYear()
       const [clubsRes, compsRes] = await Promise.all([
-        api.getClubs(),
-        api.getCompetitions()
+        api.getClubs({ year: currentYear }),
+        api.getCompetitions({ year: currentYear })
       ])
       setClubs(clubsRes || [])
       setCompetitions(compsRes || [])
@@ -275,6 +278,11 @@ export default function Notifications() {
         setSelectedCompId('')
         setCompSearch('')
         setCompDropdownOpen(false)
+      }
+      
+      // Dismiss mobile keyboard
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur()
       }
     } catch (err) {
       console.error('Error subscribing to topic:', err)
@@ -472,7 +480,10 @@ export default function Notifications() {
                                   <div
                                     key={club.id}
                                     className="search-select-option"
-                                    onClick={() => handleSubscribeTopic('club', club.id)}
+                                    onMouseDown={(e) => {
+                                      e.preventDefault();
+                                      handleSubscribeTopic('club', club.id);
+                                    }}
                                   >
                                     {club.name}
                                   </div>
@@ -485,7 +496,10 @@ export default function Notifications() {
                               <div
                                 key={club.id}
                                 className="search-select-option"
-                                onClick={() => handleSubscribeTopic('club', club.id)}
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
+                                  handleSubscribeTopic('club', club.id);
+                                }}
                               >
                                 {club.name}
                               </div>
@@ -534,7 +548,10 @@ export default function Notifications() {
                                   <div
                                     key={c.id}
                                     className="search-select-option"
-                                    onClick={() => handleSubscribeTopic('competition', c.id)}
+                                    onMouseDown={(e) => {
+                                      e.preventDefault();
+                                      handleSubscribeTopic('competition', c.id);
+                                    }}
                                   >
                                     {c.name}
                                   </div>
@@ -547,7 +564,10 @@ export default function Notifications() {
                               <div
                                 key={c.id}
                                 className="search-select-option"
-                                onClick={() => handleSubscribeTopic('competition', c.id)}
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
+                                  handleSubscribeTopic('competition', c.id);
+                                }}
                               >
                                 {c.name}
                               </div>
