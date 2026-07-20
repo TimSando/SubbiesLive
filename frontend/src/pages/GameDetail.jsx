@@ -124,7 +124,14 @@ export default function GameDetail() {
 
   const isCompleted = game?.status === 'completed'
   const isLive = game?.status === 'in_progress'
+  const isScheduled = game?.status === 'scheduled'
   const showScore = isCompleted || isLive
+
+  // Fetch prediction data for scheduled games
+  const { data: prediction } = useApi(
+    () => isScheduled && game ? api.getGamePrediction(game.id).catch(() => null) : Promise.resolve(null),
+    [isScheduled, game?.id]
+  )
 
   // Fetch recent matches (Scores) for both teams
   const { data: homeGames } = useApi(
@@ -442,10 +449,39 @@ export default function GameDetail() {
         )}
 
         {!showScore && (
-          <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--space-6)', marginTop: 'var(--space-8)' }}>
-            {renderTeamDashboard(game.home_team, homeGames, homeStats, getTeamRank(game.home_team.id))}
-            {renderTeamDashboard(game.away_team, awayGames, awayStats, getTeamRank(game.away_team.id))}
-          </div>
+          <>
+            {prediction && (
+              <div className="card" style={{ marginTop: 'var(--space-8)', textAlign: 'center' }}>
+                <h3 style={{ fontSize: 'var(--font-size-sm)', textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.05em', marginBottom: 'var(--space-4)' }}>Match Prediction</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
+                  <div style={{ flex: 1, textAlign: 'left' }}>
+                    <div style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'var(--font-weight-bold)' }}>{Math.round(prediction.home_win_probability * 100)}%</div>
+                    <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', fontWeight: 'var(--font-weight-medium)' }}>({prediction.home_odds_display})</div>
+                  </div>
+                  <div style={{ padding: '0 var(--space-4)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
+                    <div style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-medium)' }}>Draw {Math.round(prediction.draw_probability * 100)}%</div>
+                  </div>
+                  <div style={{ flex: 1, textAlign: 'right' }}>
+                    <div style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'var(--font-weight-bold)' }}>{Math.round(prediction.away_win_probability * 100)}%</div>
+                    <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', fontWeight: 'var(--font-weight-medium)' }}>({prediction.away_odds_display})</div>
+                  </div>
+                </div>
+                {/* Visual bar */}
+                <div style={{ display: 'flex', height: '8px', borderRadius: '4px', overflow: 'hidden', background: 'var(--color-bg-subtle)' }}>
+                  <div style={{ width: `${prediction.home_win_probability * 100}%`, background: 'var(--color-accent-primary)' }} />
+                  <div style={{ width: `${prediction.draw_probability * 100}%`, background: 'var(--color-border)' }} />
+                  <div style={{ width: `${prediction.away_win_probability * 100}%`, background: 'var(--color-accent-secondary)' }} />
+                </div>
+                <div style={{ marginTop: 'var(--space-3)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
+                  Confidence: <span style={{ textTransform: 'capitalize', fontWeight: 'var(--font-weight-medium)', color: prediction.confidence === 'high' ? 'var(--color-win)' : 'var(--color-text-secondary)' }}>{prediction.confidence}</span>
+                </div>
+              </div>
+            )}
+            <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--space-6)', marginTop: 'var(--space-8)' }}>
+              {renderTeamDashboard(game.home_team, homeGames, homeStats, getTeamRank(game.home_team.id))}
+              {renderTeamDashboard(game.away_team, awayGames, awayStats, getTeamRank(game.away_team.id))}
+            </div>
+          </>
         )}
       </div>
     </div>

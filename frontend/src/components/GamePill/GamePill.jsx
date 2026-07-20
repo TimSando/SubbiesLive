@@ -1,4 +1,6 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { api } from '../../api/client.js'
 
 export function formatDate(dateStr) {
   const d = new Date(dateStr)
@@ -13,9 +15,30 @@ export function formatTime(dateStr) {
 export default function GamePill({ game }) {
   const isCompleted = game.status === 'completed'
   const isLive = game.status === 'in_progress'
+  const isScheduled = game.status === 'scheduled'
   const homeWin = isCompleted && game.home_score > game.away_score
   const awayWin = isCompleted && game.away_score > game.home_score
   const showScore = isCompleted || isLive
+  
+  const [prediction, setPrediction] = useState(null)
+
+  useEffect(() => {
+    let isMounted = true
+    if (isScheduled) {
+      api.getGamePrediction(game.id)
+        .then((data) => {
+          if (isMounted) {
+            setPrediction(data)
+          }
+        })
+        .catch(() => {
+          // Ignore 404s (unrated teams) or other errors silently for the badge
+        })
+    }
+    return () => {
+      isMounted = false
+    }
+  }, [game.id, isScheduled])
 
   return (
     <Link 
@@ -57,6 +80,23 @@ export default function GamePill({ game }) {
           <span className="game-pill__status">{game.status}</span>
         )}
       </div>
+      {prediction && (
+        <div className="game-pill__prediction" style={{
+          marginTop: 'var(--space-3)',
+          paddingTop: 'var(--space-3)',
+          borderTop: '1px dashed var(--color-border)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontSize: '11px',
+          color: 'var(--color-text-secondary)',
+          fontWeight: 'var(--font-weight-medium)'
+        }}>
+          <span>{Math.round(prediction.home_win_probability * 100)}% ({prediction.home_odds_display})</span>
+          <span style={{ fontSize: '10px', opacity: 0.7 }}>Draw {Math.round(prediction.draw_probability * 100)}%</span>
+          <span>{Math.round(prediction.away_win_probability * 100)}% ({prediction.away_odds_display})</span>
+        </div>
+      )}
     </Link>
   )
 }

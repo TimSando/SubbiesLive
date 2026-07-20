@@ -49,6 +49,7 @@ export const api = {
   },
   getLiveGames: () => request('/games/live'),
   getGame: (id) => request(`/games/${id}`),
+  getGamePrediction: (id) => request(`/ratings/predictions/${id}`),
 
   // Players
   getPlayers: (params = {}) => {

@@ -123,6 +123,20 @@ def start_ingestion_scheduler():
     except Exception as e:
         logger.error(f"Failed to schedule video ingestion job: {e}")
 
+    # Rating Recalculation (Sunday at 7:00 PM)
+    try:
+        from src.ratings.service import recalculate_ratings
+
+        _scheduler.add_job(
+            recalculate_ratings,
+            CronTrigger(day_of_week="sun", hour=19, minute=0, timezone=TIMEZONE),
+            args=[Session],
+            id="rating_recalculation",
+            name="Rating recalculation (Sun 7:00 PM)",
+        )
+    except Exception as e:
+        logger.error(f"Failed to schedule rating recalculation job: {e}")
+
     # BigQuery Export (Sunday at 7:30 PM)
     try:
         from src.scripts.export_to_bq import export_db_to_bq
@@ -140,6 +154,7 @@ def start_ingestion_scheduler():
 
     logger.info("Ingestion scheduler started:")
     logger.info("  • Sunday: 6:00 PM AEST")
+    logger.info("  • Sunday: Rating Recalculation 7:00 PM AEST")
     logger.info("  • Sunday: BigQuery Database Export 7:30 PM AEST")
     logger.info("  • Saturday: 1:00 AM AEST")
     logger.info(f"  • Saturday: Every {interval_minutes} min, 9:00 AM - 8:00 PM AEST")
