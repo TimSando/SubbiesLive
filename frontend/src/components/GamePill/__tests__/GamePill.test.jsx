@@ -78,6 +78,17 @@ describe('GamePill Component', () => {
     expect(screen.getByText('scheduled')).toBeInTheDocument()
   })
 
+  it('renders scheduled game with prediction percentages next to team names', async () => {
+    render(
+      <MemoryRouter>
+        <GamePill game={scheduledGame} />
+      </MemoryRouter>
+    )
+
+    expect(await screen.findByText('65%')).toBeInTheDocument()
+    expect(screen.getByText('25%')).toBeInTheDocument()
+  })
+
   it('links to game detail page', () => {
     render(
       <MemoryRouter>

@@ -431,6 +431,16 @@ export default function GameDetail() {
                   <span className="match-header__divider">—</span>
                   <span className={`score ${awayWin ? 'score--winner' : ''}`}>{game.away_score ?? 0}</span>
                 </>
+              ) : prediction ? (
+                <>
+                  <span className="score" style={{ background: 'var(--color-bg-subtle)', color: 'var(--color-text-secondary)', minWidth: '48px', fontSize: 'var(--font-size-base)' }}>
+                    {Math.round(prediction.home_win_probability * 100)}%
+                  </span>
+                  <span className="match-header__divider">—</span>
+                  <span className="score" style={{ background: 'var(--color-bg-subtle)', color: 'var(--color-text-secondary)', minWidth: '48px', fontSize: 'var(--font-size-base)' }}>
+                    {Math.round(prediction.away_win_probability * 100)}%
+                  </span>
+                </>
               ) : (
                 <span className="badge badge--scheduled">vs</span>
               )}
@@ -570,9 +580,6 @@ export default function GameDetail() {
                     <div style={{ width: `${prediction.home_win_probability * 100}%`, background: 'var(--color-accent-primary)' }} />
                     <div style={{ width: `${prediction.draw_probability * 100}%`, background: 'var(--color-border)' }} />
                     <div style={{ width: `${prediction.away_win_probability * 100}%`, background: 'var(--color-accent-secondary)' }} />
-                  </div>
-                  <div style={{ marginTop: 'var(--space-3)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
-                    Confidence: <span style={{ textTransform: 'capitalize', fontWeight: 'var(--font-weight-medium)', color: prediction.confidence === 'high' ? 'var(--color-win)' : 'var(--color-text-secondary)' }}>{prediction.confidence}</span>
                   </div>
                 </div>
 

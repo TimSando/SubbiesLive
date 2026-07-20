@@ -224,4 +224,14 @@ export const handlers = [
 
   // Notifications VAPID
   http.get('/api/notifications/vapid-public-key', () => HttpResponse.json("test-vapid-key")),
+
+  // Predictions
+  http.get('/api/ratings/predictions/:id', () => HttpResponse.json({
+    home_win_probability: 0.65,
+    away_win_probability: 0.25,
+    draw_probability: 0.10,
+    confidence: 'medium',
+    home_odds_display: '1.54',
+    away_odds_display: '4.00',
+  })),
 ]

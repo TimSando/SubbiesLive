@@ -53,18 +53,30 @@ export default function GamePill({ game }) {
       <div className="game-pill__teams">
         <div className={`game-pill__team ${homeWin ? 'game-pill__team--winner' : ''}`}>
           <span className="game-pill__team-name">{game.home_team.club_name || game.home_team.name}</span>
-          {showScore && (
+          {showScore ? (
             <span className={`game-pill__score ${homeWin ? 'game-pill__score--winner' : ''}`}>
               {game.home_score ?? 0}
             </span>
+          ) : (
+            prediction && (
+              <span className="game-pill__score" style={{ background: 'var(--color-bg-subtle)', color: 'var(--color-text-secondary)', minWidth: '42px', fontSize: 'var(--font-size-xs)' }}>
+                {Math.round(prediction.home_win_probability * 100)}%
+              </span>
+            )
           )}
         </div>
         <div className={`game-pill__team ${awayWin ? 'game-pill__team--winner' : ''}`}>
           <span className="game-pill__team-name">{game.away_team.club_name || game.away_team.name}</span>
-          {showScore && (
+          {showScore ? (
             <span className={`game-pill__score ${awayWin ? 'game-pill__score--winner' : ''}`}>
               {game.away_score ?? 0}
             </span>
+          ) : (
+            prediction && (
+              <span className="game-pill__score" style={{ background: 'var(--color-bg-subtle)', color: 'var(--color-text-secondary)', minWidth: '42px', fontSize: 'var(--font-size-xs)' }}>
+                {Math.round(prediction.away_win_probability * 100)}%
+              </span>
+            )
           )}
         </div>
       </div>
@@ -80,23 +92,6 @@ export default function GamePill({ game }) {
           <span className="game-pill__status">{game.status}</span>
         )}
       </div>
-      {prediction && (
-        <div className="game-pill__prediction" style={{
-          marginTop: 'var(--space-3)',
-          paddingTop: 'var(--space-3)',
-          borderTop: '1px dashed var(--color-border)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          fontSize: '11px',
-          color: 'var(--color-text-secondary)',
-          fontWeight: 'var(--font-weight-medium)'
-        }}>
-          <span>{Math.round(prediction.home_win_probability * 100)}% ({prediction.home_odds_display})</span>
-          <span style={{ fontSize: '10px', opacity: 0.7 }}>Draw {Math.round(prediction.draw_probability * 100)}%</span>
-          <span>{Math.round(prediction.away_win_probability * 100)}% ({prediction.away_odds_display})</span>
-        </div>
-      )}
     </Link>
   )
 }
