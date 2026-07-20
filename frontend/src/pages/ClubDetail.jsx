@@ -11,6 +11,21 @@ export default function ClubDetail() {
   const { data: club, loading } = useApi(() => api.getClub(id, { year: selectedYear }), [id, selectedYear])
 
   const [isFollowing, setIsFollowing] = useState(false)
+  const [activeTab, setActiveTab] = useState('overview')
+  const [selectedTeamId, setSelectedTeamId] = useState(null)
+  const [selectedImpactYear, setSelectedImpactYear] = useState('career')
+
+  // Set default team ID when club data loads
+  useEffect(() => {
+    if (club && club.teams && club.teams.length > 0 && !selectedTeamId) {
+      setSelectedTeamId(club.teams[0].id)
+    }
+  }, [club, selectedTeamId])
+
+  const { data: rankings, loading: loadingRankings } = useApi(
+    () => activeTab === 'impact' && selectedTeamId ? api.getTeamImpactRankings(selectedTeamId, selectedImpactYear === 'career' ? null : Number(selectedImpactYear)) : Promise.resolve(null),
+    [activeTab, selectedTeamId, selectedImpactYear]
+  )
 
   useEffect(() => {
     if (club) {
@@ -434,333 +449,333 @@ export default function ClubDetail() {
             </div>
           </aside>
 
-          {/* RIGHT COLUMN: ACTIVE TEAMS & HORIZONTAL SCROLL MATCH CAROUSELS */}
-          <main style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)', overflow: 'hidden' }}>
-            
-            {/* 1. TEAMS SECTION */}
-            <section>
-              <h2 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-bold)', marginBottom: 'var(--space-4)', color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                <span>🏉</span> Active Grade Teams
-              </h2>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-                gap: 'var(--space-4)'
-              }}>
-                {club.teams?.map(team => {
-                  const totalGames = (team.wins || 0) + (team.losses || 0) + (team.draws || 0)
-                  return (
-                    <Link to={`/teams/${team.id}`} key={team.id} className="card" style={{
-                      padding: 'var(--space-4) var(--space-5)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      minHeight: '120px',
-                      background: 'rgba(17, 24, 39, 0.4)',
-                      textDecoration: 'none',
-                      color: 'inherit'
-                    }}>
-                      <div>
-                        <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-accent)', fontWeight: 'var(--font-weight-semibold)', display: 'block', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '2px' }}>
-                          {team.competition_name}
-                        </span>
-                        <h3 style={{ fontSize: 'var(--font-size-base)', fontWeight: 'var(--font-weight-bold)', color: 'var(--color-text-primary)' }}>
-                          {team.name}
-                        </h3>
-                      </div>
-                      
-                      {/* Record Badge Pill */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'var(--space-4)', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 'var(--space-3)' }}>
-                        <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
-                          {totalGames} games played
-                        </span>
-                        <span className="badge" style={{
-                          background: 'rgba(255, 255, 255, 0.02)',
-                          borderColor: 'var(--color-border)',
-                          color: 'var(--color-text-primary)',
-                          fontVariantNumeric: 'tabular-nums',
-                          padding: 'var(--space-1) var(--space-2)'
-                        }}>
-                          <strong style={{ color: 'var(--color-win)' }}>{team.wins || 0}W</strong>
-                          <span style={{ color: 'var(--color-text-muted)', margin: '0 3px' }}>-</span>
-                          <strong style={{ color: 'var(--color-loss)' }}>{team.losses || 0}L</strong>
-                          <span style={{ color: 'var(--color-text-muted)', margin: '0 3px' }}>-</span>
-                          <strong style={{ color: 'var(--color-draw)' }}>{team.draws || 0}D</strong>
-                        </span>
-                      </div>
-                    </Link>
-                  )
-                })}
+          <main style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)', overflow: 'hidden' }}>
+            <div className="tab-bar" style={{ margin: 0 }}>
+              <button 
+                className={`tab-bar__tab ${activeTab === 'overview' ? 'tab-bar__tab--active' : ''}`}
+                onClick={() => setActiveTab('overview')}
+              >
+                Overview
+              </button>
+              <button 
+                className={`tab-bar__tab ${activeTab === 'impact' ? 'tab-bar__tab--active' : ''}`}
+                onClick={() => setActiveTab('impact')}
+              >
+                Player Impact Rankings
+              </button>
+            </div>
 
-              </div>
-            </section>
-
-            {/* 2. RECENT RESULTS CAROUSEL */}
-            <section>
-              <h2 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-bold)', marginBottom: 'var(--space-4)', color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                <span>✅</span> Recent Results
-              </h2>
-              {club.recent_fixtures && club.recent_fixtures.length > 0 ? (
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  gap: 'var(--space-4)',
-                  overflowX: 'auto',
-                  paddingBottom: 'var(--space-4)',
-                  scrollbarWidth: 'thin',
-                  WebkitOverflowScrolling: 'touch'
-                }}>
-                  {club.recent_fixtures.map(game => {
-                    const outcome = getGameOutcome(game)
-                    const isWin = outcome === 'win'
-                    const isLoss = outcome === 'loss'
-                    const outcomeColor = isWin ? 'var(--color-win)' : isLoss ? 'var(--color-loss)' : 'var(--color-draw)'
-                    const outcomeLabel = isWin ? 'W' : isLoss ? 'L' : 'D'
-
-                    return (
-                      <Link 
-                        to={`/games/${game.id}`} 
-                        key={game.id} 
-                        className="card" 
-                        style={{
-                          flex: '0 0 290px',
-                          padding: 'var(--space-4)',
+            {activeTab === 'overview' && (
+              <>
+                {/* 1. TEAMS SECTION */}
+                <section>
+                  <h2 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-bold)', marginBottom: 'var(--space-4)', color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                    <span>🏉</span> Active Grade Teams
+                  </h2>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+                    gap: 'var(--space-4)'
+                  }}>
+                    {club.teams?.map(team => {
+                      const totalGames = (team.wins || 0) + (team.losses || 0) + (team.draws || 0)
+                      return (
+                        <Link to={`/teams/${team.id}`} key={team.id} className="card" style={{
+                          padding: 'var(--space-4) var(--space-5)',
                           display: 'flex',
                           flexDirection: 'column',
-                          gap: 'var(--space-3)',
+                          justifyContent: 'space-between',
+                          minHeight: '120px',
+                          background: 'rgba(17, 24, 39, 0.4)',
                           textDecoration: 'none',
-                          color: 'inherit',
-                          borderLeft: `3px solid ${outcomeColor}`,
-                          background: 'rgba(17, 24, 39, 0.4)'
-                        }}
-                      >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                            {game.round_name}
-                          </span>
-                          <span className="badge" style={{
-                            background: `rgba(${isWin ? '34, 197, 94' : isLoss ? '239, 68, 68' : '245, 158, 11'}, 0.15)`,
-                            color: outcomeColor,
-                            borderColor: `rgba(${isWin ? '34, 197, 94' : isLoss ? '239, 68, 68' : '245, 158, 11'}, 0.25)`,
-                            padding: '2px var(--space-2)'
-                          }}>
-                            {outcomeLabel}
-                          </span>
-                        </div>
-
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ 
-                              fontSize: 'var(--font-size-sm)', 
-                              fontWeight: game.home_team.club_id === club.id ? 'var(--font-weight-bold)' : 'var(--font-weight-medium)',
-                              color: game.home_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              maxWidth: '180px'
-                            }}>
-                              {game.home_team.name}
+                          color: 'inherit'
+                        }}>
+                          <div>
+                            <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-accent)', fontWeight: 'var(--font-weight-semibold)', display: 'block', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '2px' }}>
+                              {team.competition_name}
                             </span>
-                            <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-bold)', color: game.home_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)' }}>
-                              {game.home_score}
-                            </span>
+                            <h3 style={{ fontSize: 'var(--font-size-base)', fontWeight: 'var(--font-weight-bold)', color: 'var(--color-text-primary)' }}>
+                              {team.name}
+                            </h3>
                           </div>
                           
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ 
-                              fontSize: 'var(--font-size-sm)', 
-                              fontWeight: game.away_team.club_id === club.id ? 'var(--font-weight-bold)' : 'var(--font-weight-medium)',
-                              color: game.away_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              maxWidth: '180px'
-                            }}>
-                              {game.away_team.name}
+                          {/* Record Badge Pill */}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'var(--space-4)', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 'var(--space-3)' }}>
+                            <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
+                              {totalGames} games played
                             </span>
-                            <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-bold)', color: game.away_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)' }}>
-                              {game.away_score}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div style={{ marginTop: 'auto', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 'var(--space-2)', display: 'flex', flexDirection: 'column', gap: '2px', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
-                          <span>📅 {formatFixtureDate(game.game_date)}</span>
-                          {game.location && <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>📍 {game.location}</span>}
-                        </div>
-                      </Link>
-                    )
-                  })}
-                </div>
-              ) : (
-                <div className="card" style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
-                  No recent fixtures played.
-                </div>
-              )}
-            </section>
-
-            {/* 3. UPCOMING & LIVE GAMES CAROUSEL */}
-            <section style={{ marginBottom: 'var(--space-6)' }}>
-              <h2 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-bold)', marginBottom: 'var(--space-4)', color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                <span>📅</span> Upcoming & Live Games
-              </h2>
-              {club.upcoming_fixtures && club.upcoming_fixtures.length > 0 ? (
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  gap: 'var(--space-4)',
-                  overflowX: 'auto',
-                  paddingBottom: 'var(--space-4)',
-                  scrollbarWidth: 'thin',
-                  WebkitOverflowScrolling: 'touch'
-                }}>
-                  {club.upcoming_fixtures.map(game => {
-                    const isLive = game.status === 'in_progress'
-                    const isNotCompleted = game.status === 'not_completed'
-                    
-                    let cardBorderColor = 'var(--color-border)'
-                    let cardBackground = 'rgba(17, 24, 39, 0.4)'
-                    let cardOpacity = 1
-
-                    if (isLive) {
-                      cardBorderColor = 'var(--color-live)'
-                      cardBackground = 'var(--color-live-bg)'
-                    } else if (isNotCompleted) {
-                      cardOpacity = 0.55
-                    }
-
-                    return (
-                      <Link 
-                        to={`/games/${game.id}`} 
-                        key={game.id} 
-                        className="card" 
-                        style={{
-                          flex: '0 0 290px',
-                          padding: 'var(--space-4)',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: 'var(--space-3)',
-                          textDecoration: 'none',
-                          color: 'inherit',
-                          borderLeft: `3px solid ${cardBorderColor}`,
-                          background: cardBackground,
-                          opacity: cardOpacity
-                        }}
-                      >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                            {game.round_name}
-                          </span>
-                          {isLive ? (
-                            <span className="live-badge" style={{ fontSize: '0.65rem', padding: '2px var(--space-2)' }}>
-                              <span className="live-dot" /> LIVE
-                            </span>
-                          ) : isNotCompleted ? (
                             <span className="badge" style={{
-                              background: 'rgba(255, 255, 255, 0.05)',
-                              color: 'var(--color-text-muted)',
+                              background: 'rgba(255, 255, 255, 0.02)',
                               borderColor: 'var(--color-border)',
-                              fontSize: '0.65rem',
-                              padding: '2px var(--space-2)'
+                              color: 'var(--color-text-primary)',
+                              fontVariantNumeric: 'tabular-nums',
+                              padding: 'var(--space-1) var(--space-2)'
                             }}>
-                              NO RESULT
+                              <strong style={{ color: 'var(--color-win)' }}>{team.wins || 0}W</strong>
+                              <span style={{ color: 'var(--color-text-muted)', margin: '0 3px' }}>-</span>
+                              <strong style={{ color: 'var(--color-loss)' }}>{team.losses || 0}L</strong>
+                              <span style={{ color: 'var(--color-text-muted)', margin: '0 3px' }}>-</span>
+                              <strong style={{ color: 'var(--color-draw)' }}>{team.draws || 0}D</strong>
                             </span>
-                          ) : (
-                            <span className="badge" style={{
-                              background: 'rgba(34, 197, 94, 0.1)',
-                              color: 'var(--color-text-accent)',
-                              borderColor: 'rgba(34, 197, 94, 0.2)',
-                              fontSize: '0.65rem',
-                              padding: '2px var(--space-2)'
-                            }}>
-                              FIXTURE
+                          </div>
+                        </Link>
+                      )
+                    })}
+
+                  </div>
+                </section>
+
+                {/* 2. RECENT RESULTS CAROUSEL */}
+                <section>
+                  <h2 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-bold)', marginBottom: 'var(--space-4)', color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                    <span>✅</span> Recent Results
+                  </h2>
+                  
+                  {club.recent_games && club.recent_games.length > 0 ? (
+                    <div className="carousel-container">
+                      {club.recent_games.map(game => {
+                        const outcome = getGameOutcome(game)
+                        let statusColor = 'transparent'
+                        if (outcome === 'win') statusColor = 'var(--color-win)'
+                        if (outcome === 'loss') statusColor = 'var(--color-loss)'
+                        if (outcome === 'draw') statusColor = 'var(--color-draw)'
+
+                        return (
+                          <Link 
+                            to={`/games/${game.id}`} 
+                            key={game.id} 
+                            className="carousel-card card"
+                            style={{ borderLeft: `4px solid ${statusColor}` }}
+                          >
+                            <span style={{ fontSize: '10px', color: 'var(--color-text-accent)', fontWeight: 'var(--font-weight-semibold)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                              {game.competition_name} • {game.round_name}
                             </span>
-                          )}
-                        </div>
+                            
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', margin: 'var(--space-3) 0' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span style={{ 
+                                  fontSize: 'var(--font-size-sm)', 
+                                  fontWeight: game.home_team.club_id === club.id ? 'var(--font-weight-bold)' : 'var(--font-weight-medium)',
+                                  color: game.home_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  maxWidth: '160px'
+                                }}>
+                                  {game.home_team.name}
+                                </span>
+                                <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-bold)', fontVariantNumeric: 'tabular-nums', color: game.home_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)' }}>
+                                  {game.home_score}
+                                </span>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span style={{ 
+                                  fontSize: 'var(--font-size-sm)', 
+                                  fontWeight: game.away_team.club_id === club.id ? 'var(--font-weight-bold)' : 'var(--font-weight-medium)',
+                                  color: game.away_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  maxWidth: '160px'
+                                }}>
+                                  {game.away_team.name}
+                                </span>
+                                <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-bold)', fontVariantNumeric: 'tabular-nums', color: game.away_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)' }}>
+                                  {game.away_score}
+                                </span>
+                              </div>
+                            </div>
 
-                        {isLive ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <span style={{ 
-                                fontSize: 'var(--font-size-sm)', 
-                                fontWeight: game.home_team.club_id === club.id ? 'var(--font-weight-bold)' : 'var(--font-weight-medium)',
-                                color: game.home_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                maxWidth: '180px'
-                              }}>
-                                {game.home_team.name}
-                              </span>
-                              <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-bold)', color: game.home_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)' }}>
-                                {game.home_score}
-                              </span>
+                            <div style={{ marginTop: 'auto', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 'var(--space-2)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
+                              📅 {formatFixtureDate(game.game_date)}
                             </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <span style={{ 
-                                fontSize: 'var(--font-size-sm)', 
-                                fontWeight: game.away_team.club_id === club.id ? 'var(--font-weight-bold)' : 'var(--font-weight-medium)',
-                                color: game.away_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                maxWidth: '180px'
-                              }}>
-                                {game.away_team.name}
-                              </span>
-                              <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-bold)', color: game.away_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)' }}>
-                                {game.away_score}
-                              </span>
-                            </div>
-                          </div>
-                        ) : (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-                            <div>
-                              <span style={{ 
-                                fontSize: 'var(--font-size-sm)', 
-                                fontWeight: game.home_team.club_id === club.id ? 'var(--font-weight-bold)' : 'var(--font-weight-medium)',
-                                color: game.home_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)',
-                                display: 'block',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis'
-                              }}>
-                                {game.home_team.name}
-                              </span>
-                            </div>
-                            <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textAlign: 'left', paddingLeft: 'var(--space-2)' }}>
-                              vs
-                            </div>
-                            <div>
-                              <span style={{ 
-                                fontSize: 'var(--font-size-sm)', 
-                                fontWeight: game.away_team.club_id === club.id ? 'var(--font-weight-bold)' : 'var(--font-weight-medium)',
-                                color: game.away_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)',
-                                display: 'block',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis'
-                              }}>
-                                {game.away_team.name}
-                              </span>
-                            </div>
-                          </div>
-                        )}
+                          </Link>
+                        )
+                      })}
+                    </div>
+                  ) : (
+                    <div className="card" style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
+                      No recent results found.
+                    </div>
+                  )}
+                </section>
 
-                        <div style={{ marginTop: 'auto', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 'var(--space-2)', display: 'flex', flexDirection: 'column', gap: '2px', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
-                          <span>📅 {formatFixtureDate(game.game_date)} {!isLive && `at ${formatFixtureTime(game.game_date)}`}</span>
-                          {game.location && <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>📍 {game.location}</span>}
-                        </div>
-                      </Link>
-                    )
-                  })}
+                {/* 3. UPCOMING FIXTURES CAROUSEL */}
+                <section>
+                  <h2 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-bold)', marginBottom: 'var(--space-4)', color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                    <span>📅</span> Upcoming Matches
+                  </h2>
+
+                  {club.upcoming_games && club.upcoming_games.length > 0 ? (
+                    <div className="carousel-container">
+                      {club.upcoming_games.map(game => {
+                        const isLive = game.status === 'in_progress'
+                        return (
+                          <Link 
+                            to={`/games/${game.id}`} 
+                            key={game.id} 
+                            className="carousel-card card"
+                            style={{ borderColor: isLive ? 'var(--color-accent-primary)' : 'var(--color-border)' }}
+                          >
+                            <span style={{ fontSize: '10px', color: 'var(--color-text-accent)', fontWeight: 'var(--font-weight-semibold)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                              {game.competition_name} • {game.round_name}
+                            </span>
+
+                            {isLive ? (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', margin: 'var(--space-3) 0' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                  <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-primary)', fontWeight: 'var(--font-weight-semibold)' }}>{game.home_team.name}</span>
+                                  <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-bold)', color: 'var(--color-accent-primary)' }}>{game.home_score}</span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                  <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-primary)', fontWeight: 'var(--font-weight-semibold)' }}>{game.away_team.name}</span>
+                                  <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-bold)', color: 'var(--color-accent-primary)' }}>{game.away_score}</span>
+                                </div>
+                              </div>
+                            ) : (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', margin: 'var(--space-3) 0' }}>
+                                <div>
+                                  <span style={{ 
+                                    fontSize: 'var(--font-size-sm)', 
+                                    fontWeight: game.home_team.club_id === club.id ? 'var(--font-weight-bold)' : 'var(--font-weight-medium)',
+                                    color: game.home_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)',
+                                    display: 'block',
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis'
+                                  }}>
+                                    {game.home_team.name}
+                                  </span>
+                                </div>
+                                <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textAlign: 'left', paddingLeft: 'var(--space-2)' }}>
+                                  vs
+                                </div>
+                                <div>
+                                  <span style={{ 
+                                    fontSize: 'var(--font-size-sm)', 
+                                    fontWeight: game.away_team.club_id === club.id ? 'var(--font-weight-bold)' : 'var(--font-weight-medium)',
+                                    color: game.away_team.club_id === club.id ? 'var(--color-text-accent)' : 'var(--color-text-primary)',
+                                    display: 'block',
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis'
+                                  }}>
+                                    {game.away_team.name}
+                                  </span>
+                                </div>
+                              </div>
+                            )}
+
+                            <div style={{ marginTop: 'auto', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 'var(--space-2)', display: 'flex', flexDirection: 'column', gap: '2px', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
+                              <span>📅 {formatFixtureDate(game.game_date)} {!isLive && `at ${formatFixtureTime(game.game_date)}`}</span>
+                              {game.location && <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>📍 {game.location}</span>}
+                            </div>
+                          </Link>
+                        )
+                      })}
+                    </div>
+                  ) : (
+                    <div className="card" style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
+                      No upcoming games scheduled.
+                    </div>
+                  )}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'impact' && (
+              <section className="animate-in" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                    <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', fontWeight: 'var(--font-weight-medium)' }}>Team:</span>
+                    <select
+                      className="clubs-select-filter"
+                      value={selectedTeamId || ''}
+                      onChange={(e) => setSelectedTeamId(Number(e.target.value))}
+                      style={{ width: 'auto', minWidth: '160px', margin: 0 }}
+                    >
+                      {club.teams?.map(t => (
+                        <option key={t.id} value={t.id}>{t.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                    <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', fontWeight: 'var(--font-weight-medium)' }}>Season:</span>
+                    <select
+                      className="clubs-select-filter"
+                      value={selectedImpactYear}
+                      onChange={(e) => setSelectedImpactYear(e.target.value)}
+                      style={{ width: 'auto', minWidth: '140px', margin: 0 }}
+                    >
+                      <option value="career">Career</option>
+                      {rankings?.available_years?.map(y => (
+                        <option key={y} value={y}>{y} Season</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-              ) : (
-                <div className="card" style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
-                  No upcoming games scheduled.
-                </div>
-              )}
-            </section>
+
+                {loadingRankings ? (
+                  <div className="skeleton" style={{ height: '300px' }} />
+                ) : !rankings || rankings.players.length === 0 ? (
+                  <div className="card" style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
+                    No player impact rankings available for this team/season.
+                  </div>
+                ) : (
+                  <div className="card" style={{ padding: 0, overflowX: 'auto' }}>
+                    {rankings.full_strength_baseline > 0 && (
+                      <div style={{ padding: 'var(--space-4) var(--space-5)', borderBottom: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', fontWeight: 'var(--font-weight-medium)' }}>
+                        Full-Strength Baseline: <span style={{ color: 'var(--color-text-primary)', fontWeight: 'var(--font-weight-bold)' }}>{rankings.full_strength_baseline.toFixed(1)} Elo</span>
+                      </div>
+                    )}
+                    <table className="stats-table" style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '1px solid var(--color-border)' }}>
+                          <th style={{ padding: 'var(--space-3) var(--space-5)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>Rank</th>
+                          <th style={{ padding: 'var(--space-3) var(--space-5)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>Player Name</th>
+                          <th style={{ padding: 'var(--space-3) var(--space-5)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textTransform: 'uppercase', textAlign: 'right' }}>Impact Score</th>
+                          <th style={{ padding: 'var(--space-3) var(--space-5)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>Confidence</th>
+                          <th style={{ padding: 'var(--space-3) var(--space-5)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textTransform: 'uppercase', textAlign: 'right' }}>Games</th>
+                          <th style={{ padding: 'var(--space-3) var(--space-5)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textTransform: 'uppercase', textAlign: 'right' }}>Win Rate (With vs Without)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {rankings.players.map((p, idx) => {
+                          const scoreColor = p.impact_score > 15 ? 'var(--color-win)' : (p.impact_score > 5 ? 'var(--color-text-accent)' : 'var(--color-text-secondary)')
+                          const confClass = p.confidence === 'high' ? 'badge--win' : (p.confidence === 'medium' ? 'badge--draw' : 'badge--loss')
+                          
+                          return (
+                            <tr key={p.player_id} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)' }}>
+                              <td style={{ padding: 'var(--space-4) var(--space-5)', fontSize: 'var(--font-size-sm)', fontVariantNumeric: 'tabular-nums' }}>{idx + 1}</td>
+                              <td style={{ padding: 'var(--space-4) var(--space-5)', fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
+                                <Link to={`/players/${p.player_id}`} style={{ textDecoration: 'none', color: 'var(--color-text-primary)' }}>
+                                  {p.player_name}
+                                </Link>
+                              </td>
+                              <td style={{ padding: 'var(--space-4) var(--space-5)', fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-bold)', color: scoreColor, textAlign: 'right' }}>
+                                +{p.impact_score.toFixed(1)}
+                              </td>
+                              <td style={{ padding: 'var(--space-4) var(--space-5)' }}>
+                                <span className={`badge ${confClass}`} style={{ fontSize: '9px', textTransform: 'capitalize' }}>
+                                  {p.confidence}
+                                </span>
+                              </td>
+                              <td style={{ padding: 'var(--space-4) var(--space-5)', fontSize: 'var(--font-size-sm)', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
+                                {p.games_with}
+                              </td>
+                              <td style={{ padding: 'var(--space-4) var(--space-5)', fontSize: 'var(--font-size-sm)', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
+                                {p.win_rate_with !== null ? `${Math.round(p.win_rate_with * 100)}%` : '-'} vs {p.win_rate_without !== null ? `${Math.round(p.win_rate_without * 100)}%` : '-'}
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </section>
+            )}
 
           </main>
         </div>

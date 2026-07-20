@@ -59,6 +59,10 @@ export const api = {
 
   // Teams
   getTeam: (id, params = {}) => request(`/teams/${id}${buildQuery(params)}`),
+  getTeamImpactRankings: (teamId, year) => {
+    const params = year && year !== 'career' ? { year } : {}
+    return request(`/ratings/player-impact/${teamId}${buildQuery(params)}`)
+  },
 
 
   // Standings

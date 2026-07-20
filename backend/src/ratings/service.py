@@ -192,3 +192,9 @@ def backfill_ratings(session_factory) -> None:
 def recalculate_ratings(session_factory) -> None:
     """Recalculate ratings wrapper used by the scheduler."""
     backfill_ratings(session_factory)
+    
+    # Recalculate player impacts
+    from src.core.config import get_settings
+    from src.ratings.player_impact_service import recalculate_all_impacts
+    settings = get_settings()
+    recalculate_all_impacts(session_factory, settings.current_season_year)

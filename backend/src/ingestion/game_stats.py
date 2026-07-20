@@ -402,3 +402,74 @@ def ingest_player_history_for_game(
         sheet_id = sheet.get("id")
         if sheet_id:
             ingest_player_history(session, game_id, sheet_id, team_id_map)
+
+
+def ingest_game_squads(
+    session,
+    game_id: int,
+    game_external_id: int,
+    team_id_map: dict,
+):
+    """Fetch score sheets for a scheduled game and store the named squad.
+
+    Only writes to game_squads (not player_history) — roster data only,
+    no stats. Uses ON CONFLICT to handle re-runs cleanly.
+    """
+    try:
+        game_info = get_game_info(game_external_id)
+    except Exception as e:
+        logger.debug(f"  No squad data available for scheduled game {game_external_id}: {e}")
+        return
+
+    for sheet_key in ["home_score_sheet", "away_score_sheet"]:
+        sheet = game_info.get(sheet_key, {})
+        sheet_id = sheet.get("id")
+        if not sheet_id:
+            continue
+
+        try:
+            records = get_score_sheet(sheet_id)
+        except Exception:
+            continue
+
+        if not records:
+            continue
+
+        for record in records:
+            member = record.get("member")
+            if not member:
+                continue
+
+            player_id = upsert_player(session, {
+                "external_id": member["id"],
+                "name": member["name"],
+                "dob": member.get("dob"),
+                "image_url": member.get("image"),
+                "thumbnail_url": member.get("thumbnail"),
+            })
+            if not player_id:
+                continue
+
+            team_ext_id = record.get("team_id")
+            db_team_id = team_id_map.get(team_ext_id)
+            if not db_team_id:
+                continue
+
+            session.execute(
+                text("""
+                    INSERT INTO game_squads (game_id, team_id, player_id, player_number, position_id)
+                    VALUES (:gid, :tid, :pid, :pnum, :pos)
+                    ON CONFLICT (game_id, team_id, player_id) DO UPDATE SET
+                        player_number = EXCLUDED.player_number,
+                        position_id = EXCLUDED.position_id
+                """),
+                {
+                    "gid": game_id,
+                    "tid": db_team_id,
+                    "pid": player_id,
+                    "pnum": record.get("player_number"),
+                    "pos": record.get("position_id"),
+                },
+            )
+
+    session.commit()

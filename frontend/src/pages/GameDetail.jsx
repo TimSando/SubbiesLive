@@ -30,7 +30,7 @@ function RugbyPosts() {
   )
 }
 
-function EventRow({ event }) {
+function EventRow({ event, playerImpact }) {
   const icons = { 
     try: '🏉', 
     conversion: <RugbyPosts />, 
@@ -54,9 +54,22 @@ function EventRow({ event }) {
         <span className="event-row__type">{event.event_type.replace('_', ' ')}</span>
         <span className="event-row__player">
           {event.player_id ? (
-            <Link to={`/players/${event.player_id}`} style={{ color: 'var(--color-accent-primary)', textDecoration: 'none' }}>
-              {event.player_name}
-            </Link>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-1.5)' }}>
+              <Link to={`/players/${event.player_id}`} style={{ color: 'var(--color-accent-primary)', textDecoration: 'none' }}>
+                {event.player_name}
+              </Link>
+              {playerImpact !== undefined && playerImpact !== null && (
+                <span className="badge" style={{
+                  fontSize: '9px',
+                  padding: '1px 4px',
+                  background: 'rgba(255,255,255,0.04)',
+                  borderColor: 'rgba(255,255,255,0.1)',
+                  color: playerImpact > 15 ? 'var(--color-win)' : (playerImpact > 5 ? 'var(--color-text-accent)' : 'var(--color-text-secondary)')
+                }}>
+                  +{playerImpact.toFixed(1)}
+                </span>
+              )}
+            </span>
           ) : (
             event.player_name || `#${event.player_number || '?'}`
           )}
@@ -159,6 +172,22 @@ export default function GameDetail() {
     [game?.competition_id, showScore]
   )
 
+  // Fetch impact scores for completed games events lookup
+  const { data: homeImpact } = useApi(
+    () => game && showScore ? api.getTeamImpactRankings(game.home_team.id) : Promise.resolve(null),
+    [game?.home_team?.id, showScore]
+  )
+  const { data: awayImpact } = useApi(
+    () => game && showScore ? api.getTeamImpactRankings(game.away_team.id) : Promise.resolve(null),
+    [game?.away_team?.id, showScore]
+  )
+
+  const getPlayerImpactScore = (event) => {
+    const impactData = event.team_id === game.home_team.id ? homeImpact : awayImpact
+    const player = impactData?.players?.find(p => p.player_id === event.player_id)
+    return player ? player.impact_score : null
+  }
+
   const getTeamRank = (teamId) => {
     if (!standings || !standings.standings) return null
     const row = standings.standings.find(s => s.team_id === teamId)
@@ -170,6 +199,74 @@ export default function GameDetail() {
     if (rank === 2) return '2nd'
     if (rank === 3) return '3rd'
     return `${rank}th`
+  }
+
+  const renderKeyPlayers = (team, insights) => {
+    if (!insights) return null
+    const { key_players, squad_modifier, squad_modifier_source } = insights
+
+    return (
+      <div className="card" style={{ padding: 'var(--space-5)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)', borderBottom: '1px solid var(--color-border)', paddingBottom: 'var(--space-3)' }}>
+          <h3 style={{ fontSize: 'var(--font-size-base)', fontWeight: 'var(--font-weight-bold)', margin: 0 }}>
+            {team.club_name || team.name} Key Players
+          </h3>
+          {squad_modifier !== null && squad_modifier_source === 'game_squads' ? (
+            <span className="badge" style={{
+              background: squad_modifier >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+              color: squad_modifier >= 0 ? 'var(--color-win)' : 'var(--color-loss)',
+              borderColor: squad_modifier >= 0 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+            }}>
+              Squad: {squad_modifier >= 0 ? '+' : ''}{squad_modifier.toFixed(1)} Elo
+            </span>
+          ) : (
+            <span className="badge" style={{ background: 'rgba(255,255,255,0.03)', color: 'var(--color-text-muted)' }}>
+              No Squad Named
+            </span>
+          )}
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+          {key_players.map((p) => {
+            const isMissing = p.weeks_since_last_game !== null && p.weeks_since_last_game >= 3
+            const scoreColor = p.impact_score > 15 ? 'var(--color-win)' : (p.impact_score > 5 ? 'var(--color-text-accent)' : 'var(--color-text-secondary)')
+
+            return (
+              <div key={p.player_id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontWeight: 'var(--font-weight-semibold)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                    <Link to={`/players/${p.player_id}`} style={{ textDecoration: 'none', color: 'var(--color-text-primary)' }}>
+                      {p.player_name}
+                    </Link>
+                    {isMissing && (
+                      <span className="badge" style={{ fontSize: '9px', padding: '1px 4px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--color-loss)', borderColor: 'rgba(239, 68, 68, 0.2)' }}>
+                        Missing {p.weeks_since_last_game}w
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', marginTop: '2px' }}>
+                    {p.games_this_season} games this season • Last: {p.last_played_round || 'N/A'}
+                  </div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-bold)', color: scoreColor }}>
+                    +{p.impact_score.toFixed(1)}
+                  </span>
+                  {p.impact_score_season !== null && (
+                    <div style={{ fontSize: '9px', color: 'var(--color-text-muted)' }}>
+                      Season: +{p.impact_score_season.toFixed(1)}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+          {key_players.length === 0 && (
+            <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)', margin: 0 }}>No impact ratings available for this team yet.</p>
+          )}
+        </div>
+      </div>
+    )
   }
 
   const renderTeamDashboard = (team, recentGames, stats, rank) => (
@@ -430,7 +527,7 @@ export default function GameDetail() {
                 <h3 className="events-col__title">
                   {game.home_team.club_name} ({game.home_score ?? 0})
                 </h3>
-                {homeEvents.map((e, i) => <EventRow key={i} event={e} />)}
+                {homeEvents.map((e, i) => <EventRow key={i} event={e} playerImpact={getPlayerImpactScore(e)} />)}
                 {homeEvents.length === 0 && (
                   <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)' }}>No events</p>
                 )}
@@ -439,7 +536,7 @@ export default function GameDetail() {
                 <h3 className="events-col__title">
                   {game.away_team.club_name} ({game.away_score ?? 0})
                 </h3>
-                {awayEvents.map((e, i) => <EventRow key={i} event={e} />)}
+                {awayEvents.map((e, i) => <EventRow key={i} event={e} playerImpact={getPlayerImpactScore(e)} />)}
                 {awayEvents.length === 0 && (
                   <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)' }}>No events</p>
                 )}
@@ -451,31 +548,38 @@ export default function GameDetail() {
         {!showScore && (
           <>
             {prediction && (
-              <div className="card" style={{ marginTop: 'var(--space-8)', textAlign: 'center' }}>
-                <h3 style={{ fontSize: 'var(--font-size-sm)', textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.05em', marginBottom: 'var(--space-4)' }}>Match Prediction</h3>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
-                  <div style={{ flex: 1, textAlign: 'left' }}>
-                    <div style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'var(--font-weight-bold)' }}>{Math.round(prediction.home_win_probability * 100)}%</div>
-                    <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', fontWeight: 'var(--font-weight-medium)' }}>({prediction.home_odds_display})</div>
+              <>
+                <div className="card" style={{ marginTop: 'var(--space-8)', textAlign: 'center' }}>
+                  <h3 style={{ fontSize: 'var(--font-size-sm)', textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.05em', marginBottom: 'var(--space-4)' }}>Match Prediction</h3>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
+                    <div style={{ flex: 1, textAlign: 'left' }}>
+                      <div style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'var(--font-weight-bold)' }}>{Math.round(prediction.home_win_probability * 100)}%</div>
+                    </div>
+                    <div style={{ padding: '0 var(--space-4)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
+                      <div style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-medium)' }}>Draw {Math.round(prediction.draw_probability * 100)}%</div>
+                    </div>
+                    <div style={{ flex: 1, textAlign: 'right' }}>
+                      <div style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'var(--font-weight-bold)' }}>{Math.round(prediction.away_win_probability * 100)}%</div>
+                    </div>
                   </div>
-                  <div style={{ padding: '0 var(--space-4)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
-                    <div style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-medium)' }}>Draw {Math.round(prediction.draw_probability * 100)}%</div>
+                  {/* Visual bar */}
+                  <div style={{ display: 'flex', height: '8px', borderRadius: '4px', overflow: 'hidden', background: 'var(--color-bg-subtle)' }}>
+                    <div style={{ width: `${prediction.home_win_probability * 100}%`, background: 'var(--color-accent-primary)' }} />
+                    <div style={{ width: `${prediction.draw_probability * 100}%`, background: 'var(--color-border)' }} />
+                    <div style={{ width: `${prediction.away_win_probability * 100}%`, background: 'var(--color-accent-secondary)' }} />
                   </div>
-                  <div style={{ flex: 1, textAlign: 'right' }}>
-                    <div style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'var(--font-weight-bold)' }}>{Math.round(prediction.away_win_probability * 100)}%</div>
-                    <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', fontWeight: 'var(--font-weight-medium)' }}>({prediction.away_odds_display})</div>
+                  <div style={{ marginTop: 'var(--space-3)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
+                    Confidence: <span style={{ textTransform: 'capitalize', fontWeight: 'var(--font-weight-medium)', color: prediction.confidence === 'high' ? 'var(--color-win)' : 'var(--color-text-secondary)' }}>{prediction.confidence}</span>
                   </div>
                 </div>
-                {/* Visual bar */}
-                <div style={{ display: 'flex', height: '8px', borderRadius: '4px', overflow: 'hidden', background: 'var(--color-bg-subtle)' }}>
-                  <div style={{ width: `${prediction.home_win_probability * 100}%`, background: 'var(--color-accent-primary)' }} />
-                  <div style={{ width: `${prediction.draw_probability * 100}%`, background: 'var(--color-border)' }} />
-                  <div style={{ width: `${prediction.away_win_probability * 100}%`, background: 'var(--color-accent-secondary)' }} />
-                </div>
-                <div style={{ marginTop: 'var(--space-3)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
-                  Confidence: <span style={{ textTransform: 'capitalize', fontWeight: 'var(--font-weight-medium)', color: prediction.confidence === 'high' ? 'var(--color-win)' : 'var(--color-text-secondary)' }}>{prediction.confidence}</span>
-                </div>
-              </div>
+
+                {prediction.player_insights && (
+                  <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--space-6)', marginTop: 'var(--space-6)' }}>
+                    {renderKeyPlayers(game.home_team, prediction.player_insights.home_team)}
+                    {renderKeyPlayers(game.away_team, prediction.player_insights.away_team)}
+                  </div>
+                )}
+              </>
             )}
             <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--space-6)', marginTop: 'var(--space-8)' }}>
               {renderTeamDashboard(game.home_team, homeGames, homeStats, getTeamRank(game.home_team.id))}

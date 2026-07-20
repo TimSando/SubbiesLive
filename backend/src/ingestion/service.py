@@ -21,6 +21,7 @@ from src.ingestion.upserts import (
 from src.ingestion.game_stats import (
     ingest_game_events,
     ingest_player_history_for_game,
+    ingest_game_squads,
     SyncMode,
 )
 
@@ -161,12 +162,24 @@ def run_ingestion(session_factory, sync_mode: SyncMode = SyncMode.FAST):
                                 ingest_player_history_for_game(
                                     session,
                                     game_id,
-                                    game_data["external_id"],
-                                    team_id_map,
-                                    shared_game_info,
+                                    game_external_id=game_data["external_id"],
+                                    team_id_map=team_id_map,
+                                    game_info=shared_game_info,
                                     game_date=game_data.get("game_date"),
                                     sync_mode=sync_mode,
                                 )
+                            elif game_data["status"] == "scheduled":
+                                try:
+                                    ingest_game_squads(
+                                        session,
+                                        game_id,
+                                        game_data["external_id"],
+                                        team_id_map,
+                                    )
+                                except Exception as e:
+                                    logger.warning(
+                                        f"    Failed to ingest game squads for scheduled game {game_data['external_id']}: {e}"
+                                    )
                         except Exception as e:
                             logger.error(
                                 f"    Failed to process game {raw_game.get('id')}: {e}"

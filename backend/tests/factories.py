@@ -131,3 +131,55 @@ async def make_player_history(
     db.add(hist)
     await db.flush()
     return hist
+
+
+async def make_game_squad(
+    db, *, game_id, team_id, player_id, player_number=None, position_id=None
+):
+    from src.ratings.models import GameSquad
+    squad = GameSquad(
+        game_id=game_id,
+        team_id=team_id,
+        player_id=player_id,
+        player_number=player_number,
+        position_id=position_id,
+    )
+    db.add(squad)
+    await db.flush()
+    return squad
+
+
+async def make_player_impact_score(
+    db,
+    *,
+    player_id,
+    team_id,
+    club_id,
+    competition_mapping_id=None,
+    year=None,
+    impact_score=0.0,
+    games_with=0,
+    games_without=0,
+    win_rate_with=None,
+    win_rate_without=None,
+    margin_diff=None,
+    confidence="low",
+):
+    from src.ratings.models import PlayerImpactScore
+    score = PlayerImpactScore(
+        player_id=player_id,
+        team_id=team_id,
+        club_id=club_id,
+        competition_mapping_id=competition_mapping_id,
+        year=year,
+        impact_score=impact_score,
+        games_with=games_with,
+        games_without=games_without,
+        win_rate_with=win_rate_with,
+        win_rate_without=win_rate_without,
+        margin_diff=margin_diff,
+        confidence=confidence,
+    )
+    db.add(score)
+    await db.flush()
+    return score

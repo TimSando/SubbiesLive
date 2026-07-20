@@ -596,28 +596,32 @@ async def test_venue_weather_geocoding_lookup(client, db_session):
     jwt_tok = generate_mock_jwt(user_id="123")
     client.cookies.set("rx_access_token", jwt_tok)
 
+    mock_settings = MagicMock()
+    mock_settings.google_maps_api_key = None
+
     mock_nominatim_resp = MagicMock(status_code=200)
     mock_nominatim_resp.json.return_value = [{"lat": "-33.9999", "lon": "151.8888"}]
 
     from src.venues.models import Venue
 
-    with patch(
-        "src.refzone.router.safe_nominatim_request_async", new_callable=AsyncMock
-    ) as mock_req:
-        mock_req.return_value = mock_nominatim_resp
-
+    with patch("src.refzone.router.get_settings", return_value=mock_settings):
         with patch(
-            "src.refzone.router.get_weather_for_appointment", new_callable=AsyncMock
-        ) as mock_get_weather:
-            mock_get_weather.return_value = None
+            "src.refzone.router.safe_nominatim_request_async", new_callable=AsyncMock
+        ) as mock_req:
+            mock_req.return_value = mock_nominatim_resp
 
-            r = await client.get(
-                "/api/refzone/venue-weather",
-                params={
-                    "venue_name": "Mysterious Park",
-                    "moment": "2026-07-15T15:30:00.000Z",
-                },
-            )
+            with patch(
+                "src.refzone.router.get_weather_for_appointment", new_callable=AsyncMock
+            ) as mock_get_weather:
+                mock_get_weather.return_value = None
+
+                r = await client.get(
+                    "/api/refzone/venue-weather",
+                    params={
+                        "venue_name": "Mysterious Park",
+                        "moment": "2026-07-15T15:30:00.000Z",
+                    },
+                )
 
     assert r.status_code == 200
     data = r.json()
