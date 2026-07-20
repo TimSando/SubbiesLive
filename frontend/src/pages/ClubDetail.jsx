@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { useApi } from '../hooks/useApi.js'
+import { useGoBack } from '../hooks/useGoBack.js'
 import { api } from '../api/client.js'
 import PageSubscribeButton from '../components/NotificationToggle/PageSubscribeButton.jsx'
 
 export default function ClubDetail() {
   const { id } = useParams()
-  const navigate = useNavigate()
+  const goBack = useGoBack('/clubs')
   const [selectedYear, setSelectedYear] = useState(() => sessionStorage.getItem('club_detail_selectedYear') || '2026')
   const { data: club, loading } = useApi(() => api.getClub(id, { year: selectedYear }), [id, selectedYear])
 
@@ -63,7 +64,7 @@ export default function ClubDetail() {
           <p style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-6)' }}>
             We couldn't locate the rugby club you are looking for.
           </p>
-          <Link to="/competitions" className="btn btn--primary" onClick={(e) => { e.preventDefault(); navigate(-1); }}>← Back</Link>
+          <Link to="/clubs" className="btn btn--primary" onClick={(e) => { e.preventDefault(); goBack(); }}>← Back</Link>
         </div>
       </div>
     )
@@ -98,7 +99,7 @@ export default function ClubDetail() {
     <div className="page">
       <div className="container animate-in" style={{ maxWidth: '1280px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
-          <Link to="/competitions" className="breadcrumb" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', margin: 0 }} onClick={(e) => { e.preventDefault(); navigate(-1); }}>
+          <Link to="/clubs" className="breadcrumb" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', margin: 0 }} onClick={(e) => { e.preventDefault(); goBack(); }}>
             ← Back
           </Link>
           

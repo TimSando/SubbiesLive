@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { useGoBack } from '../hooks/useGoBack.js'
 import { useApi } from '../hooks/useApi.js'
 import { api } from '../api/client.js'
 import PageSubscribeButton from '../components/NotificationToggle/PageSubscribeButton.jsx'
@@ -82,6 +83,8 @@ function EventRow({ event }) {
 export default function GameDetail() {
   const { id } = useParams()
   const { data: game, loading } = useApi(() => api.getGame(id), [id])
+  const fallbackUrl = game?.competition_id ? `/competitions/${game.competition_id}` : '/competitions'
+  const goBack = useGoBack(fallbackUrl)
 
   const [weather, setWeather] = useState(null)
   const [loadingWeather, setLoadingWeather] = useState(false)
@@ -272,7 +275,7 @@ export default function GameDetail() {
     return (
       <div className="page"><div className="container">
         <h1>Game not found</h1>
-        <Link to="/competitions" className="btn btn--ghost">← Back</Link>
+        <Link to="/competitions" className="btn btn--ghost" onClick={(e) => { e.preventDefault(); goBack(); }}>← Back</Link>
       </div></div>
     )
   }
@@ -286,7 +289,7 @@ export default function GameDetail() {
     <div className="page">
       <div className="container animate-in">
         {game.competition_id && (
-          <Link to={`/competitions/${game.competition_id}`} className="breadcrumb">
+          <Link to={`/competitions/${game.competition_id}`} className="breadcrumb" onClick={(e) => { e.preventDefault(); goBack(); }}>
             ← {game.competition_name}
           </Link>
         )}

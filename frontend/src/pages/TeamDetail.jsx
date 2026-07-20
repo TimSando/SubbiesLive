@@ -1,6 +1,7 @@
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { useState } from 'react'
 import { useApi } from '../hooks/useApi.js'
+import { useGoBack } from '../hooks/useGoBack.js'
 import { api } from '../api/client.js'
 
 function formatDate(dateStr) {
@@ -9,7 +10,7 @@ function formatDate(dateStr) {
 }
 
 export default function TeamDetail() {
-  const navigate = useNavigate()
+  const goBack = useGoBack('/clubs')
   const { id } = useParams()
 
   const { data: team, loading: loadingTeam } = useApi(
@@ -39,7 +40,7 @@ export default function TeamDetail() {
       <div className="page">
         <div className="container">
           <h1>Team not found</h1>
-          <Link to="/clubs" className="btn btn--ghost" style={{ marginTop: 'var(--space-4)' }} onClick={(e) => { e.preventDefault(); navigate(-1); }}>
+          <Link to="/clubs" className="btn btn--ghost" style={{ marginTop: 'var(--space-4)' }} onClick={(e) => { e.preventDefault(); goBack(); }}>
             ← Back
           </Link>
         </div>
@@ -51,7 +52,7 @@ export default function TeamDetail() {
     <div className="page">
       <div className="container animate-in">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>
-          <Link to="/clubs" className="breadcrumb" style={{ margin: 0 }} onClick={(e) => { e.preventDefault(); navigate(-1); }}>
+          <Link to="/clubs" className="breadcrumb" style={{ margin: 0 }} onClick={(e) => { e.preventDefault(); goBack(); }}>
             ← Back
           </Link>
         </div>

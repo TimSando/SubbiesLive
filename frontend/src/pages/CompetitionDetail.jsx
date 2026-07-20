@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useApi } from '../hooks/useApi.js'
+import { useGoBack } from '../hooks/useGoBack.js'
 import { api } from '../api/client.js'
 import PageSubscribeButton from '../components/NotificationToggle/PageSubscribeButton.jsx'
 import GamePill from '../components/GamePill/GamePill.jsx'
@@ -153,6 +154,7 @@ function GamesForRound({ competitionId, round }) {
 
 export default function CompetitionDetail() {
   const navigate = useNavigate()
+  const goBack = useGoBack('/competitions')
   const location = useLocation()
   const { id } = useParams()
   
@@ -208,7 +210,7 @@ export default function CompetitionDetail() {
       <div className="page">
         <div className="container">
           <h1>Competition not found</h1>
-          <Link to="/competitions" className="btn btn--ghost" style={{ marginTop: 'var(--space-4)' }} onClick={(e) => { e.preventDefault(); navigate(-1); }}>
+          <Link to="/competitions" className="btn btn--ghost" style={{ marginTop: 'var(--space-4)' }} onClick={(e) => { e.preventDefault(); goBack(); }}>
             ← Back
           </Link>
         </div>
@@ -235,7 +237,7 @@ export default function CompetitionDetail() {
   return (
     <div className="page">
       <div className="container animate-in">
-        <Link to="/competitions" className="breadcrumb" onClick={(e) => { e.preventDefault(); navigate(-1); }}>← Back</Link>
+        <Link to="/competitions" className="breadcrumb" onClick={(e) => { e.preventDefault(); goBack(); }}>← Back</Link>
 
         <header style={{ marginBottom: 'var(--space-8)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-2)' }}>

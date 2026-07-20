@@ -1,6 +1,7 @@
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { useState, useMemo } from 'react'
 import { useApi } from '../hooks/useApi.js'
+import { useGoBack } from '../hooks/useGoBack.js'
 import { api } from '../api/client.js'
 import ToggleSwitch from '../components/Stats/ToggleSwitch.jsx'
 
@@ -23,7 +24,7 @@ function calculateAge(dobStr) {
 }
 
 export default function PlayerDetail() {
-  const navigate = useNavigate()
+  const goBack = useGoBack('/stats')
   const { id } = useParams()
   const [viewMode, setViewMode] = useState('total')
   const [selectedYear, setSelectedYear] = useState('career')
@@ -84,7 +85,7 @@ export default function PlayerDetail() {
       <div className="page">
         <div className="container">
           <h1>Player not found</h1>
-          <Link to="/stats" className="btn btn--ghost" style={{ marginTop: 'var(--space-4)' }} onClick={(e) => { e.preventDefault(); navigate(-1); }}>
+          <Link to="/stats" className="btn btn--ghost" style={{ marginTop: 'var(--space-4)' }} onClick={(e) => { e.preventDefault(); goBack(); }}>
             ← Back
           </Link>
         </div>
@@ -96,7 +97,7 @@ export default function PlayerDetail() {
     <div className="page">
       <div className="container animate-in">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
-          <Link to="/stats" className="breadcrumb" style={{ margin: 0 }} onClick={(e) => { e.preventDefault(); navigate(-1); }}>
+          <Link to="/stats" className="breadcrumb" style={{ margin: 0 }} onClick={(e) => { e.preventDefault(); goBack(); }}>
             ← Back
           </Link>
           

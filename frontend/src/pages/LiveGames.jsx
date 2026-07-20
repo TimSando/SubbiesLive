@@ -1,16 +1,17 @@
 import GamePill from '../components/GamePill/GamePill.jsx'
 import { useApi } from '../hooks/useApi.js'
 import { api } from '../api/client.js'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { useGoBack } from '../hooks/useGoBack.js'
 
 export default function LiveGames() {
-  const navigate = useNavigate()
+  const goBack = useGoBack('/')
   const { data: liveGames, loading } = useApi(() => api.getLiveGames(), [])
 
   return (
     <div className="page">
       <div className="container animate-in">
-        <Link to="/" className="breadcrumb" onClick={(e) => { e.preventDefault(); navigate(-1) }}>← Back</Link>
+        <Link to="/" className="breadcrumb" onClick={(e) => { e.preventDefault(); goBack() }}>← Back</Link>
         <header style={{ marginBottom: 'var(--space-8)' }}>
           <h1>Live Matches</h1>
         </header>
