@@ -30,12 +30,13 @@ export default function Competitions() {
     sessionStorage.setItem('competitions_division', division)
   }, [division])
 
-  // Dynamically extract divisions based on selected competition
+  // Dynamically extract divisions based on selected competition (excluding Women's division filter)
   const activeDivisions = Array.from(new Set(
     (competitions || [])
       .filter(c => parentComp === 'All' || c.parent_competition === parentComp)
       .map(c => c.division)
       .filter(Boolean)
+      .filter(d => d.toLowerCase() !== 'womens' && d.toLowerCase() !== "women's")
   )).sort((a, b) => {
     const na = parseInt(a), nb = parseInt(b)
     if (!isNaN(na) && !isNaN(nb)) return na - nb

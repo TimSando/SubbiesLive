@@ -1,0 +1,1936 @@
+[
+  {
+    "_id": "YPPwjbyKWixSsR3ca",
+    "type": "AR2",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "20b547cef93b3bb95",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "1st Division 1st Grade - Kentwell Cup"
+      },
+      "venue": {
+        "name": "Lapstone Oval",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1784351700000,
+      "homeTeam": {
+        "name": "Blue Mountains"
+      },
+      "awayTeam": {
+        "name": "Colleagues"
+      }
+    },
+    "competition": {
+      "name": "1st Division 1st Grade - Kentwell Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "dtT9euSTjp6e9Zp8B",
+        "type": "Referee",
+        "refereeId": "o87tqGYHjHahDuWmY",
+        "firstname": "Aaron",
+        "lastname": "Crofts"
+      },
+      {
+        "_id": "xcJrthWCk6aQud7QB",
+        "type": "Referee Coach",
+        "refereeId": "idP9j6PiNCLWGcGzN",
+        "firstname": "Andrew",
+        "lastname": "Winslade"
+      },
+      {
+        "_id": "dEXsATpARMhWgodCA",
+        "type": "AR1",
+        "refereeId": "36Bx3Ei8eSxcq4Ynd",
+        "firstname": "Luca",
+        "lastname": "Russo"
+      }
+    ],
+    "db_game_id": 1871
+  },
+  {
+    "_id": "bqxCCxdAnXdmeK3ck",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "7da93ea6be637ad64",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "1st Division Colts - Barbour Cup"
+      },
+      "venue": {
+        "name": "Lapstone Oval",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1784342700000,
+      "homeTeam": {
+        "name": "Blue Mountains"
+      },
+      "awayTeam": {
+        "name": "Colleagues"
+      }
+    },
+    "competition": {
+      "name": "1st Division Colts - Barbour Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "Cd395K293egvKLuQW",
+        "type": "Referee Coach",
+        "refereeId": "idP9j6PiNCLWGcGzN",
+        "firstname": "Andrew",
+        "lastname": "Winslade"
+      },
+      {
+        "_id": "Yzu8ApeYkkxgGaoHm",
+        "type": "TMO",
+        "refereeId": "B5z5nE5kr5ePKr3or",
+        "firstname": "Oscar",
+        "lastname": "Jones"
+      }
+    ],
+    "db_game_id": 1878
+  },
+  {
+    "_id": "DCkA4Do4aMnmyt6Wz",
+    "type": "AR1",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "4674998b418b7373c",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "Colts 1sts Premiership - Gus Heffernan Shield"
+      },
+      "venue": {
+        "name": "Sydney Uni Football Ground",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1783734600000,
+      "homeTeam": {
+        "name": "Sydney University"
+      },
+      "awayTeam": {
+        "name": "Wildfires"
+      }
+    },
+    "competition": {
+      "name": "Colts 1sts Premiership - Gus Heffernan Shield",
+      "association": {
+        "_id": "53029",
+        "name": "Sydney Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "bx5nxq5JqxR56KYg9",
+        "type": "Referee",
+        "refereeId": "aBLgk2nwfYGK8mkg2",
+        "firstname": "Ziggy",
+        "lastname": "Day"
+      },
+      {
+        "_id": "28Q7bLpmFLnBmcJor",
+        "type": "Referee Coach",
+        "refereeId": "tRrg3LtYxiqhvb88D",
+        "firstname": "Mervyn",
+        "lastname": "Iles"
+      }
+    ],
+    "db_game_id": 754
+  },
+  {
+    "_id": "LPezdEBnmJdXkA9AP",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "f37be18e5f35b2015",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "Colts 2nds Premiership - Shell Trophy"
+      },
+      "venue": {
+        "name": "Sydney Uni Football Ground",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1783729500000,
+      "homeTeam": {
+        "name": "Sydney University"
+      },
+      "awayTeam": {
+        "name": "Wildfires"
+      }
+    },
+    "competition": {
+      "name": "Colts 2nds Premiership - Shell Trophy",
+      "association": {
+        "_id": "53029",
+        "name": "Sydney Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "phAXXwJsB6YTr6MyX",
+        "type": "Referee Coach",
+        "refereeId": "W3YPLmLu8Z6Aphbt6",
+        "firstname": "Angus",
+        "lastname": "Cameron"
+      },
+      {
+        "_id": "HuumB4ACjcDRnSoHy",
+        "type": "TMO",
+        "refereeId": "tRrg3LtYxiqhvb88D",
+        "firstname": "Mervyn",
+        "lastname": "Iles"
+      }
+    ],
+    "db_game_id": 906
+  },
+  {
+    "_id": "CCK5mEuXvve7ELvGE",
+    "type": "Referee",
+    "status": "declined",
+    "isActive": false,
+    "notified": true,
+    "meta": {
+      "reason": "Work/School/Family Commitment"
+    },
+    "match": {
+      "_id": "bc1e2fc783be29d24",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "3rd Division 1st Grade - Clark Cup"
+      },
+      "venue": {
+        "name": "Wakehurst Rugby Park",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1783142100000,
+      "homeTeam": {
+        "name": "Wakehurst/Old Barker"
+      },
+      "awayTeam": {
+        "name": "Hornsby"
+      }
+    },
+    "competition": {
+      "name": "3rd Division 1st Grade - Clark Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "iCFadoDJXso5Wnihm",
+        "type": "Referee Coach",
+        "refereeId": "Zg69CrxC8pQ2nMih8",
+        "firstname": "David",
+        "lastname": "Powell"
+      },
+      {
+        "_id": "MtcZbMFgu6CCJ69zP",
+        "type": "Referee",
+        "refereeId": "mK6229b3drL7DHTaL",
+        "firstname": "John",
+        "lastname": "Goh"
+      }
+    ],
+    "db_game_id": 1340
+  },
+  {
+    "_id": "SqkXtwc95eHiyyXpF",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "6d6f5c3c6e71a4564",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "2nd Division Colts - Robertson Cup"
+      },
+      "venue": {
+        "name": "Porter Reserve",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1783133100000,
+      "homeTeam": {
+        "name": "Newport"
+      },
+      "awayTeam": {
+        "name": "UNSW"
+      }
+    },
+    "competition": {
+      "name": "2nd Division Colts - Robertson Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [],
+    "db_game_id": 1222
+  },
+  {
+    "_id": "YzLRWaTzsbYz3wEcs",
+    "type": "AR2",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "963ba840880897124",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "1st Division 1st Grade - Kentwell Cup"
+      },
+      "venue": {
+        "name": "Lapstone Oval",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1781932500000,
+      "homeTeam": {
+        "name": "Blue Mountains"
+      },
+      "awayTeam": {
+        "name": "Waverley"
+      }
+    },
+    "competition": {
+      "name": "1st Division 1st Grade - Kentwell Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "qrGZvw8sw5E37rSC7",
+        "type": "AR1",
+        "refereeId": "hvgS9v6opq6J5Zam2",
+        "firstname": "Wayne",
+        "lastname": "Cusack"
+      },
+      {
+        "_id": "vR2DA7Juvj7C5xP9P",
+        "type": "Referee",
+        "refereeId": "yQfeRwmDGnzQsc3p5",
+        "firstname": "Toby",
+        "lastname": "Brandon-Cooper"
+      },
+      {
+        "_id": "dWWmfNZ79M7N28xis",
+        "type": "Referee Coach",
+        "refereeId": "qvWc8Lpg3pDCkRHXQ",
+        "firstname": "David",
+        "lastname": "Conway"
+      }
+    ],
+    "db_game_id": 27
+  },
+  {
+    "_id": "pwZkQ5JSTATfCjTtn",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "2bac5d3792dd9ce3e",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "1st Division Colts - Barbour Cup"
+      },
+      "venue": {
+        "name": "Lapstone Oval",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1781923500000,
+      "homeTeam": {
+        "name": "Blue Mountains"
+      },
+      "awayTeam": {
+        "name": "Waverley"
+      }
+    },
+    "competition": {
+      "name": "1st Division Colts - Barbour Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [],
+    "db_game_id": 355
+  },
+  {
+    "_id": "CJt2JywdPkfp8M4xF",
+    "type": "AR2",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "936607085e9e3c768",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "1st Division 1st Grade - Kentwell Cup"
+      },
+      "venue": {
+        "name": "Rawson Oval",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1779513300000,
+      "homeTeam": {
+        "name": "Mosman"
+      },
+      "awayTeam": {
+        "name": "Waverley"
+      }
+    },
+    "competition": {
+      "name": "1st Division 1st Grade - Kentwell Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "wwTesezj8xF6A34yN",
+        "type": "AR1",
+        "refereeId": "NpwekqeXRCD39FaZh",
+        "firstname": "Theodore",
+        "lastname": "Florentzos"
+      },
+      {
+        "_id": "GkNGvqKBSgWnmivqe",
+        "type": "Referee Coach",
+        "refereeId": "B5z5nE5kr5ePKr3or",
+        "firstname": "Oscar",
+        "lastname": "Jones"
+      },
+      {
+        "_id": "7fxKSjZ2YM6NBcxkK",
+        "type": "Referee",
+        "refereeId": "yXzHG3meJpzc79wAX",
+        "firstname": "Hugh",
+        "lastname": "Sterndale-Smith"
+      }
+    ],
+    "db_game_id": 14
+  },
+  {
+    "_id": "mdMMfy6Ccp7DzAhpM",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "48f05d52129802967",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "1st Division Colts - Barbour Cup"
+      },
+      "venue": {
+        "name": "Rawson Oval",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1779504300000,
+      "homeTeam": {
+        "name": "Mosman"
+      },
+      "awayTeam": {
+        "name": "Waverley"
+      }
+    },
+    "competition": {
+      "name": "1st Division Colts - Barbour Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "7N3Qd6T5gmL58G73Z",
+        "type": "Referee Coach",
+        "refereeId": "yXzHG3meJpzc79wAX",
+        "firstname": "Hugh",
+        "lastname": "Sterndale-Smith"
+      }
+    ],
+    "db_game_id": 342
+  },
+  {
+    "_id": "7YAjqjqkx6EyaoCG9",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": false,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "19eee2ae82d8a3766",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "3rd Division Colts - Nicholson Cup"
+      },
+      "venue": {
+        "name": "Lofberg Oval",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1779504300000,
+      "homeTeam": {
+        "name": "Knox"
+      },
+      "awayTeam": {
+        "name": "Wakehurst/Old Barker"
+      }
+    },
+    "competition": {
+      "name": "3rd Division Colts - Nicholson Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "JDjZsbHAscSjXJgqF",
+        "type": "Referee",
+        "refereeId": "oxH49CyqGa4bNAHoo",
+        "firstname": "David",
+        "lastname": "Meiklejohn"
+      }
+    ],
+    "db_game_id": 1384
+  },
+  {
+    "_id": "6aJqQS2nQZgZJdGdc",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "134bc8fb5806a0a77",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "4th Division Colts - Radford Cup"
+      },
+      "venue": {
+        "name": "Beauchamp Park",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1778904000000,
+      "homeTeam": {
+        "name": "Chatswood"
+      },
+      "awayTeam": {
+        "name": "Macquarie Uni"
+      }
+    },
+    "competition": {
+      "name": "4th Division Colts - Radford Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "3pLK7MuuuyeNQa6i4",
+        "type": "Referee Coach",
+        "refereeId": "yXzHG3meJpzc79wAX",
+        "firstname": "Hugh",
+        "lastname": "Sterndale-Smith"
+      }
+    ],
+    "db_game_id": 1529
+  },
+  {
+    "_id": "jQjdDgLgKtCFr6fEN",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "5763723571f578830",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "4th Division Colts - Radford Cup"
+      },
+      "venue": {
+        "name": "Redfield College",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1778299200000,
+      "homeTeam": {
+        "name": "Redfield"
+      },
+      "awayTeam": {
+        "name": "Manly Savers"
+      }
+    },
+    "competition": {
+      "name": "4th Division Colts - Radford Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [],
+    "db_game_id": 1527
+  },
+  {
+    "_id": "b2nByTpbBa3E9azBC",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": false,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "wxSoPfmx5oDKdcshR",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "Women's 10's - Joy Johnson Cup"
+      },
+      "venue": {
+        "name": "Turramurra Memorial Park",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1778296500000,
+      "homeTeam": {
+        "name": "Old Barker"
+      },
+      "awayTeam": {
+        "name": "Kings"
+      }
+    },
+    "competition": {
+      "name": "Women's 10's - Joy Johnson Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "6K8TSdA23rRL5pSXW",
+        "type": "Referee",
+        "refereeId": "D4kp3HNDrPNnf5Tap",
+        "firstname": "Robert",
+        "lastname": "McKay"
+      }
+    ],
+    "db_game_id": 1719
+  },
+  {
+    "_id": "Doh87vYxdMp5hsxc4",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "771f071962dca0530",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "3rd Division 2nd Grade - Farrant Cup"
+      },
+      "venue": {
+        "name": "Wakehurst Rugby Park",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1777694400000,
+      "homeTeam": {
+        "name": "Wakehurst/Old Barker"
+      },
+      "awayTeam": {
+        "name": "Renegades"
+      }
+    },
+    "competition": {
+      "name": "3rd Division 2nd Grade - Farrant Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [],
+    "db_game_id": 1417
+  },
+  {
+    "_id": "wSmNBWS7KCcep4r38",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "55fdc96574291b4ff",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "1st Division 3rd Grade - Whiddon Cup"
+      },
+      "venue": {
+        "name": "Soldiers Memorial Park",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1777686000000,
+      "homeTeam": {
+        "name": "Lindfield"
+      },
+      "awayTeam": {
+        "name": "Blue Mountains"
+      }
+    },
+    "competition": {
+      "name": "1st Division 3rd Grade - Whiddon Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [],
+    "db_game_id": 479
+  },
+  {
+    "_id": "ZDCwCTppQQ2jQ7mZS",
+    "type": "AR2",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "23af2272295d16778",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "3rd Division 1st Grade - Clark Cup"
+      },
+      "venue": {
+        "name": "Kellyville Park #5",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1776489300000,
+      "homeTeam": {
+        "name": "Renegades"
+      },
+      "awayTeam": {
+        "name": "Hornsby"
+      }
+    },
+    "competition": {
+      "name": "3rd Division 1st Grade - Clark Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "K67uLaoTzaioESzNX",
+        "type": "Referee",
+        "refereeId": "eojDs4YD8bTxLasNx",
+        "firstname": "Anthony",
+        "lastname": "Moyes"
+      },
+      {
+        "_id": "wSgF3wrviJwnwZGws",
+        "type": "AR1",
+        "refereeId": "7YN7XqmnYRL8Ju4Mz",
+        "firstname": "Samuel",
+        "lastname": "Kable"
+      }
+    ],
+    "db_game_id": 1325
+  },
+  {
+    "_id": "oWjG24H8LJZjGoZDJ",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "f6d2db81da250c156",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "3rd Division Colts - Nicholson Cup"
+      },
+      "venue": {
+        "name": "Kellyville Park #5",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1776480300000,
+      "homeTeam": {
+        "name": "Renegades"
+      },
+      "awayTeam": {
+        "name": "Hornsby"
+      }
+    },
+    "competition": {
+      "name": "3rd Division Colts - Nicholson Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [],
+    "db_game_id": 1370
+  },
+  {
+    "_id": "tFvfzs7Dy7bcDZz2T",
+    "type": "AR2",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "9bccd9c3530e38967",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "2nd Division 1st Grade - Barraclough Cup"
+      },
+      "venue": {
+        "name": "Porter Reserve",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1775884500000,
+      "homeTeam": {
+        "name": "Newport"
+      },
+      "awayTeam": {
+        "name": "Forest"
+      }
+    },
+    "competition": {
+      "name": "2nd Division 1st Grade - Barraclough Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "5zBXdvhxgcgMtmgT7",
+        "type": "Referee",
+        "refereeId": "hCh2osnDHQ8at6z7z",
+        "firstname": "Paul",
+        "lastname": "Worsley"
+      },
+      {
+        "_id": "2nxtWmiShRTcYtJaX",
+        "type": "AR1",
+        "refereeId": "PvX6gYNGsP35rGi2F",
+        "firstname": "Candace",
+        "lastname": "Barritt"
+      }
+    ],
+    "db_game_id": 1012
+  },
+  {
+    "_id": "JQ4Wg3CjBtme2QhgR",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "7cf54d5ce9b7d3d50",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "2nd Division 2nd Grade - Stockdale Cup"
+      },
+      "venue": {
+        "name": "Porter Reserve",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1775880000000,
+      "homeTeam": {
+        "name": "Newport"
+      },
+      "awayTeam": {
+        "name": "Forest"
+      }
+    },
+    "competition": {
+      "name": "2nd Division 2nd Grade - Stockdale Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "iMArikWcwbqyvNXTi",
+        "type": "Referee Coach",
+        "refereeId": "idP9j6PiNCLWGcGzN",
+        "firstname": "Andrew",
+        "lastname": "Winslade"
+      }
+    ],
+    "db_game_id": 1113
+  },
+  {
+    "_id": "7EaxTJvQEBLGTGQKQ",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": false,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "6d52e254aed9b9462",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "2nd Division Colts - Robertson Cup"
+      },
+      "venue": {
+        "name": "Porter Reserve",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1775875500000,
+      "homeTeam": {
+        "name": "Newport"
+      },
+      "awayTeam": {
+        "name": "Forest"
+      }
+    },
+    "competition": {
+      "name": "2nd Division Colts - Robertson Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "Sh9k7fJ5SdeWcscGa",
+        "type": "Referee Coach",
+        "refereeId": "idP9j6PiNCLWGcGzN",
+        "firstname": "Andrew",
+        "lastname": "Winslade"
+      },
+      {
+        "_id": "QdrNtE6nrgFzgupCP",
+        "type": "Referee",
+        "refereeId": "LurCDGFoT3yynLTbw",
+        "firstname": "Paul J",
+        "lastname": "Beran"
+      }
+    ],
+    "db_game_id": 1203
+  },
+  {
+    "_id": "H2pEmRnPYAqyvL6GB",
+    "type": "AR2",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "J8okK5xMLWcyKkAFu",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "NSW Suburban 1st Grade Trials"
+      },
+      "venue": {
+        "name": "Rawson Oval",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1774671300000,
+      "homeTeam": {
+        "name": "Mosman"
+      },
+      "awayTeam": {
+        "name": "Newport"
+      }
+    },
+    "competition": {
+      "name": "NSW Suburban 1st Grade Trials",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "2S6P8BwggqESkiHWT",
+        "type": "Referee",
+        "refereeId": "o87tqGYHjHahDuWmY",
+        "firstname": "Aaron",
+        "lastname": "Crofts"
+      },
+      {
+        "_id": "aZfofjHBdHNDByLbs",
+        "type": "Referee Coach",
+        "refereeId": "idP9j6PiNCLWGcGzN",
+        "firstname": "Andrew",
+        "lastname": "Winslade"
+      },
+      {
+        "_id": "AtY4szeDmQtYnTfSC",
+        "type": "AR1",
+        "refereeId": "LurCDGFoT3yynLTbw",
+        "firstname": "Paul J",
+        "lastname": "Beran"
+      }
+    ],
+    "db_game_id": null
+  },
+  {
+    "_id": "xgNxXe9kJrEGNN3us",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "MawqBw34JcMzCBbzC",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "3rd Grade Trials"
+      },
+      "venue": {
+        "name": "Rawson Oval",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1774658400000,
+      "homeTeam": {
+        "name": "Mosman"
+      },
+      "awayTeam": {
+        "name": "Newport"
+      }
+    },
+    "competition": {
+      "name": "3rd Grade Trials",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "uYMyXKpNbRcfr2M4g",
+        "type": "Referee Coach",
+        "refereeId": "idP9j6PiNCLWGcGzN",
+        "firstname": "Andrew",
+        "lastname": "Winslade"
+      },
+      {
+        "_id": "Yjfxnxhmw86vgnbsD",
+        "type": "TMO",
+        "refereeId": "PhMnQj9yKXoakBmPc",
+        "firstname": "Michael",
+        "lastname": "Edye"
+      }
+    ],
+    "db_game_id": null
+  },
+  {
+    "_id": "RLSjArpy6kHkRoJ5r",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "6YRYuDxCCCd88W7qM",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "Colts Trials"
+      },
+      "venue": {
+        "name": "Lapstone Oval",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1774056000000,
+      "homeTeam": {
+        "name": "Blue Mountains"
+      },
+      "awayTeam": {
+        "name": "Forest"
+      }
+    },
+    "competition": {
+      "name": "Colts Trials",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "Yjqx7To3pTpTszRMP",
+        "type": "Referee Coach",
+        "refereeId": "tRrg3LtYxiqhvb88D",
+        "firstname": "Mervyn",
+        "lastname": "Iles"
+      }
+    ],
+    "db_game_id": null
+  },
+  {
+    "_id": "YPkYx4nCzJNhMM45S",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "RN3FCGTBHk97n8Z68",
+      "season": {
+        "seasonid": 2026
+      },
+      "competition": {
+        "name": "Colts 3 Trials"
+      },
+      "venue": {
+        "name": "Melwood Oval",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1773447300000,
+      "homeTeam": {
+        "name": "Forest"
+      },
+      "awayTeam": {
+        "name": "Manly"
+      }
+    },
+    "competition": {
+      "name": "Colts 3 Trials",
+      "association": {
+        "_id": "53029",
+        "name": "Sydney Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "shXZW8M2nj9qW7LvY",
+        "type": "Referee Coach",
+        "refereeId": "idP9j6PiNCLWGcGzN",
+        "firstname": "Andrew",
+        "lastname": "Winslade"
+      }
+    ],
+    "db_game_id": null
+  },
+  {
+    "_id": "otuEwdpwBAkz6tTaT",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "82b45b4d604382f5d",
+      "season": {
+        "seasonid": 2023
+      },
+      "competition": {
+        "name": "NSW Suburban Rugby - 2nd Division 3rd Grade - Blunt Cup"
+      },
+      "venue": {
+        "name": "The David Phillips Sports Complex",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1688175600000,
+      "homeTeam": {
+        "name": "UNSW"
+      },
+      "awayTeam": {
+        "name": "Hawkesbury Valley"
+      }
+    },
+    "competition": {
+      "name": "NSW Suburban Rugby - 2nd Division 3rd Grade - Blunt Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [],
+    "db_game_id": 4876
+  },
+  {
+    "_id": "M8dpykoZaPGLu6xnG",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "bd0771af6ab544595",
+      "season": {
+        "seasonid": 2023
+      },
+      "competition": {
+        "name": "NSW Suburban Rugby - 2nd Division 3rd Grade - Blunt Cup"
+      },
+      "venue": {
+        "name": "The David Phillips Sports Complex",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1686966000000,
+      "homeTeam": {
+        "name": "UNSW"
+      },
+      "awayTeam": {
+        "name": "Lindfield"
+      }
+    },
+    "competition": {
+      "name": "NSW Suburban Rugby - 2nd Division 3rd Grade - Blunt Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union"
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [],
+    "db_game_id": 4822
+  },
+  {
+    "_id": "N5nHnHDwt4bfcSb6d",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "768a02c56000e1c7a",
+      "season": {
+        "seasonid": 2022
+      },
+      "competition": {
+        "name": "NSW Suburban Rugby -  2nd Division 4th Grade - Richardson Cup"
+      },
+      "venue": {
+        "name": "The David Phillips Sports Complex",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1660351500000,
+      "homeTeam": {
+        "name": "UNSW 4th Grade"
+      },
+      "awayTeam": {
+        "name": "Hills 4th Grade"
+      }
+    },
+    "competition": {
+      "name": "NSW Suburban Rugby -  2nd Division 4th Grade - Richardson Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union",
+        "state": {
+          "_id": "30893",
+          "name": "New South Wales Rugby Union"
+        }
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [],
+    "db_game_id": 6057
+  },
+  {
+    "_id": "EXgXT6gxGSbYSgcEL",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "77a866ef279250cf4",
+      "season": {
+        "seasonid": 2022
+      },
+      "competition": {
+        "name": "NSW Suburban Rugby -  2nd Division 4th Grade - Richardson Cup"
+      },
+      "venue": {
+        "name": "Latham Park Field 1",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1658537100000,
+      "homeTeam": {
+        "name": "UNSW 4th Grade"
+      },
+      "awayTeam": {
+        "name": "Epping 4th Grade"
+      }
+    },
+    "competition": {
+      "name": "NSW Suburban Rugby -  2nd Division 4th Grade - Richardson Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union",
+        "state": {
+          "_id": "30893",
+          "name": "New South Wales Rugby Union"
+        }
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [],
+    "db_game_id": 6053
+  },
+  {
+    "_id": "RsZ78oGkGnr79pRtR",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "8968264857df61302",
+      "season": {
+        "seasonid": 2022
+      },
+      "competition": {
+        "name": "NSW Suburban Rugby -  2nd Division 3rd Grade - Blunt Cup"
+      },
+      "venue": {
+        "name": "Woollahra Oval #1",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1657935600000,
+      "homeTeam": {
+        "name": "Sydney Harlequins 3rd Grade"
+      },
+      "awayTeam": {
+        "name": "UNSW 3rd Grade"
+      }
+    },
+    "competition": {
+      "name": "NSW Suburban Rugby -  2nd Division 3rd Grade - Blunt Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union",
+        "state": {
+          "_id": "30893",
+          "name": "New South Wales Rugby Union"
+        }
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "iK9qjSDuBawMeyovD",
+        "type": "Referee Coach",
+        "refereeId": "iRC6Yxb5Dd9cjpwTh",
+        "firstname": "Christopher",
+        "lastname": "Pearl"
+      }
+    ],
+    "db_game_id": 6016
+  },
+  {
+    "_id": "Wq5mTGc8HYidynL5u",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "e678c19e86ad24b3e",
+      "season": {
+        "seasonid": 2022
+      },
+      "competition": {
+        "name": "NSW Suburban Rugby -  2nd Division 4th Grade - Richardson Cup"
+      },
+      "venue": {
+        "name": "The David Phillips Sports Complex",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1656117900000,
+      "homeTeam": {
+        "name": "UNSW 4th Grade"
+      },
+      "awayTeam": {
+        "name": "Newport 4th Grade"
+      }
+    },
+    "competition": {
+      "name": "NSW Suburban Rugby -  2nd Division 4th Grade - Richardson Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union",
+        "state": {
+          "_id": "30893",
+          "name": "New South Wales Rugby Union"
+        }
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [
+      {
+        "_id": "ehhY8tmCyFXed69Av",
+        "type": "Referee Coach",
+        "refereeId": "iRC6Yxb5Dd9cjpwTh",
+        "firstname": "Christopher",
+        "lastname": "Pearl"
+      }
+    ],
+    "db_game_id": 6051
+  },
+  {
+    "_id": "WRueg6yjCE2MQ4Dja",
+    "type": "Referee",
+    "status": "approved",
+    "isActive": true,
+    "notified": true,
+    "meta": {},
+    "match": {
+      "_id": "3d54f4cea3a6e915e",
+      "season": {
+        "seasonid": 2022
+      },
+      "competition": {
+        "name": "NSW Suburban Rugby -  2nd Division 3rd Grade - Blunt Cup"
+      },
+      "venue": {
+        "name": "The David Phillips Sports Complex",
+        "venueTimezone": "Australia/Sydney"
+      },
+      "round": {
+        "type": 1
+      },
+      "moment": 1654306800000,
+      "homeTeam": {
+        "name": "UNSW 3rd Grade"
+      },
+      "awayTeam": {
+        "name": "Hawkesbury Valley 3rd Grade"
+      }
+    },
+    "competition": {
+      "name": "NSW Suburban Rugby -  2nd Division 3rd Grade - Blunt Cup",
+      "association": {
+        "_id": "30867",
+        "name": "NSW Suburban Rugby Union",
+        "state": {
+          "_id": "30893",
+          "name": "New South Wales Rugby Union"
+        }
+      }
+    },
+    "compAppointmentBoard": {
+      "_id": "vQxrMHTEsnJNTaAgo",
+      "name": "Sydney Rugby Referees (NSWRRA)",
+      "contact": {
+        "email": "Kim.taufa@nsw.rugby",
+        "firstname": "Kim",
+        "lastname": "Taufa",
+        "mobile": "0477088008"
+      }
+    },
+    "matchAppointmentBoard": [],
+    "otherReferees": [],
+    "db_game_id": 6002
+  }
+]

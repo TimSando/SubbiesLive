@@ -1,6 +1,6 @@
 """Pydantic schemas for Club API responses."""
 
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 
 from src.competitions.schemas import CompetitionMappingBrief
@@ -38,6 +38,12 @@ class ClubBrief(BaseModel):
     home_ground_map_url: str | None = None
     has_womens_team: bool | None = False
 
+    @model_validator(mode="after")
+    def rewrite_logo(self) -> "ClubBrief":
+        if self.logo_url and not self.logo_url.startswith("/api/"):
+            self.logo_url = f"/api/clubs/{self.id}/logo"
+        return self
+
     class Config:
         from_attributes = True
 
@@ -66,6 +72,12 @@ class ClubDetail(BaseModel):
 
     recent_fixtures: list[GameBrief] = []
     upcoming_fixtures: list[GameBrief] = []
+
+    @model_validator(mode="after")
+    def rewrite_logo(self) -> "ClubDetail":
+        if self.logo_url and not self.logo_url.startswith("/api/"):
+            self.logo_url = f"/api/clubs/{self.id}/logo"
+        return self
 
     class Config:
         from_attributes = True

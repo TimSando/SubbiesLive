@@ -33,7 +33,7 @@ async def test_get_team_detail(client, db_session):
     data = response.json()
     assert data["name"] == "Randwick 1st Grade"
     assert data["club_name"] == "Randwick Gallopers"
-    assert data["club_logo_url"] == "http://example.com/logo.png"
+    assert data["club_logo_url"] == f"/api/clubs/{club.id}/logo"
     assert data["competition_name"] == "Kentwell Cup"
     assert data["year"] == 2026
     assert data["stats"]["games_played"] == 0

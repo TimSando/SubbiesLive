@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 
 class PlayerStatRow(BaseModel):
@@ -32,6 +32,12 @@ class ClubStatRow(BaseModel):
     games_played: int
     logo_url: str | None = None
 
+    @model_validator(mode="after")
+    def rewrite_logo(self) -> "ClubStatRow":
+        if self.logo_url and not self.logo_url.startswith("/api/"):
+            self.logo_url = f"/api/clubs/{self.club_id}/logo"
+        return self
+
 
 class SeasonOverview(BaseModel):
     total_tries: int
@@ -58,6 +64,12 @@ class ClubDepthRow(BaseModel):
     dedicated_players: int
     swing_players: int
     avg_games: float
+
+    @model_validator(mode="after")
+    def rewrite_logo(self) -> "ClubDepthRow":
+        if self.logo_url and not self.logo_url.startswith("/api/"):
+            self.logo_url = f"/api/clubs/{self.club_id}/logo"
+        return self
 
 
 class TeamFormStats(BaseModel):

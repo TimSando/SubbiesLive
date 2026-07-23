@@ -218,7 +218,7 @@ export default function Stats() {
       <td>
         <Link to={`/clubs/${club.club_id}`} className="player-cell" style={{ textDecoration: 'none' }}>
           {club.logo_url ? (
-            <img src={club.logo_url} alt={club.club_name} className="player-avatar" style={{ objectFit: 'contain', padding: '2px' }} />
+            <img src={club.logo_url} alt={club.club_name} className="player-avatar" loading="lazy" style={{ objectFit: 'contain', padding: '2px' }} />
           ) : (
             <div className="player-avatar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg-glass)', fontSize: '0.6rem' }}>🏉</div>
           )}
@@ -241,7 +241,7 @@ export default function Stats() {
       <td>
         <Link to={`/clubs/${club.club_id}`} className="player-cell" style={{ textDecoration: 'none' }}>
           {club.logo_url ? (
-            <img src={club.logo_url} alt={club.club_name} className="player-avatar" style={{ objectFit: 'contain', padding: '2px' }} />
+            <img src={club.logo_url} alt={club.club_name} className="player-avatar" loading="lazy" style={{ objectFit: 'contain', padding: '2px' }} />
           ) : (
             <div className="player-avatar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg-glass)', fontSize: '0.6rem' }}>🏉</div>
           )}

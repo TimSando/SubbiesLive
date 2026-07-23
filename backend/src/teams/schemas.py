@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 from typing import Optional
 
 
@@ -28,3 +28,9 @@ class TeamDetail(BaseModel):
     competition_name: str
     year: int
     stats: TeamStats
+
+    @model_validator(mode="after")
+    def rewrite_logo(self) -> "TeamDetail":
+        if self.club_logo_url and not self.club_logo_url.startswith("/api/"):
+            self.club_logo_url = f"/api/clubs/{self.club_id}/logo"
+        return self

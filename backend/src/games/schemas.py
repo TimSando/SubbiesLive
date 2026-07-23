@@ -1,7 +1,7 @@
 """Pydantic schemas for Game API responses."""
 
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 
 class TeamInGame(BaseModel):
@@ -12,6 +12,12 @@ class TeamInGame(BaseModel):
     club_name: str = ""
     club_id: int | None = None
     logo_url: str | None = None
+
+    @model_validator(mode="after")
+    def rewrite_logo(self) -> "TeamInGame":
+        if self.logo_url and self.club_id and not self.logo_url.startswith("/api/"):
+            self.logo_url = f"/api/clubs/{self.club_id}/logo"
+        return self
 
     class Config:
         from_attributes = True

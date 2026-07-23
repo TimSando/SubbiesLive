@@ -44,7 +44,6 @@ export default function Clubs() {
   const [searchQuery, setSearchQuery] = useState(() => sessionStorage.getItem('clubs_searchQuery') || '')
   const [parentComp, setParentComp] = useState(() => sessionStorage.getItem('clubs_parentComp') || 'All')
   const [division, setDivision] = useState(() => sessionStorage.getItem('clubs_division') || 'All')
-  const [onlyWomens, setOnlyWomens] = useState(() => sessionStorage.getItem('clubs_onlyWomens') === 'true')
 
   useEffect(() => {
     sessionStorage.setItem('clubs_selectedYear', selectedYear)
@@ -61,10 +60,6 @@ export default function Clubs() {
   useEffect(() => {
     sessionStorage.setItem('clubs_division', division)
   }, [division])
-
-  useEffect(() => {
-    sessionStorage.setItem('clubs_onlyWomens', onlyWomens ? 'true' : 'false')
-  }, [onlyWomens])
 
   // Dynamically extract divisions based on selected competition
   const activeDivisions = Array.from(new Set(
@@ -86,13 +81,10 @@ export default function Clubs() {
     // 3. Division filter
     const matchesDivision = division === 'All' || club.competition_mapping?.division === division
 
-    // 4. Women's team filter
-    const matchesWomens = !onlyWomens || club.has_womens_team === true
-
-    // 5. Only show clubs that have active teams in the selected year
+    // 4. Only show clubs that have active teams in the selected year
     const hasActiveTeams = club.team_count === undefined || club.team_count > 0
 
-    return matchesSearch && matchesParent && matchesDivision && matchesWomens && hasActiveTeams
+    return matchesSearch && matchesParent && matchesDivision && hasActiveTeams
   })
 
   // Group clubs by parent_competition, then by division
@@ -217,16 +209,6 @@ export default function Clubs() {
                 <option key={div} value={div}>{formatDivisionName(div)}</option>
               ))}
             </select>
-
-            <label className="clubs-checkbox-filter">
-              <input
-                type="checkbox"
-                checked={onlyWomens}
-                onChange={(e) => setOnlyWomens(e.target.checked)}
-              />
-              <span className="checkbox-custom"></span>
-              <span className="checkbox-label">Women's Team</span>
-            </label>
           </div>
         </div>
 
@@ -287,6 +269,7 @@ export default function Clubs() {
                             src={club.logo_url}
                             alt={`${club.name} logo`}
                             className="club-row__logo"
+                            loading="lazy"
                             onError={(e) => { e.target.style.display = 'none' }}
                           />
                         ) : (
